@@ -1,0 +1,256 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: #0A0A0A;
+    color: #D9E4DD;
+    font-family: 'Roboto', sans-serif;
+    overflow: hidden;
+    position: relative;
+}
+
+canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    opacity: 0.3;
+}
+
+header {
+    text-align: center;
+    padding: 0.5rem;
+    background: linear-gradient(to bottom, rgba(26, 38, 57, 0.8), transparent);
+    position: absolute;
+    width: 100%;
+    z-index: 10;
+}
+
+header h1 {
+    font-family: 'Cinzel', serif;
+    font-size: 1.5rem;
+    color: #00A3E0;
+    text-shadow: 0 0 8px #00A3E0;
+}
+
+.main-container {
+    height: 100vh;
+    overflow: hidden;
+}
+
+.origin-grid {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 2.5rem 0.5rem 0.5rem;
+}
+
+.origin-row {
+    display: flex;
+    justify-content: center;
+    flex-grow: 1;
+    height: calc(100% / 3);
+}
+
+.origin-card {
+    height: 100%;
+    margin: 0 3px;
+    background: #1A2639;
+    border: 2px solid #00A3E0;
+    border-radius: 6px;
+    overflow: hidden;
+    position: relative;
+    transition: transform 0.3s ease;
+    cursor: pointer;
+}
+
+.origin-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0 12px #00A3E0;
+}
+
+.origin-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.origin-card .overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.7);
+    padding: 0.2rem;
+    text-align: center;
+    color: #D9E4DD;
+    font-family: 'Cinzel', serif;
+    font-size: 0.8rem;
+}
+
+.selected-view {
+    display: none;
+    height: 100vh;
+    display: flex;
+}
+
+.selected-card {
+    width: 30%;
+    height: 100vh;
+    background: #1A2639;
+    border-right: 2px solid #00A3E0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.selected-card img {
+    width: 100%;
+    height: 100vh;
+    object-fit: contain;
+    border: 2px solid #00A3E0;
+    border-radius: 6px;
+}
+
+.description {
+    width: 70%;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.description h2 {
+    font-family: 'Cinzel', serif;
+    font-size: 1.8rem;
+    color: #00A3E0;
+    margin-bottom: 1rem;
+}
+
+.description p {
+    font-size: 1rem;
+    line-height: 1.5;
+    flex-grow: 1;
+    overflow-y: auto;
+}
+
+.scroll-container {
+    display: flex;
+    overflow-x: auto;
+    padding: 0.5rem 0;
+    gap: 10px;
+}
+
+.scroll-card {
+    width: 120px;
+    height: 90px;
+    background: #1A2639;
+    border: 2px solid #00A3E0;
+    border-radius: 6px;
+    overflow: hidden;
+    position: relative;
+    cursor: pointer;
+    transition: opacity 0.3s ease;
+}
+
+.scroll-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.scroll-card .overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.7);
+    padding: 0.2rem;
+    text-align: center;
+    color: #D9E4DD;
+    font-family: 'Cinzel', serif;
+    font-size: 0.6rem;
+}
+
+.scroll-card:not(.selected) {
+    opacity: 0.5;
+}
+
+.scroll-card:hover {
+    opacity: 1;
+}
+
+.reset-button {
+    display: none;
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+    padding: 0.5rem 1rem;
+    background: #00A3E0;
+    color: #0A0A0A;
+    font-family: 'Cinzel', serif;
+    font-size: 0.8rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    z-index: 1000;
+}
+
+.reset-button:hover {
+    background: #D9E4DD;
+}
+
+@media (max-width: 768px) {
+    header h1 {
+        font-size: 1rem;
+    }
+
+    .origin-grid {
+        padding: 2rem 0.3rem 0.3rem;
+    }
+
+    .origin-card {
+        margin: 0 2px;
+    }
+
+    .origin-card .overlay {
+        font-size: 0.6rem;
+    }
+
+    .selected-card {
+        width: 40%;
+    }
+
+    .selected-card img {
+        width: 100%;
+    }
+
+    .description {
+        width: 60%;
+        padding: 1rem;
+    }
+
+    .description h2 {
+        font-size: 1.2rem;
+    }
+
+    .description p {
+        font-size: 0.8rem;
+    }
+
+    .scroll-card {
+        width: 80px;
+        height: 60px;
+    }
+
+    .scroll-card .overlay {
+        font-size: 0.5rem;
+    }
+}
