@@ -24,26 +24,27 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
     // Рендеринг карточек Origins
-function renderOrigins() {
-    originGrid.innerHTML = '';
-    
-    // Создаем контейнер для горизонтального расположения
-    const rowContainer = document.createElement('div');
-    rowContainer.classList.add('origin-row');
-    
-    originsData.forEach(origin => {
-        const card = document.createElement('div');
-        card.classList.add('origin-card');
-        card.innerHTML = `
-            <img src="Origins/${origin.src}" alt="${origin.name}">
-            <div class="overlay">${origin.name}</div>
-        `;
-        card.addEventListener('click', () => selectOrigin(origin));
-        rowContainer.appendChild(card);
-    });
-    
-    originGrid.appendChild(rowContainer);
-}
+    function renderOrigins() {
+        originGrid.innerHTML = '';
+        
+        // Создаем контейнер для горизонтального расположения
+        const rowContainer = document.createElement('div');
+        rowContainer.classList.add('origin-row');
+        
+        originsData.forEach(origin => {
+            const card = document.createElement('div');
+            card.classList.add('origin-card');
+            card.innerHTML = `
+                <img src="Origins/${origin.src}" alt="${origin.name}">
+                <div class="overlay">${origin.name}</div>
+            `;
+            card.addEventListener('click', () => selectOrigin(origin));
+            rowContainer.appendChild(card);
+        });
+        
+        originGrid.appendChild(rowContainer);
+    }
+
     // Выбор Origin
     function selectOrigin(origin) {
         originGrid.style.display = 'none';
@@ -99,6 +100,7 @@ function renderOrigins() {
             this.size = Math.random() * 2 + 1;
             this.speedX = Math.random() * 0.5 - 0.25;
             this.speedY = Math.random() * 0.5 - 0.25;
+            this.opacity = Math.random() * 0.6 + 0.4;
         }
 
         update() {
@@ -109,7 +111,7 @@ function renderOrigins() {
         }
 
         draw() {
-            ctx.fillStyle = '#00A3E0';
+            ctx.fillStyle = `rgba(0, 163, 224, ${this.opacity})`;
             ctx.beginPath();
             ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
             ctx.fill();
