@@ -143,6 +143,12 @@
         "src": "Origins/Sentinel.jpg",
         "description": "Часовой стоит на страже вечно."
     },
+	    {
+        "id": "Scout",
+        "name": "Скаут",
+        "src": "Origins/Scout.jpg",
+        "description": "Часовой стоит на страже вечно."
+    },
     {
         "id": "Shaman",
         "name": "Шаман",
