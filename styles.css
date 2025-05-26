@@ -46,24 +46,20 @@ header h1 {
 }
 
 .origin-grid {
-    height: 100%;
+    height: calc(100% - 2rem); /* Учитываем отступы и заголовок */
     display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    padding: 2.5rem 0.5rem 0.5rem;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-content: flex-start;
+    padding: 2rem 0.5rem 0.5rem;
+    gap: 8px; /* Отступы между карточками */
     z-index: 5;
 }
 
-.origin-row {
-    display: flex;
-    justify-content: center;
-    flex-grow: 1;
-    height: calc(100% / 3);
-}
-
 .origin-card {
-    height: 100%;
-    margin: 0 3px;
+    flex: 1 1 calc(14.28% - 8px); /* 100% / 7 карточек в строке - gap */
+    max-width: calc(14.28% - 8px);
+    height: calc(50% - 12px); /* Две строки, с учётом gap */
     background: #1A2639;
     border: 2px solid #00A3E0;
     border-radius: 6px;
@@ -98,10 +94,19 @@ header h1 {
     font-size: 0.8rem;
 }
 
+.error-message {
+    display: none;
+    text-align: center;
+    padding: 1rem;
+    color: #FF5555;
+    font-size: 1rem;
+    z-index: 5;
+}
+
 .selected-view {
     display: none;
     height: 100vh;
-    display: flex;
+    flex-direction: row;
     z-index: 5;
 }
 
@@ -156,7 +161,7 @@ header h1 {
 
 .scroll-card {
     width: 80px;
-    height: 120px; /* Пропорции 2:3 для 640x960 */
+    height: 120px; /* Пропорции 2:3 */
     background: #1A2639;
     border: 2px solid #00A3E0;
     border-radius: 6px;
@@ -215,17 +220,32 @@ header h1 {
     background: #D9E4DD;
 }
 
+/* Адаптивность */
+@media (max-width: 1024px) {
+    .origin-card {
+        flex: 1 1 calc(25% - 8px); /* 4 карточки в строке */
+        max-width: calc(25% - 8px);
+        height: calc(25% - 10px); /* 4 строки */
+    }
+}
+
 @media (max-width: 768px) {
     header h1 {
         font-size: 1rem;
     }
 
     .origin-grid {
-        padding: 2rem 0.3rem 0.3rem;
+        padding: 1.5rem 0.3rem 0.3rem;
+        flex-direction: column;
+        align-content: stretch;
+        overflow-y: auto;
     }
 
     .origin-card {
-        margin: 0 2px;
+        flex: 1 1 100%;
+        max-width: 100%;
+        height: 200px; /* Фиксированная высота для мобильных */
+        margin-bottom: 8px;
     }
 
     .origin-card .overlay {
@@ -234,10 +254,6 @@ header h1 {
 
     .selected-card {
         width: 40%;
-    }
-
-    .selected-card img {
-        object-fit: cover;
     }
 
     .description {
@@ -255,10 +271,27 @@ header h1 {
 
     .scroll-card {
         width: 60px;
-        height: 90px; /* Пропорции 2:3 */
+        height: 90px;
     }
 
     .scroll-card .overlay {
         font-size: 0.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .selected-card {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .description {
+        width: 100%;
+        padding: 0.5rem;
+    }
+
+    .scroll-card {
+        width: 50px;
+        height: 75px;
     }
 }
