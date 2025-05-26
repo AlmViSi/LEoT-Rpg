@@ -44,10 +44,10 @@
             constructor() {
                 this.x = Math.random() * canvas.width;
                 this.y = Math.random() * canvas.height;
-                this.size = Math.random() * 3 + 1;
-                this.speedX = Math.random() * 0.6 - 0.3;
-                this.speedY = Math.random() * 0.6 - 0.3;
-                this.opacity = Math.random() * 0.3 + 0.2;
+                this.size = Math.random() * 4 + 2;
+                this.speedX = Math.random() * 1.5 - 0.75;
+                this.speedY = Math.random() * 1.5 - 0.75;
+                this.opacity = Math.random() * 0.6 + 0.4;
             }
 
             update() {
@@ -58,14 +58,14 @@
             }
 
             draw() {
-                ctx.fillStyle = `rgba(0, 163, 224, ${this.opacity})`;
+                ctx.fillStyle = `rgba(255, 215, 0, ${this.opacity})`; // Золотой цвет
                 ctx.beginPath();
                 ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
                 ctx.fill();
             }
         }
 
-        for (let i = 0; i < 30; i++) {
+        for (let i = 0; i < 50; i++) {
             particles.push(new Particle());
         }
 
@@ -92,7 +92,7 @@
         let origins = [];
 
         // Load Origins from JSON
-        fetch('origins.json')
+        fetch('./origins.json')
             .then(response => {
                 if (!response.ok) throw new Error('Failed to load origins.json');
                 return response.json();
@@ -113,7 +113,7 @@
                 return;
             }
 
-            const totalCards = origins.length;
+            const totalCards = origins.length; // Теперь 26
             const cardsPerRow = Math.ceil(totalCards / 3);
             const rows = [[], [], []];
 
@@ -132,9 +132,9 @@
                         const card = document.createElement('div');
                         card.className = 'origin-card';
                         card.dataset.origin = origin.id;
-                        card.style.width = `calc(100% / ${Math.max(row.length, 3)} - 6px)`; // Min 3 cards per row
+                        card.style.width = `calc(100% / ${Math.max(row.length, 3)} - 6px)`;
                         card.innerHTML = `
-                            <img src="${origin.src}" alt="${origin.name}">
+                            <img src="./Origins/${origin.src}" alt="${origin.name}" style="object-fit: cover;">
                             <div class="overlay">${origin.name}</div>
                         `;
                         rowDiv.appendChild(card);
@@ -159,7 +159,7 @@
 
             const origin = origins.find(o => o.id === id);
             selectedCard.innerHTML = `
-                <img src="${origin.src}" alt="${origin.name}">
+                <img src="./Origins/${origin.src}" alt="${origin.name}" style="object-fit: cover;">
             `;
             descriptionTitle.textContent = origin.name;
             descriptionText.textContent = origin.description || `Описание для ${origin.name}`;
@@ -169,7 +169,7 @@
                 if (o.id !== id) {
                     scrollContainer.innerHTML += `
                         <div class="scroll-card" data-origin="${o.id}">
-                            <img src="${o.src}" alt="${o.name}">
+                            <img src="./Origins/${o.src}" alt="${o.name}" style="object-fit: cover;">
                             <div class="overlay">${o.name}</div>
                         </div>
                     `;
