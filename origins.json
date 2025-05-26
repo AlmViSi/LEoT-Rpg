@@ -2,157 +2,157 @@
     {
         "id": "MonumentGuardian",
         "name": "Страж Монумента",
-        "src": "MonumentGuardian.jpg",
+        "src": "Origins/MonumentGuardian.jpg",
         "description": "Страж Монумента обладает силой древних рун, защищая священные алтари от врагов."
     },
     {
         "id": "Faceless",
         "name": "Безликий",
-        "src": "Faceless.jpg",
+        "src": "Origins/Faceless.jpg",
         "description": "Безликий скрывает своё лицо, используя тени для внезапных атак."
     },
     {
         "id": "HirinHerald",
         "name": "Вестник Хирина",
-        "src": "HirinHerald.jpg",
+        "src": "Origins/HirinHerald.jpg",
         "description": "Вестник Хирина несёт волю богов, исцеляя союзников."
     },
     {
         "id": "WarVeteran",
         "name": "Ветеран Войны",
-        "src": "WarVeteran.jpg",
+        "src": "Origins/WarVeteran.jpg",
         "description": "Ветеран Войны закалён в боях, мастер меча и щита."
     },
     {
         "id": "Chieftain",
         "name": "Вождь",
-        "src": "Chieftain.jpg",
+        "src": "Origins/Chieftain.jpg",
         "description": "Вождь ведёт свой народ, вдохновляя воинов."
     },
     {
         "id": "Gargoyle",
         "name": "Гаргулья",
-        "src": "Gargoyle.jpg",
+        "src": "Origins/Gargoyle.jpg",
         "description": "Гаргулья оживает ночью, защищая древние руины."
     },
     {
         "id": "Demon",
         "name": "Демон",
-        "src": "Demon.jpg",
+        "src": "Origins/Demon.jpg",
         "description": "Демон сеет хаос, используя адский огонь."
     },
     {
         "id": "Dervish",
         "name": "Дервиш",
-        "src": "Dervish.jpg",
+        "src": "Origins/Dervish.jpg",
         "description": "Дервиш кружится в танце смерти, разя врагов."
     },
     {
         "id": "AonirPriest",
         "name": "Жрец Аонира",
-        "src": "AonirPriest.jpg",
+        "src": "Origins/AonirPriest.jpg",
         "description": "Жрец Аонира призывает свет для исцеления."
     },
     {
         "id": "BladeSummoner",
         "name": "Заклинатель Клинков",
-        "src": "BladeSummoner.jpg",
+        "src": "Origins/BladeSummoner.jpg",
         "description": "Заклинатель Клинков вызывает магические клинки."
     },
     {
         "id": "ZarathChosen",
         "name": "Избранники Зараха",
-        "src": "ZarathChosen.jpg",
+        "src": "Origins/ZarathChosen.jpg",
         "description": "Избранники Зараха служат тёмному богу."
     },
     {
         "id": "BloodKnight",
         "name": "Кровавый Рыцарь",
-        "src": "BloodKnight.jpg",
+        "src": "Origins/BloodKnight.jpg",
         "description": "Кровавый Рыцарь питается кровью врагов."
     },
     {
         "id": "CircleMage",
         "name": "Маг Круга",
-        "src": "CircleMage.jpg",
+        "src": "Origins/CircleMage.jpg",
         "description": "Маг Круга владеет древними заклинаниями."
     },
     {
         "id": "Necromancer",
         "name": "Некромант",
-        "src": "Necromancer.jpg",
+        "src": "Origins/Necromancer.jpg",
         "description": "Некромант поднимает мёртвых для битвы."
     },
     {
         "id": "StarSinger",
         "name": "Певец Звёзд",
-        "src": "StarSinger.jpg",
+        "src": "Origins/StarSinger.jpg",
         "description": "Певец Звёзд черпает силу из космоса."
     },
     {
         "id": "ConvocationSurvivor",
         "name": "Переживший Конвокацию",
-        "src": "ConvocationSurvivor.jpg",
+        "src": "Origins/ConvocationSurvivor.jpg",
         "description": "Переживший Конвокацию выстоял в великой битве."
     },
     {
         "id": "ElementalLord",
         "name": "Повелитель Стихий",
-        "src": "ElementalLord.jpg",
+        "src": "Origins/ElementalLord.jpg",
         "description": "Повелитель Стихий управляет огнём и льдом."
     },
     {
         "id": "EoEmissary",
         "name": "Посланник Eo",
-        "src": "EoEmissary.jpg",
+        "src": "Origins/EoEmissary.jpg",
         "description": "Посланник Eo несёт волю мира."
     },
     {
         "id": "RuneWarrior",
         "name": "Рунный Воин",
-        "src": "RuneWarrior.jpg",
+        "src": "Origins/RuneWarrior.jpg",
         "description": "Рунный Воин использует руны для силы."
     },
     {
         "id": "RuneSmith",
         "name": "Рунный Кузнец",
-        "src": "RuneSmith.jpg",
+        "src": "Origins/RuneSmith.jpg",
         "description": "Рунный Кузнец создаёт магическое оружие."
     },
     {
         "id": "ForestGuardian",
         "name": "Страж Леса",
-        "src": "ForestGuardian.jpg",
+        "src": "Origins/ForestGuardian.jpg",
         "description": "Страж Леса защищает природу."
     },
     {
         "id": "Phantom",
         "name": "Фантом",
-        "src": "Phantom.jpg",
+        "src": "Origins/Phantom.jpg",
         "description": "Фантом скользит между мирами."
     },
     {
         "id": "PortalKeeper",
         "name": "Хранитель Порталов",
-        "src": "PortalKeeper.jpg",
+        "src": "Origins/PortalKeeper.jpg",
         "description": "Хранитель Порталов открывает врата."
     },
     {
         "id": "Sentinel",
         "name": "Часовой",
-        "src": "Sentinel.jpg",
+        "src": "Origins/Sentinel.jpg",
         "description": "Часовой стоит на страже вечно."
     },
     {
         "id": "Shaman",
         "name": "Шаман",
-        "src": "Shaman.jpg",
+        "src": "Origins/Shaman.jpg",
         "description": "Шаман общается с духами предков."
     },
     {
         "id": "Scout",
         "name": "Скаут",
-        "src": "Scout.jpg",
+        "src": "Origins/Scout.jpg",
         "description": "Скаут скрытно разведывает врагов, используя арбалет и руны."
     }
 ]
