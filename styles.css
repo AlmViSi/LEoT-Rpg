@@ -18,8 +18,8 @@ canvas {
     left: 0;
     width: 100%;
     height: 100%;
-    z-index: 2; /* Над фоном, под контентом */
-    opacity: 0.8; /* Видимость золотых частиц */
+    z-index: 2;
+    opacity: 0.8;
 }
 
 header {
@@ -42,24 +42,24 @@ header h1 {
     height: 100vh;
     overflow: hidden;
     position: relative;
-    z-index: 5; /* Над canvas */
+    z-index: 5;
 }
 
 .origin-grid {
-    height: calc(100% - 2rem); /* Учитываем отступы и заголовок */
+    height: calc(100% - 2rem);
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
     align-content: flex-start;
     padding: 2rem 0.5rem 0.5rem;
-    gap: 8px; /* Отступы между карточками */
+    gap: 8px;
     z-index: 5;
 }
 
 .origin-card {
-    flex: 1 1 calc(14.28% - 8px); /* 100% / 7 карточек в строке - gap */
+    flex: 1 1 calc(14.28% - 8px);
     max-width: calc(14.28% - 8px);
-    height: calc(50% - 12px); /* Две строки, с учётом gap */
+    height: calc(50% - 12px);
     background: #1A2639;
     border: 2px solid #00A3E0;
     border-radius: 6px;
@@ -161,7 +161,7 @@ header h1 {
 
 .scroll-card {
     width: 80px;
-    height: 120px; /* Пропорции 2:3 */
+    height: 120px;
     background: #1A2639;
     border: 2px solid #00A3E0;
     border-radius: 6px;
@@ -220,12 +220,11 @@ header h1 {
     background: #D9E4DD;
 }
 
-/* Адаптивность */
 @media (max-width: 1024px) {
     .origin-card {
-        flex: 1 1 calc(25% - 8px); /* 4 карточки в строке */
+        flex: 1 1 calc(25% - 8px);
         max-width: calc(25% - 8px);
-        height: calc(25% - 10px); /* 4 строки */
+        height: calc(25% - 10px);
     }
 }
 
@@ -244,7 +243,7 @@ header h1 {
     .origin-card {
         flex: 1 1 100%;
         max-width: 100%;
-        height: 200px; /* Фиксированная высота для мобильных */
+        height: 200px;
         margin-bottom: 8px;
     }
 
@@ -281,12 +280,13 @@ header h1 {
 
 @media (max-width: 480px) {
     .selected-card {
-        flex-direction: column;
         width: 100%;
+        height: 50%;
     }
 
     .description {
         width: 100%;
+        height: 50%;
         padding: 0.5rem;
     }
 
