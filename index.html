@@ -136,10 +136,10 @@
                         card.className = 'origin-card';
                         card.dataset.origin = origin.id;
                         card.style.width = `calc(100% / ${Math.max(row.length, 3)} - 6px)`;
-                        // Добавляем обработку ошибок загрузки изображения
+                        // Заменяем placeholder на локальный путь
                         card.innerHTML = `
                             <img src="./Origins/${origin.src}" alt="${origin.name}" style="object-fit: cover;" 
-                                 onerror="this.src='https://via.placeholder.com/640x960?text=${origin.name}';">
+                                 onerror="this.src='./Origins/placeholder.png';">
                             <div class="overlay">${origin.name}</div>
                         `;
                         rowDiv.appendChild(card);
@@ -165,7 +165,7 @@
             const origin = origins.find(o => o.id === id);
             selectedCard.innerHTML = `
                 <img src="./Origins/${origin.src}" alt="${origin.name}" style="object-fit: cover;"
-                     onerror="this.src='https://via.placeholder.com/640x960?text=${origin.name}';">
+                     onerror="this.src='./Origins/placeholder.png';">
             `;
             descriptionTitle.textContent = origin.name;
             descriptionText.textContent = origin.description || `Описание для ${origin.name}`;
@@ -176,7 +176,7 @@
                     scrollContainer.innerHTML += `
                         <div class="scroll-card" data-origin="${o.id}">
                             <img src="./Origins/${o.src}" alt="${o.name}" style="object-fit: cover;"
-                                 onerror="this.src='https://via.placeholder.com/640x960?text=${o.name}';">
+                                 onerror="this.src='./Origins/placeholder.png';">
                             <div class="overlay">${o.name}</div>
                         </div>
                     `;
