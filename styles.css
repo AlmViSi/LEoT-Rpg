@@ -52,7 +52,7 @@ header h1 {
     display: flex;
     height: 100vh;
     width: 100vw;
-    padding: 60px 0;
+    padding: 0;
     overflow-x: auto;
     overflow-y: hidden;
     scroll-snap-type: x mandatory;
@@ -65,21 +65,20 @@ header h1 {
 .origin-row {
     display: flex;
     height: 100%;
-    min-width: 100%;
+    width: 100%;
     align-items: center;
-    justify-content: center;
-    gap: 20px;
-    padding: 0 20px;
+    justify-content: flex-start;
+    gap: 0;
+    padding: 0;
     scroll-snap-align: start;
 }
 
 .origin-card {
-    flex: 0 0 auto;
-    width: 250px;
-    height: 350px;
+    flex: 0 0 calc(100vw / 14);
+    height: 100%;
     position: relative;
-    border: 2px solid #00A3E0;
-    border-radius: 8px;
+    border: 1px solid #00A3E0;
+    border-radius: 0;
     overflow: hidden;
     transition: transform 0.3s ease;
     cursor: pointer;
@@ -107,7 +106,7 @@ header h1 {
     text-align: center;
     color: #D9E4DD;
     font-family: 'Cinzel', serif;
-    font-size: 1rem;
+    font-size: clamp(0.8rem, 1.5vw, 1rem);
 }
 
 .origin-grid::-webkit-scrollbar {
@@ -263,12 +262,7 @@ header h1 {
 
 @media (max-width: 768px) {
     .origin-card {
-        width: 180px;
-        height: 250px;
-    }
-    
-    .origin-row {
-        gap: 10px;
+        flex: 0 0 calc(100vw / 7);
     }
     
     .selected-card {
@@ -290,8 +284,7 @@ header h1 {
 
 @media (max-width: 480px) {
     .origin-card {
-        width: 150px;
-        height: 200px;
+        flex: 0 0 calc(100vw / 4);
     }
     
     header h1 {
