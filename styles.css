@@ -100,7 +100,7 @@ header h1 {
     text-align: center;
     color: #D9E4DD;
     font-family: 'Cinzel', serif;
-    font-size: clamp(0.8rem, 4.5vw, 3rem);
+    font-size: clamp(0.8rem, 2vw, 1rem);
 }
 
 .origin-grid::-webkit-scrollbar {
