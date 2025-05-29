@@ -1,52 +1,191 @@
-```html
 <!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SpellForce: Выбор Персонажа</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Lost Edge of Time</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto&family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <canvas id="backgroundCanvas"></canvas>
+    <canvas id="particle-canvas"></canvas>
     <header>
-        <h1>Выберите Свою Судьбу</h1>
+        <h1>Choose Your Origin</h1>
     </header>
     <div class="main-container">
-        <div class="origin-grid" id="origin-grid">
-            <div class="origin-row" id="origin-row-1"></div>
-            <div class="origin-row" id="origin-row-2"></div>
+        <div id="error-message" class="error-message">
+            Ошибка загрузки данных. Проверьте origins.json или наличие изображений в папке Origins.
         </div>
-        <div class="race-grid" id="race-grid" style="display: none;">
-            <div class="race-row" id="race-row-1"></div>
-            <div class="race-row" id="race-row-2"></div>
-        </div>
-        <div class="error-message" id="error-message">Ошибка загрузки данных. Проверьте файлы origins.json, races.json или наличие изображений в папках Origins/ и Races/.</div>
-        <div class="selected-view" id="selected-origin-view" style="display: none;">
-            <div class="selected-card">
-                <img id="selected-origin-image" src="" alt="Selected Origin">
-            </div>
+        <div id="origin-grid" class="origin-grid"></div>
+        <div id="selected-view" class="selected-view">
+            <div id="selected-card" class="selected-card"></div>
             <div class="description">
-                <h2 id="selected-origin-name">Выберите Origin</h2>
-                <p id="selected-origin-description">Выберите Origin, чтобы узнать его историю и способности.</p>
-                <div class="scroll-container" id="origin-scroll-container"></div>
-                <button class="next-button" id="next-to-race">Выбрать Раса</button>
+                <h2 id="origin-title">Выберите Origin</h2>
+                <p id="origin-description">Выберите Origin, чтобы узнать его историю и способности.</p>
+                <div id="scroll-container" class="scroll-container"></div>
             </div>
         </div>
-        <div class="selected-view" id="selected-race-view" style="display: none;">
-            <div class="selected-card">
-                <img id="selected-race-image" src="" alt="Selected Race">
-            </div>
-            <div class="description">
-                <h2 id="selected-race-name">Выберите Раса</h2>
-                <p id="selected-race-description">Выберите Раса, чтобы узнать её историю.</p>
-                <div class="scroll-container" id="race-scroll-container"></div>
-            </div>
-        </div>
-        <button class="reset-button" id="reset-button" style="display: none;">Вернуться</button>
     </div>
-    <script src="script.js"></script>
+    <button id="reset-button" class="reset-button">Вернуться</button>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const originGrid = document.getElementById('origin-grid');
+            const errorMessage = document.getElementById('error-message');
+            const selectedView = document.getElementById('selected-view');
+            const selectedCard = document.getElementById('selected-card');
+            const originTitle = document.getElementById('origin-title');
+            const originDescription = document.getElementById('origin-description');
+            const scrollContainer = document.getElementById('scroll-container');
+            const resetButton = document.getElementById('reset-button');
+            let originsData = [];
+
+            // Загрузка origins.json
+            fetch('origins.json')
+                .then(response => {
+                    if (!response.ok) throw new Error('Ошибка загрузки origins.json');
+                    return response.json();
+                })
+                .then(data => {
+                    originsData = data;
+                    renderOrigins();
+                })
+                .catch(() => {
+                    errorMessage.style.display = 'block';
+                });
+
+            // Рендеринг карточек Origins
+            function renderOrigins() {
+                originGrid.innerHTML = '';
+                
+                // Разделяем данные на два ряда по 7 карточек
+                const firstRowOrigins = originsData.slice(0, 7);
+                const secondRowOrigins = originsData.slice(7, 14);
+
+                // Создаем первый ряд
+                const firstRowContainer = document.createElement('div');
+                firstRowContainer.classList.add('origin-row');
+                firstRowOrigins.forEach(origin => {
+                    const card = document.createElement('div');
+                    card.classList.add('origin-card');
+                    card.innerHTML = `
+                        <img src="Origins/${origin.src}" alt="${origin.name}">
+                        <div class="overlay">${origin.name}</div>
+                    `;
+                    card.addEventListener('click', () => selectOrigin(origin));
+                    firstRowContainer.appendChild(card);
+                });
+
+                // Создаем второй ряд
+                const secondRowContainer = document.createElement('div');
+                secondRowContainer.classList.add('origin-row');
+                secondRowOrigins.forEach(origin => {
+                    const card = document.createElement('div');
+                    card.classList.add('origin-card');
+                    card.innerHTML = `
+                        <img src="Origins/${origin.src}" alt="${origin.name}">
+                        <div class="overlay">${origin.name}</div>
+                    `;
+                    card.addEventListener('click', () => selectOrigin(origin));
+                    secondRowContainer.appendChild(card);
+                });
+
+                originGrid.appendChild(firstRowContainer);
+                originGrid.appendChild(secondRowContainer);
+            }
+
+            // Выбор Origin
+            function selectOrigin(origin) {
+                originGrid.style.display = 'none';
+                selectedView.style.display = 'flex';
+                resetButton.style.display = 'block';
+
+                selectedCard.innerHTML = `<img src="Origins/${origin.src}" alt="${origin.name}">`;
+                originTitle.textContent = origin.name;
+                originDescription.textContent = origin.description;
+
+                renderScrollCards(origin.id);
+            }
+
+            // Рендеринг мини-карточек в прокрутке
+            function renderScrollCards(selectedId) {
+                scrollContainer.innerHTML = '';
+                originsData.forEach(origin => {
+                    const scrollCard = document.createElement('div');
+                    scrollCard.classList.add('scroll-card');
+                    if (origin.id === selectedId) scrollCard.classList.add('selected');
+                    scrollCard.innerHTML = `
+                        <img src="Origins/${origin.src}" alt="${origin.name}">
+                        <div class="overlay">${origin.name}</div>
+                    `;
+                    scrollCard.addEventListener('click', () => selectOrigin(origin));
+                    scrollContainer.appendChild(scrollCard);
+                });
+            }
+
+            // Сброс к сетке
+            resetButton.addEventListener('click', () => {
+                originGrid.style.display = 'flex';
+                selectedView.style.display = 'none';
+                resetButton.style.display = 'none';
+            });
+
+            // Анимация частиц на canvas
+            const canvas = document.getElementById('particle-canvas');
+            const ctx = canvas.getContext('2d');
+            let particles = [];
+
+            function resizeCanvas() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+            resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
+
+            class Particle {
+                constructor() {
+                    this.x = Math.random() * canvas.width;
+                    this.y = Math.random() * canvas.height;
+                    this.size = Math.random() * 2 + 1;
+                    this.speedX = Math.random() * 0.5 - 0.25;
+                    this.speedY = Math.random() * 0.5 - 0.25;
+                    this.opacity = Math.random() * 0.6 + 0.4;
+                }
+
+                update() {
+                    this.x += this.speedX;
+                    this.y += this.speedY;
+                    if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
+                    if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
+                }
+
+                draw() {
+                    ctx.fillStyle = `rgba(0, 163, 224, ${this.opacity})`;
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+
+            function initParticles() {
+                particles = [];
+                for (let i = 0; i < 50; i++) {
+                    particles.push(new Particle());
+                }
+            }
+
+            function animateParticles() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                particles.forEach(p => {
+                    p.update();
+                    p.draw();
+                });
+                requestAnimationFrame(animateParticles);
+            }
+
+            initParticles();
+            animateParticles();
+        });
+    </script>
 </body>
 </html>
-```
