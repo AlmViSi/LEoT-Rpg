@@ -17,6 +17,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Canvas Animation
     function initCanvas() {
+        if (!canvas || !ctx) {
+            console.error('Canvas or context not found');
+            return;
+        }
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
         const particles = [];
@@ -65,20 +69,30 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const [originsResponse, racesResponse] = await Promise.all([
                 fetch('origins.json').then(res => {
-                    if (!res.ok) throw new Error('Не удалось загрузить origins.json');
+                    if (!res.ok) throw new Error(`Failed to load origins.json: ${res.status}`);
                     return res.json();
                 }),
                 fetch('races.json').then(res => {
-                    if (!res.ok) throw new Error('Не удалось загрузить races.json');
+                    if (!res.ok) throw new Error(`Failed to load races.json: ${res.status}`);
                     return res.json();
                 })
             ]);
-            origins = originsResponse;
-            races = racesResponse;
+            // Validate data structure
+            if (!Array.isArray(originsResponse) || !Array.isArray(racesResponse)) {
+                throw new Error('Invalid JSON structure: origins or races is not an array');
+            }
+            origins = originsResponse.filter(item => item && item.id && item.name && item.src && item.description);
+            races = racesResponse.filter(item => item && item.id && item.name && item.src && item.description);
+            if (origins.length === 0 || races.length === 0) {
+                throw new Error('No valid data found in origins.json or races.json');
+            }
+            console.log('Loaded origins:', origins);
+            console.log('Loaded races:', races);
             displayOrigins();
         } catch (error) {
             errorMessage.style.display = 'block';
-            console.error('Ошибка загрузки данных:', error);
+            errorMessage.textContent = `Ошибка загрузки данных: ${error.message}`;
+            console.error('Error loading data:', error);
         }
     }
 
@@ -86,13 +100,21 @@ document.addEventListener('DOMContentLoaded', () => {
     function displayOrigins() {
         const row1 = document.getElementById('origin-row-1');
         const row2 = document.getElementById('origin-row-2');
+        if (!row1 || !row2) {
+            console.error('Origin row elements not found');
+            return;
+        }
         row1.innerHTML = '';
         row2.innerHTML = '';
         origins.forEach((origin, index) => {
+            if (!origin.src || !origin.name) {
+                console.warn(`Invalid origin data at index ${index}:`, origin);
+                return;
+            }
             const card = document.createElement('div');
             card.classList.add('origin-card');
             card.innerHTML = `
-                <img src="Origins/${origin.src}" alt="${origin.name}">
+                <img src="Origins/${origin.src}" alt="${origin.name}" onerror="this.src='Origins/placeholder.jpg'">
                 <div class="overlay">${origin.name}</div>
             `;
             card.addEventListener('click', () => selectOrigin(origin));
@@ -106,6 +128,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Select Origin
     function selectOrigin(origin) {
+        if (!origin || !origin.src || !origin.name || !origin.description) {
+            console.error('Invalid origin selected:', origin);
+            return;
+        }
         selectedOrigin = origin;
         originGrid.style.display = 'none';
         selectedOriginView.style.display = 'flex';
@@ -120,13 +146,21 @@ document.addEventListener('DOMContentLoaded', () => {
     // Update Origin Scroll
     function updateOriginScroll() {
         const scrollContainer = document.getElementById('origin-scroll-container');
+        if (!scrollContainer) {
+            console.error('Origin scroll container not found');
+            return;
+        }
         scrollContainer.innerHTML = '';
         origins.forEach(origin => {
+            if (!origin.src || !origin.name) {
+                console.warn('Invalid origin in scroll:', origin);
+                return;
+            }
             const scrollCard = document.createElement('div');
             scrollCard.classList.add('scroll-card');
             if (origin.id === selectedOrigin.id) scrollCard.classList.add('selected');
             scrollCard.innerHTML = `
-                <img src="Origins/${origin.src}" alt="${origin.name}">
+                <img src="Origins/${origin.src}" alt="${origin.name}" onerror="this.src='Origins/placeholder.jpg'">
                 <div class="overlay">${origin.name}</div>
             `;
             scrollCard.addEventListener('click', () => selectOrigin(origin));
@@ -138,13 +172,21 @@ document.addEventListener('DOMContentLoaded', () => {
     function displayRaces() {
         const row1 = document.getElementById('race-row-1');
         const row2 = document.getElementById('race-row-2');
+        if (!row1 || !row2) {
+            console.error('Race row elements not found');
+            return;
+        }
         row1.innerHTML = '';
         row2.innerHTML = '';
         races.forEach((race, index) => {
+            if (!race.src || !race.name) {
+                console.warn(`Invalid race data at index ${index}:`, race);
+                return;
+            }
             const card = document.createElement('div');
             card.classList.add('race-card');
             card.innerHTML = `
-                <img src="Races/${race.src}" alt="${race.name}">
+                <img src="Races/${race.src}" alt="${race.name}" onerror="this.src='Races/placeholder.jpg'">
                 <div class="overlay">${race.name}</div>
             `;
             card.addEventListener('click', () => selectRace(race));
@@ -158,6 +200,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Select Race
     function selectRace(race) {
+        if (!race || !race.src || !race.name || !race.description) {
+            console.error('Invalid race selected:', race);
+            return;
+        }
         selectedRace = race;
         raceGrid.style.display = 'none';
         selectedRaceView.style.display = 'flex';
@@ -172,13 +218,21 @@ document.addEventListener('DOMContentLoaded', () => {
     // Update Race Scroll
     function updateRaceScroll() {
         const scrollContainer = document.getElementById('race-scroll-container');
+        if (!scrollContainer) {
+            console.error('Race scroll container not found');
+            return;
+        }
         scrollContainer.innerHTML = '';
         races.forEach(race => {
+            if (!race.src || !race.name) {
+                console.warn('Invalid race in scroll:', race);
+                return;
+            }
             const scrollCard = document.createElement('div');
             scrollCard.classList.add('scroll-card');
             if (selectedRace && race.id === selectedRace.id) scrollCard.classList.add('selected');
             scrollCard.innerHTML = `
-                <img src="Races/${race.src}" alt="${race.name}">
+                <img src="Races/${race.src}" alt="${race.name}" onerror="this.src='Races/placeholder.jpg'">
                 <div class="overlay">${race.name}</div>
             `;
             scrollCard.addEventListener('click', () => selectRace(race));
@@ -195,6 +249,8 @@ document.addEventListener('DOMContentLoaded', () => {
             nextButton.style.display = 'none';
             displayRaces();
         });
+    } else {
+        console.error('Next button not found');
     }
 
     // Reset Button Logic
@@ -215,6 +271,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             resetButton.style.display = 'none';
         });
+    } else {
+        console.error('Reset button not found');
     }
 
     // Initialize
