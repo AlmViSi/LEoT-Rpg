@@ -1,3 +1,4 @@
+```css
 * {
     margin: 0;
     padding: 0;
@@ -48,7 +49,7 @@ header h1 {
     z-index: 5;
 }
 
-.origin-grid {
+.origin-grid, .race-grid {
     display: flex;
     flex-direction: column;
     height: 100vh;
@@ -57,16 +58,16 @@ header h1 {
     z-index: 5;
 }
 
-.origin-row {
+.origin-row, .race-row {
     display: flex;
-    height: calc(50% - 1.5rem); /* Half height minus padding */
+    height: calc(50% - 1.5rem);
     width: 100%;
-    justify-content: center; /* Центрируем по горизонтали */
-    align-items: center; /* Центрируем по вертикали */
+    justify-content: center;
+    align-items: center;
     gap: 0;
 }
 
-.origin-card {
+.origin-card, .race-card {
     flex: 0 0 calc(100vw / 7);
     height: 100%;
     background: #1A2639;
@@ -78,19 +79,19 @@ header h1 {
     cursor: pointer;
 }
 
-.origin-card:hover {
+.origin-card:hover, .race-card:hover {
     transform: translateY(-5px);
     box-shadow: 0 0 12px #00A3E0;
 }
 
-.origin-card img {
+.origin-card img, .race-card img {
     width: 100%;
     height: 100%;
     object-fit: cover;
     object-position: center;
 }
 
-.origin-card .overlay {
+.origin-card .overlay, .race-card .overlay {
     position: absolute;
     bottom: 0;
     left: 0;
@@ -103,8 +104,8 @@ header h1 {
     font-size: clamp(0.8rem, 2vw, 1rem);
 }
 
-.origin-grid::-webkit-scrollbar {
-    display: none; /* Hide scrollbar since all cards fit */
+.origin-grid::-webkit-scrollbar, .race-grid::-webkit-scrollbar {
+    display: none;
 }
 
 .error-message {
@@ -229,11 +230,9 @@ header h1 {
     opacity: 1;
 }
 
-.reset-button {
-    display: none;
+.next-button, .reset-button {
     position: fixed;
     bottom: 10px;
-    right: 10px;
     padding: 0.5rem 1rem;
     background: #00A3E0;
     color: #0A0A0A;
@@ -246,7 +245,15 @@ header h1 {
     z-index: 10;
 }
 
-.reset-button:hover {
+.next-button {
+    right: 80px;
+}
+
+.reset-button {
+    right: 10px;
+}
+
+.next-button:hover, .reset-button:hover {
     background: #D9E4DD;
 }
 
@@ -255,15 +262,15 @@ header h1 {
         font-size: 1rem;
     }
 
-    .origin-grid {
+    .origin-grid, .race-grid {
         padding: 2rem 0.3rem 0.3rem;
     }
 
-    .origin-card {
+    .origin-card, .race-card {
         flex: 0 0 calc(100vw / 4);
     }
 
-    .origin-card .overlay {
+    .origin-card .overlay, .race-card .overlay {
         font-size: 0.6rem;
     }
 
@@ -292,10 +299,16 @@ header h1 {
     .scroll-card .overlay {
         font-size: 0.5rem;
     }
+
+    .next-button, .reset-button {
+        font-size: 0.7rem;
+        padding: 0.4rem 0.8rem;
+    }
 }
 
 @media (max-width: 480px) {
-    .origin-card {
+    .origin-card, .race-card {
         flex: 0 0 calc(100vw / 3);
     }
 }
+```
