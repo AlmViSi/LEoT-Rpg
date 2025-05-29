@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const resetButton = document.getElementById('reset-button');
     const nextButton = document.getElementById('next-to-race');
     const canvas = document.getElementById('backgroundCanvas');
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas ? canvas.getContext('2d') : null;
 
     let origins = [];
     let races = [];
@@ -69,29 +69,39 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const [originsResponse, racesResponse] = await Promise.all([
                 fetch('origins.json').then(res => {
-                    if (!res.ok) throw new Error(`Failed to load origins.json: ${res.status}`);
+                    if (!res.ok) throw new Error(`Failed to load origins.json: ${res.status} ${res.statusText}`);
                     return res.json();
                 }),
                 fetch('races.json').then(res => {
-                    if (!res.ok) throw new Error(`Failed to load races.json: ${res.status}`);
+                    if (!res.ok) throw new Error(`Failed to load races.json: ${res.status} ${res.statusText}`);
                     return res.json();
                 })
             ]);
-            // Validate data structure
-            if (!Array.isArray(originsResponse) || !Array.isArray(racesResponse)) {
-                throw new Error('Invalid JSON structure: origins or races is not an array');
-            }
-            origins = originsResponse.filter(item => item && item.id && item.name && item.src && item.description);
-            races = racesResponse.filter(item => item && item.id && item.name && item.src && item.description);
-            if (origins.length === 0 || races.length === 0) {
-                throw new Error('No valid data found in origins.json or races.json');
-            }
+            // Validate data
+            if (!Array.isArray(originsResponse)) throw new Error('origins.json is not an array');
+            if (!Array.isArray(racesResponse)) throw new Error('races.json is not an array');
+            origins = originsResponse.filter(item => {
+                if (!item || typeof item !== 'object' || !item.id || !item.name || !item.src || !item.description) {
+                    console.warn('Invalid origin data:', item);
+                    return false;
+                }
+                return true;
+            });
+            races = racesResponse.filter(item => {
+                if (!item || typeof item !== 'object' || !item.id || !item.name || !item.src || !item.description) {
+                    console.warn('Invalid race data:', item);
+                    return false;
+                }
+                return true;
+            });
+            if (origins.length === 0) throw new Error('No valid data in origins.json');
+            if (races.length === 0) throw new Error('No valid data in races.json');
             console.log('Loaded origins:', origins);
             console.log('Loaded races:', races);
             displayOrigins();
         } catch (error) {
             errorMessage.style.display = 'block';
-            errorMessage.textContent = `Ошибка загрузки данных: ${error.message}`;
+            errorMessage.textContent = `Ошибка загрузки: ${error.message}`;
             console.error('Error loading data:', error);
         }
     }
@@ -102,13 +112,16 @@ document.addEventListener('DOMContentLoaded', () => {
         const row2 = document.getElementById('origin-row-2');
         if (!row1 || !row2) {
             console.error('Origin row elements not found');
+            errorMessage.style.display = 'block';
+            errorMessage.textContent = 'Ошибка: не найдены элементы для отображения Origins';
             return;
         }
         row1.innerHTML = '';
         row2.innerHTML = '';
         origins.forEach((origin, index) => {
-            if (!origin.src || !origin.name) {
-                console.warn(`Invalid origin data at index ${index}:`, origin);
+            // Skip invalid entries
+            if (!origin || !origin.src || !origin.name) {
+                console.warn(`Skipping invalid origin at index ${index}:`, origin);
                 return;
             }
             const card = document.createElement('div');
@@ -124,12 +137,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 row2.appendChild(card);
             }
         });
+        if (row1.children.length === 0 && row2.children.length === 0) {
+            errorMessage.style.display = 'block';
+            errorMessage.textContent = 'Ошибка: нет данных для отображения Origins';
+        }
     }
 
     // Select Origin
     function selectOrigin(origin) {
         if (!origin || !origin.src || !origin.name || !origin.description) {
             console.error('Invalid origin selected:', origin);
+            errorMessage.style.display = 'block';
+            errorMessage.textContent = 'Ошибка: выбран неверный Origin';
             return;
         }
         selectedOrigin = origin;
@@ -152,7 +171,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         scrollContainer.innerHTML = '';
         origins.forEach(origin => {
-            if (!origin.src || !origin.name) {
+            if (!origin || !origin.src || !origin.name) {
                 console.warn('Invalid origin in scroll:', origin);
                 return;
             }
@@ -160,7 +179,7 @@ document.addEventListener('DOMContentLoaded', () => {
             scrollCard.classList.add('scroll-card');
             if (origin.id === selectedOrigin.id) scrollCard.classList.add('selected');
             scrollCard.innerHTML = `
-                <img src="Origins/${origin.src}" alt="${origin.name}" onerror="this.src='Origins/placeholder.jpg'">
+                <img src="Origins/${origin.src}" alt"${origin.name}" onerror="this.src='Origins/placeholder.jpg'">
                 <div class="overlay">${origin.name}</div>
             `;
             scrollCard.addEventListener('click', () => selectOrigin(origin));
@@ -174,13 +193,15 @@ document.addEventListener('DOMContentLoaded', () => {
         const row2 = document.getElementById('race-row-2');
         if (!row1 || !row2) {
             console.error('Race row elements not found');
+            errorMessage.style.display = 'block';
+            errorMessage.textContent = 'Ошибка: не найдены элементы для отображения Races';
             return;
         }
         row1.innerHTML = '';
         row2.innerHTML = '';
         races.forEach((race, index) => {
-            if (!race.src || !race.name) {
-                console.warn(`Invalid race data at index ${index}:`, race);
+            if (!race || !race.src || !race.name) {
+                console.warn(`Skipping invalid race at index ${index}:`, race);
                 return;
             }
             const card = document.createElement('div');
@@ -196,12 +217,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 row2.appendChild(card);
             }
         });
+        if (row1.children.length === 0 && row2.children.length === 0) {
+            errorMessage.style.display = 'block';
+            errorMessage.textContent = 'Ошибка: нет данных для отображения Races';
+        }
     }
 
     // Select Race
     function selectRace(race) {
         if (!race || !race.src || !race.name || !race.description) {
             console.error('Invalid race selected:', race);
+            errorMessage.style.display = 'block';
+            errorMessage.textContent = 'Ошибка: выбрана неверная раса';
             return;
         }
         selectedRace = race;
@@ -224,7 +251,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         scrollContainer.innerHTML = '';
         races.forEach(race => {
-            if (!race.src || !race.name) {
+            if (!race || !race.src || !race.name) {
                 console.warn('Invalid race in scroll:', race);
                 return;
             }
