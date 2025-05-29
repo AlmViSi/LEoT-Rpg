@@ -14,16 +14,16 @@
         <h1>Выберите Свою Судьбу</h1>
     </header>
     <div class="main-container">
-        <div class="origin-grid">
+        <div class="origin-grid" id="origin-grid">
             <div class="origin-row" id="origin-row-1"></div>
             <div class="origin-row" id="origin-row-2"></div>
         </div>
-        <div class="race-grid" style="display: none;">
+        <div class="race-grid" id="race-grid" style="display: none;">
             <div class="race-row" id="race-row-1"></div>
             <div class="race-row" id="race-row-2"></div>
         </div>
-        <div class="error-message">Ошибка загрузки данных. Проверьте origins.json, races.json или наличие изображений в папке.</div>
-        <div class="selected-view" id="selected-origin-view">
+        <div class="error-message" id="error-message">Ошибка загрузки данных. Проверьте файлы origins.json, races.json или наличие изображений в папках Origins/ и Races/.</div>
+        <div class="selected-view" id="selected-origin-view" style="display: none;">
             <div class="selected-card">
                 <img id="selected-origin-image" src="" alt="Selected Origin">
             </div>
@@ -31,7 +31,7 @@
                 <h2 id="selected-origin-name">Выберите Origin</h2>
                 <p id="selected-origin-description">Выберите Origin, чтобы узнать его историю и способности.</p>
                 <div class="scroll-container" id="origin-scroll-container"></div>
-                <button class="next-button" id="next-to-race">Выбрать Расу</button>
+                <button class="next-button" id="next-to-race">Выбрать Раса</button>
             </div>
         </div>
         <div class="selected-view" id="selected-race-view" style="display: none;">
@@ -39,12 +39,12 @@
                 <img id="selected-race-image" src="" alt="Selected Race">
             </div>
             <div class="description">
-                <h2 id="selected-race-name">Выберите Расу</h2>
-                <p id="selected-race-description">Выберите Расу, чтобы узнать её историю.</p>
+                <h2 id="selected-race-name">Выберите Раса</h2>
+                <p id="selected-race-description">Выберите Раса, чтобы узнать её историю.</p>
                 <div class="scroll-container" id="race-scroll-container"></div>
             </div>
         </div>
-        <button class="reset-button" id="reset-button">Вернуться</button>
+        <button class="reset-button" id="reset-button" style="display: none;">Вернуться</button>
     </div>
     <script src="script.js"></script>
 </body>

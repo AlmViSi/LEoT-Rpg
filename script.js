@@ -1,10 +1,10 @@
 ```javascript
 document.addEventListener('DOMContentLoaded', () => {
-    const originGrid = document.querySelector('.origin-grid');
-    const raceGrid = document.querySelector('.race-grid');
+    const originGrid = document.getElementById('origin-grid');
+    const raceGrid = document.getElementById('race-grid');
     const selectedOriginView = document.getElementById('selected-origin-view');
     const selectedRaceView = document.getElementById('selected-race-view');
-    const errorMessage = document.querySelector('.error-message');
+    const errorMessage = document.getElementById('error-message');
     const resetButton = document.getElementById('reset-button');
     const nextButton = document.getElementById('next-to-race');
     const canvas = document.getElementById('backgroundCanvas');
@@ -16,60 +16,69 @@ document.addEventListener('DOMContentLoaded', () => {
     let selectedRace = null;
 
     // Canvas Animation
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-    const particles = [];
-    class Particle {
-        constructor() {
-            this.x = Math.random() * canvas.width;
-            this.y = Math.random() * canvas.height;
-            this.size = Math.random() * 5 + 1;
-            this.speedX = Math.random() * 2 - 1;
-            this.speedY = Math.random() * 2 - 1;
-        }
-        update() {
-            this.x += this.speedX;
-            this.y += this.speedY;
-            if (this.size > 0.2) this.size -= 0.1;
-        }
-        draw() {
-            ctx.fillStyle = 'rgba(0, 163, 224, 0.5)';
-            ctx.beginPath();
-            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-            ctx.fill();
-        }
-    }
-    function handleParticles() {
-        for (let i = 0; i < particles.length; i++) {
-            particles[i].update();
-            particles[i].draw();
-            if (particles[i].size <= 0.2) {
-                particles.splice(i, 1);
-                i--;
+    function initCanvas() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        const particles = [];
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 5 + 1;
+                this.speedX = Math.random() * 2 - 1;
+                this.speedY = Math.random() * 2 - 1;
+            }
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                if (this.size > 0.2) this.size -= 0.1;
+            }
+            draw() {
+                ctx.fillStyle = 'rgba(0, 163, 224, 0.5)';
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
             }
         }
+        function handleParticles() {
+            for (let i = 0; i < particles.length; i++) {
+                particles[i].update();
+                particles[i].draw();
+                if (particles[i].size <= 0.2) {
+                    particles.splice(i, 1);
+                    i--;
+                }
+            }
+        }
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            if (Math.random() < 0.1) particles.push(new Particle());
+            handleParticles();
+            requestAnimationFrame(animate);
+        }
+        animate();
     }
-    function animate() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        if (Math.random() < 0.1) particles.push(new Particle());
-        handleParticles();
-        requestAnimationFrame(animate);
-    }
-    animate();
+    initCanvas();
 
     // Load Data
     async function loadData() {
         try {
             const [originsResponse, racesResponse] = await Promise.all([
-                fetch('origins.json'),
-                fetch('races.json')
+                fetch('origins.json').then(res => {
+                    if (!res.ok) throw new Error('Не удалось загрузить origins.json');
+                    return res.json();
+                }),
+                fetch('races.json').then(res => {
+                    if (!res.ok) throw new Error('Не удалось загрузить races.json');
+                    return res.json();
+                })
             ]);
-            origins = await originsResponse.json();
-            races = await racesResponse.json();
+            origins = originsResponse;
+            races = racesResponse;
             displayOrigins();
         } catch (error) {
             errorMessage.style.display = 'block';
-            console.error('Error loading data:', error);
+            console.error('Ошибка загрузки данных:', error);
         }
     }
 
@@ -77,6 +86,8 @@ document.addEventListener('DOMContentLoaded', () => {
     function displayOrigins() {
         const row1 = document.getElementById('origin-row-1');
         const row2 = document.getElementById('origin-row-2');
+        row1.innerHTML = '';
+        row2.innerHTML = '';
         origins.forEach((origin, index) => {
             const card = document.createElement('div');
             card.classList.add('origin-card');
@@ -176,31 +187,35 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Next to Race Selection
-    nextButton.addEventListener('click', () => {
-        selectedOriginView.style.display = 'none';
-        raceGrid.style.display = 'flex';
-        resetButton.style.display = 'block';
-        nextButton.style.display = 'none';
-        displayRaces();
-    });
+    if (nextButton) {
+        nextButton.addEventListener('click', () => {
+            selectedOriginView.style.display = 'none';
+            raceGrid.style.display = 'flex';
+            resetButton.style.display = 'block';
+            nextButton.style.display = 'none';
+            displayRaces();
+        });
+    }
 
     // Reset Button Logic
-    resetButton.addEventListener('click', () => {
-        if (selectedRaceView.style.display === 'flex') {
-            selectedRaceView.style.display = 'none';
-            raceGrid.style.display = 'flex';
-            selectedRace = null;
-        } else if (selectedOriginView.style.display === 'flex') {
-            selectedOriginView.style.display = 'none';
-            originGrid.style.display = 'flex';
-            selectedOrigin = null;
-            nextButton.style.display = 'none';
-        } else {
-            raceGrid.style.display = 'none';
-            originGrid.style.display = 'flex';
-        }
-        resetButton.style.display = 'none';
-    });
+    if (resetButton) {
+        resetButton.addEventListener('click', () => {
+            if (selectedRaceView.style.display === 'flex') {
+                selectedRaceView.style.display = 'none';
+                raceGrid.style.display = 'flex';
+                selectedRace = null;
+            } else if (selectedOriginView.style.display === 'flex') {
+                selectedOriginView.style.display = 'none';
+                originGrid.style.display = 'flex';
+                selectedOrigin = null;
+                nextButton.style.display = 'none';
+            } else {
+                raceGrid.style.display = 'none';
+                originGrid.style.display = 'flex';
+            }
+            resetButton.style.display = 'none';
+        });
+    }
 
     // Initialize
     loadData();
