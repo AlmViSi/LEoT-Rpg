@@ -10,6 +10,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database-compat.js"></script>
     <style>
+        /* Стили остаются такими же как в предыдущем варианте */
         .tab-container {
             display: flex;
             justify-content: center;
@@ -59,8 +60,7 @@
         .character-portrait-container {
             display: flex;
             flex-direction: column;
-            height: 100%; /* Занимает всю доступную высоту */
-            justify-content: space-between;
+            height: 100%;
         }
         
         .character-portrait {
@@ -86,11 +86,10 @@
         }
         
         .character-info {
-            margin-top: 0.5rem; /* Уменьшаем отступ сверху */
+            margin-top: 1rem;
             display: flex;
             flex-direction: column;
             gap: 0.5rem;
-            flex-grow: 1; /* Занимает доступное пространство */
         }
         
         .character-info input, 
@@ -145,28 +144,41 @@
             border-radius: 5px;
         }
         
-        .points-left {
-            text-align: center;
+        .load-uid-container {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+        
+        .load-uid-input {
+            flex: 1;
+            background: rgba(26, 38, 57, 0.8);
+            border: 1px solid #00A3E0;
+            color: #D9E4DD;
             padding: 0.5rem;
-            font-family: 'Cinzel', serif;
+            border-radius: 5px;
+        }
+        
+        .points-left-container {
             background: rgba(26, 38, 57, 0.8);
             border: 1px solid #00A3E0;
             border-radius: 5px;
+            padding: 0.5rem;
+            text-align: center;
+            font-family: 'Cinzel', serif;
             margin-top: auto;
         }
         
-        .stats-content {
-            display: grid;
-            grid-template-rows: auto 1fr;
-            gap: 1rem;
+        .stats-column {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
         }
         
         .main-stats {
             display: grid;
             grid-template-columns: 1fr;
             gap: 0.5rem;
-            height: fit-content; 
-            align-content: start;
         }
         
         .stat-item {
@@ -211,6 +223,7 @@
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 1rem;
+            margin-top: 1rem;
         }
         
         .derived-stats-column {
@@ -285,18 +298,19 @@
                         <button class="character-action-btn" id="generate-uid-btn">Generate UID</button>
                     </div>
                     
+                    <div class="load-uid-container">
+                        <input type="text" id="load-uid-input" class="load-uid-input" placeholder="Enter UID to load">
+                        <button class="character-action-btn" id="load-character-btn">Load</button>
+                    </div>
+                    
                     <div class="character-actions">
                         <button class="character-action-btn" id="save-character-btn">Save Character</button>
-                        <button class="character-action-btn" id="load-character-btn">Load Character</button>
+                        <button class="character-action-btn" id="clear-character-btn">Clear</button>
                     </div>
-                </div>
-                
-                <div class="points-left">
-                    Points left: <span id="points-left">36</span>
                 </div>
             </div>
             
-            <div class="stats-content">
+            <div class="stats-column">
                 <div class="main-stats">
                     <div class="stat-item">
                         <span>Сила (STR):</span>
@@ -362,8 +376,11 @@
                     </div>
                 </div>
                 
+                <div class="points-left-container">
+                    Points left: <span id="points-left">36</span>
+                </div>
+                
                 <div class="derived-stats-container">
-                    <!-- Первый столбец -->
                     <div class="derived-stats-column">
                         <div class="derived-stat">
                             <div>Запас Здоровья</div>
@@ -401,7 +418,6 @@
                         </div>
                     </div>
                     
-                    <!-- Второй столбец -->
                     <div class="derived-stats-column">
                         <div class="derived-stat">
                             <div>Грация</div>
@@ -439,7 +455,6 @@
                         </div>
                     </div>
                     
-                    <!-- Третий столбец -->
                     <div class="derived-stats-column">
                         <div class="derived-stat">
                             <div>Бдительность</div>
@@ -503,6 +518,7 @@
             const portraitContainer = document.getElementById('character-portrait');
             const statButtons = document.querySelectorAll('.stat-btn');
             const pointsLeftElement = document.getElementById('points-left');
+            const loadUidInput = document.getElementById('load-uid-input');
             
             let pointsLeft = 36;
             const stats = {
@@ -599,6 +615,7 @@
             document.getElementById('generate-uid-btn').addEventListener('click', () => {
                 const uid = generateUID();
                 document.getElementById('character-uid').value = uid;
+                loadUidInput.value = uid; // Автоматически заполняем поле для загрузки
             });
             
             // Сохранение персонажа
@@ -608,11 +625,18 @@
             
             // Загрузка персонажа
             document.getElementById('load-character-btn').addEventListener('click', () => {
-                const uid = document.getElementById('character-uid').value;
+                const uid = loadUidInput.value.trim();
                 if (uid) {
                     loadCharacter(uid);
                 } else {
-                    alert('Please enter or generate a UID first');
+                    alert('Please enter a UID to load');
+                }
+            });
+            
+            // Очистка формы
+            document.getElementById('clear-character-btn').addEventListener('click', () => {
+                if (confirm('Are you sure you want to clear all character data?')) {
+                    resetCharacter();
                 }
             });
             
@@ -642,7 +666,7 @@
                 
                 database.ref('characters/' + uid).set(characterData)
                     .then(() => {
-                        alert('Character saved successfully!');
+                        alert('Character saved successfully with UID: ' + uid);
                     })
                     .catch((error) => {
                         console.error('Error saving character:', error);
@@ -659,12 +683,13 @@
                             // Заполняем данные персонажа
                             document.getElementById('character-name').value = characterData.name || '';
                             document.getElementById('character-bio').value = characterData.bio || '';
+                            document.getElementById('character-uid').value = uid;
                             
                             // Восстанавливаем характеристики
                             for (const stat in characterData.stats) {
                                 stats[stat] = characterData.stats[stat];
                             }
-                            pointsLeft = 36 - Object.values(stats).reduce((a, b) => a + b, 0) + 35; // 7*5=35 начальных очков
+                            pointsLeft = 36 - Object.values(stats).reduce((a, b) => a + b, 0) ; 
                             updateStats();
                             
                             // Восстанавливаем портрет
@@ -681,6 +706,26 @@
                         console.error('Error loading character:', error);
                         alert('Error loading character: ' + error.message);
                     });
+            }
+            
+            // Сброс персонажа
+            function resetCharacter() {
+                // Сброс характеристик
+                for (const stat in stats) {
+                    stats[stat] = 0;
+                }
+                pointsLeft = 36;
+                updateStats();
+                
+                // Очистка полей
+                document.getElementById('character-name').value = '';
+                document.getElementById('character-bio').value = '';
+                document.getElementById('character-uid').value = '';
+                loadUidInput.value = '';
+                portraitContainer.innerHTML = '<span>Click to upload portrait</span>';
+                
+                // Очистка загруженного файла
+                document.getElementById('portrait-upload').value = '';
             }
             
             // Анимация частиц
