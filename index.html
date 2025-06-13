@@ -3,15 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lost Edge of Time</title>
+    <title>Lost Edge of Time - Character Creator</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto&family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
+    <style>
+        .tab-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 1rem;
+            position: relative;
+            z-index: 10;
+        }
+        
+        .tab {
+            padding: 0.5rem 1rem;
+            background: #1A2639;
+            color: #D9E4DD;
+            border: 1px solid #00A3E0;
+            cursor: pointer;
+            font-family: 'Cinzel', serif;
+            transition: all 0.3s ease;
+        }
+        
+        .tab:first-child {
+            border-radius: 5px 0 0 5px;
+        }
+        
+        .tab:last-child {
+            border-radius: 0 5px 5px 0;
+        }
+        
+        .tab.active {
+            background: #00A3E0;
+            color: #0A0A0A;
+            font-weight: bold;
+        }
+        
+        .tab:hover:not(.active) {
+            background: rgba(0, 163, 224, 0.3);
+        }
+    </style>
 </head>
 <body>
     <canvas id="particle-canvas"></canvas>
     <header>
-        <h1>Choose Your Origin</h1>
+        <h1>Lost Edge of Time - Character Creator</h1>
     </header>
+    
+    <div class="tab-container">
+        <a href="index.html" class="tab active">Origin</a>
+        <a href="race.html" class="tab">Race</a>
+        <a href="traits.html" class="tab">Traits</a>
+        <a href="powersets.html" class="tab">Power Sets</a>
+        <a href="character.html" class="tab">Character</a>
+    </div>
+    
     <div class="main-container">
         <div id="error-message" class="error-message">
             Ошибка загрузки данных. Проверьте origins.json или наличие изображений в папке Origins.
@@ -26,6 +72,7 @@
             </div>
         </div>
     </div>
+    
     <button id="reset-button" class="reset-button">Вернуться</button>
 
     <script>
@@ -58,11 +105,9 @@
             function renderOrigins() {
                 originGrid.innerHTML = '';
                 
-                // Разделяем данные на два ряда по 7 карточек
                 const firstRowOrigins = originsData.slice(0, 7);
                 const secondRowOrigins = originsData.slice(7, 14);
 
-                // Создаем первый ряд
                 const firstRowContainer = document.createElement('div');
                 firstRowContainer.classList.add('origin-row');
                 firstRowOrigins.forEach(origin => {
@@ -76,7 +121,6 @@
                     firstRowContainer.appendChild(card);
                 });
 
-                // Создаем второй ряд
                 const secondRowContainer = document.createElement('div');
                 secondRowContainer.classList.add('origin-row');
                 secondRowOrigins.forEach(origin => {
