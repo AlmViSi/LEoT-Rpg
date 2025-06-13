@@ -5,18 +5,48 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lost Edge of Time - Character</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto&family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css">
-    <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database-compat.js"></script>
     <style>
-        /* Стили остаются такими же как в предыдущем варианте */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Roboto', sans-serif;
+            background-color: #0A0A0A;
+            color: #D9E4DD;
+        }
+        
+        #particle-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+        
+        header {
+            background: rgba(26, 38, 57, 0.8);
+            padding: 1rem;
+            text-align: center;
+            border-bottom: 2px solid #00A3E0;
+        }
+        
+        h1 {
+            margin: 0;
+            font-family: 'Cinzel', serif;
+        }
+        
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+        
         .tab-container {
             display: flex;
             justify-content: center;
             margin-bottom: 1rem;
-            position: relative;
-            z-index: 10;
         }
         
         .tab {
@@ -26,15 +56,6 @@
             border: 1px solid #00A3E0;
             cursor: pointer;
             font-family: 'Cinzel', serif;
-            transition: all 0.3s ease;
-        }
-        
-        .tab:first-child {
-            border-radius: 5px 0 0 5px;
-        }
-        
-        .tab:last-child {
-            border-radius: 0 5px 5px 0;
         }
         
         .tab.active {
@@ -43,36 +64,23 @@
             font-weight: bold;
         }
         
-        .tab:hover:not(.active) {
-            background: rgba(0, 163, 224, 0.3);
-        }
-        
         .character-container {
-            height: calc(100vh - 100px);
-            padding: 1rem;
-            overflow-y: auto;
-            color: #D9E4DD;
             display: grid;
             grid-template-columns: 250px 1fr;
             gap: 1rem;
-        }
-        
-        .character-portrait-container {
-            display: flex;
-            flex-direction: column;
-            height: 100%;
+            height: calc(100vh - 150px);
+            overflow-y: auto;
         }
         
         .character-portrait {
             width: 100%;
-            height: 320px;
+            height: 250px;
             background: #1A2639;
             border: 2px solid #00A3E0;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            overflow: hidden;
         }
         
         .character-portrait img {
@@ -80,114 +88,42 @@
             max-height: 100%;
         }
         
-        .character-portrait span {
-            font-family: 'Cinzel', serif;
-            color: #D9E4DD;
-        }
-        
         .character-info {
             margin-top: 1rem;
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
         }
         
-        .character-info input, 
+        .character-info input,
         .character-info textarea {
+            width: 100%;
+            margin-bottom: 0.5rem;
+            padding: 0.5rem;
             background: rgba(26, 38, 57, 0.8);
             border: 1px solid #00A3E0;
             color: #D9E4DD;
-            padding: 0.5rem;
-            border-radius: 5px;
-            font-family: 'Roboto', sans-serif;
-        }
-        
-        .character-info textarea {
-            height: 80px;
-            resize: vertical;
         }
         
         .character-actions {
             display: flex;
             gap: 0.5rem;
-            margin-top: 0.5rem;
+            margin-top: 1rem;
         }
         
-        .character-action-btn {
-            flex: 1;
+        button {
             padding: 0.5rem;
             background: #00A3E0;
             color: #0A0A0A;
             border: none;
-            border-radius: 5px;
-            font-family: 'Cinzel', serif;
             cursor: pointer;
-            transition: background 0.3s ease;
-        }
-        
-        .character-action-btn:hover {
-            background: #D9E4DD;
-        }
-        
-        .uid-container {
-            display: flex;
-            gap: 0.5rem;
-            margin-top: 0.5rem;
-        }
-        
-        .uid-input {
-            flex: 1;
-            background: rgba(26, 38, 57, 0.8);
-            border: 1px solid #00A3E0;
-            color: #D9E4DD;
-            padding: 0.5rem;
-            border-radius: 5px;
-        }
-        
-        .load-uid-container {
-            display: flex;
-            gap: 0.5rem;
-            margin-top: 0.5rem;
-        }
-        
-        .load-uid-input {
-            flex: 1;
-            background: rgba(26, 38, 57, 0.8);
-            border: 1px solid #00A3E0;
-            color: #D9E4DD;
-            padding: 0.5rem;
-            border-radius: 5px;
-        }
-        
-        .points-left-container {
-            background: rgba(26, 38, 57, 0.8);
-            border: 1px solid #00A3E0;
-            border-radius: 5px;
-            padding: 0.5rem;
-            text-align: center;
             font-family: 'Cinzel', serif;
-            margin-top: auto;
-        }
-        
-        .stats-column {
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-        }
-        
-        .main-stats {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 0.5rem;
         }
         
         .stat-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            margin-bottom: 0.5rem;
+            padding: 0.5rem;
             background: rgba(26, 38, 57, 0.8);
-            padding: 0.5rem 1rem;
-            border-radius: 5px;
             border: 1px solid #00A3E0;
         }
         
@@ -197,93 +133,28 @@
         }
         
         .stat-value {
-            min-width: 30px;
-            text-align: center;
-            font-weight: bold;
             margin: 0 0.5rem;
-        }
-        
-        .stat-btn {
-            width: 25px;
-            height: 25px;
-            background: #00A3E0;
-            border: none;
-            color: #0A0A0A;
-            font-weight: bold;
-            cursor: pointer;
-            border-radius: 3px;
-        }
-        
-        .stat-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-        
-        .derived-stats-container {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 1rem;
-            margin-top: 1rem;
-        }
-        
-        .derived-stats-column {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
-        
-        .derived-stat {
-            background: rgba(26, 38, 57, 0.8);
-            padding: 0.5rem;
-            border: 1px solid #00A3E0;
-            border-radius: 5px;
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .derived-stat.special {
-            background: rgba(40, 60, 90, 0.8);
-        }
-        
-        .derived-stat div:first-child {
-            font-size: 0.9rem;
-            opacity: 0.8;
-        }
-        
-        .derived-stat div:last-child {
-            font-weight: bold;
-            font-size: 1.1rem;
-            text-align: right;
-        }
-        
-        @media (max-width: 768px) {
-            .character-container {
-                grid-template-columns: 1fr;
-            }
-            
-            .derived-stats-container {
-                grid-template-columns: 1fr;
-            }
+            min-width: 20px;
+            text-align: center;
         }
     </style>
 </head>
 <body>
-    <canvas id="particle-canvas"></canvas>
     <header>
         <h1>Lost Edge of Time - Character</h1>
     </header>
     
-    <div class="tab-container">
-        <a href="index.html" class="tab">Origin</a>
-        <a href="race.html" class="tab">Race</a>
-        <a href="traits.html" class="tab">Traits</a>
-        <a href="powersets.html" class="tab">Power Sets</a>
-        <a href="character.html" class="tab active">Character</a>
-    </div>
-    
     <div class="main-container">
+        <div class="tab-container">
+            <a href="index.html" class="tab">Origin</a>
+            <a href="race.html" class="tab">Race</a>
+            <a href="traits.html" class="tab">Traits</a>
+            <a href="powersets.html" class="tab">Power Sets</a>
+            <a href="character.html" class="tab active">Character</a>
+        </div>
+        
         <div class="character-container">
-            <div class="character-portrait-container">
+            <div>
                 <div class="character-portrait" id="character-portrait">
                     <span>Click to upload portrait</span>
                     <input type="file" id="portrait-upload" accept="image/*" style="display: none;">
@@ -291,206 +162,91 @@
                 
                 <div class="character-info">
                     <input type="text" id="character-name" placeholder="Character Name">
-                    <textarea id="character-bio" placeholder="Character Biography"></textarea>
+                    <textarea id="character-bio" placeholder="Character Biography" rows="4"></textarea>
                     
-                    <div class="uid-container">
-                        <input type="text" id="character-uid" class="uid-input" placeholder="Character UID" readonly>
-                        <button class="character-action-btn" id="generate-uid-btn">Generate UID</button>
+                    <div>
+                        <input type="text" id="character-uid" placeholder="Character UID" readonly>
+                        <button id="generate-uid-btn">Generate UID</button>
                     </div>
                     
-                    <div class="load-uid-container">
-                        <input type="text" id="load-uid-input" class="load-uid-input" placeholder="Enter UID to load">
-                        <button class="character-action-btn" id="load-character-btn">Load</button>
+                    <div>
+                        <input type="text" id="load-uid-input" placeholder="Enter UID to load">
+                        <button id="load-character-btn">Load</button>
                     </div>
                     
                     <div class="character-actions">
-                        <button class="character-action-btn" id="save-character-btn">Save Character</button>
-                        <button class="character-action-btn" id="clear-character-btn">Clear</button>
+                        <button id="save-character-btn">Save Character</button>
+                        <button id="clear-character-btn">Clear</button>
                     </div>
                 </div>
             </div>
             
-            <div class="stats-column">
-                <div class="main-stats">
-                    <div class="stat-item">
-                        <span>Сила (STR):</span>
-                        <div class="stat-controls">
-                            <button class="stat-btn" data-stat="str" data-action="decrease">-</button>
-                            <span class="stat-value" id="str-value">5</span>
-                            <button class="stat-btn" data-stat="str" data-action="increase">+</button>
-                        </div>
-                    </div>
-                    
-                    <div class="stat-item">
-                        <span>Выносливость (CON):</span>
-                        <div class="stat-controls">
-                            <button class="stat-btn" data-stat="con" data-action="decrease">-</button>
-                            <span class="stat-value" id="con-value">5</span>
-                            <button class="stat-btn" data-stat="con" data-action="increase">+</button>
-                        </div>
-                    </div>
-                    
-                    <div class="stat-item">
-                        <span>Сноровка (DEX):</span>
-                        <div class="stat-controls">
-                            <button class="stat-btn" data-stat="dex" data-action="decrease">-</button>
-                            <span class="stat-value" id="dex-value">5</span>
-                            <button class="stat-btn" data-stat="dex" data-action="increase">+</button>
-                        </div>
-                    </div>
-                    
-                    <div class="stat-item">
-                        <span>Ловкость (AGI):</span>
-                        <div class="stat-controls">
-                            <button class="stat-btn" data-stat="agi" data-action="decrease">-</button>
-                            <span class="stat-value" id="agi-value">5</span>
-                            <button class="stat-btn" data-stat="agi" data-action="increase">+</button>
-                        </div>
-                    </div>
-                    
-                    <div class="stat-item">
-                        <span>Интеллект (INT):</span>
-                        <div class="stat-controls">
-                            <button class="stat-btn" data-stat="int" data-action="decrease">-</button>
-                            <span class="stat-value" id="int-value">5</span>
-                            <button class="stat-btn" data-stat="int" data-action="increase">+</button>
-                        </div>
-                    </div>
-                    
-                    <div class="stat-item">
-                        <span>Мудрость (WIS):</span>
-                        <div class="stat-controls">
-                            <button class="stat-btn" data-stat="wis" data-action="decrease">-</button>
-                            <span class="stat-value" id="wis-value">5</span>
-                            <button class="stat-btn" data-stat="wis" data-action="increase">+</button>
-                        </div>
-                    </div>
-                    
-                    <div class="stat-item">
-                        <span>Обаяние (CHA):</span>
-                        <div class="stat-controls">
-                            <button class="stat-btn" data-stat="cha" data-action="decrease">-</button>
-                            <span class="stat-value" id="cha-value">5</span>
-                            <button class="stat-btn" data-stat="cha" data-action="increase">+</button>
-                        </div>
+            <div>
+                <div class="stat-item">
+                    <span>Сила (STR):</span>
+                    <div class="stat-controls">
+                        <button class="stat-btn" data-stat="str" data-action="decrease">-</button>
+                        <span class="stat-value" id="str-value">0</span>
+                        <button class="stat-btn" data-stat="str" data-action="increase">+</button>
                     </div>
                 </div>
                 
-                <div class="points-left-container">
+                <div class="stat-item">
+                    <span>Выносливость (CON):</span>
+                    <div class="stat-controls">
+                        <button class="stat-btn" data-stat="con" data-action="decrease">-</button>
+                        <span class="stat-value" id="con-value">0</span>
+                        <button class="stat-btn" data-stat="con" data-action="increase">+</button>
+                    </div>
+                </div>
+                
+                <div class="stat-item">
+                    <span>Сноровка (DEX):</span>
+                    <div class="stat-controls">
+                        <button class="stat-btn" data-stat="dex" data-action="decrease">-</button>
+                        <span class="stat-value" id="dex-value">0</span>
+                        <button class="stat-btn" data-stat="dex" data-action="increase">+</button>
+                    </div>
+                </div>
+                
+                <div class="stat-item">
+                    <span>Ловкость (AGI):</span>
+                    <div class="stat-controls">
+                        <button class="stat-btn" data-stat="agi" data-action="decrease">-</button>
+                        <span class="stat-value" id="agi-value">0</span>
+                        <button class="stat-btn" data-stat="agi" data-action="increase">+</button>
+                    </div>
+                </div>
+                
+                <div class="stat-item">
+                    <span>Интеллект (INT):</span>
+                    <div class="stat-controls">
+                        <button class="stat-btn" data-stat="int" data-action="decrease">-</button>
+                        <span class="stat-value" id="int-value">0</span>
+                        <button class="stat-btn" data-stat="int" data-action="increase">+</button>
+                    </div>
+                </div>
+                
+                <div class="stat-item">
+                    <span>Мудрость (WIS):</span>
+                    <div class="stat-controls">
+                        <button class="stat-btn" data-stat="wis" data-action="decrease">-</button>
+                        <span class="stat-value" id="wis-value">0</span>
+                        <button class="stat-btn" data-stat="wis" data-action="increase">+</button>
+                    </div>
+                </div>
+                
+                <div class="stat-item">
+                    <span>Обаяние (CHA):</span>
+                    <div class="stat-controls">
+                        <button class="stat-btn" data-stat="cha" data-action="decrease">-</button>
+                        <span class="stat-value" id="cha-value">0</span>
+                        <button class="stat-btn" data-stat="cha" data-action="increase">+</button>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 1rem; padding: 0.5rem; background: rgba(26, 38, 57, 0.8); text-align: center;">
                     Points left: <span id="points-left">36</span>
-                </div>
-                
-                <div class="derived-stats-container">
-                    <div class="derived-stats-column">
-                        <div class="derived-stat">
-                            <div>Запас Здоровья</div>
-                            <div id="health-value">200</div>
-                        </div>
-                        
-                        <div class="derived-stat">
-                            <div>Запас Фокуса</div>
-                            <div id="focus-value">200</div>
-                        </div>
-                        
-                        <div class="derived-stat special">
-                            <div>Колдовство</div>
-                            <div id="witchcraft-value">10</div>
-                        </div>
-                        
-                        <div class="derived-stat special">
-                            <div>Мастерство</div>
-                            <div id="mastery-value">10</div>
-                        </div>
-                        
-                        <div class="derived-stat special">
-                            <div>Могущество</div>
-                            <div id="might-value">10</div>
-                        </div>
-                        
-                        <div class="derived-stat">
-                            <div>Концентрация</div>
-                            <div id="concentration-value">2</div>
-                        </div>
-                        
-                        <div class="derived-stat">
-                            <div>Число Реакций</div>
-                            <div id="reactions-value">2</div>
-                        </div>
-                    </div>
-                    
-                    <div class="derived-stats-column">
-                        <div class="derived-stat">
-                            <div>Грация</div>
-                            <div id="grace-value">2</div>
-                        </div>
-                        
-                        <div class="derived-stat">
-                            <div>Предчувствие</div>
-                            <div id="premonition-value">2</div>
-                        </div>
-                        
-                        <div class="derived-stat special">
-                            <div>Снижение Угрозы</div>
-                            <div id="threat-value">5</div>
-                        </div>
-                        
-                        <div class="derived-stat special">
-                            <div>Влияние</div>
-                            <div id="influence-value">5</div>
-                        </div>
-                        
-                        <div class="derived-stat special">
-                            <div>Харизма</div>
-                            <div id="charisma-value">2</div>
-                        </div>
-                        
-                        <div class="derived-stat">
-                            <div>Число Умений</div>
-                            <div id="skills-value">14</div>
-                        </div>
-                        
-                        <div class="derived-stat">
-                            <div>Число Черт</div>
-                            <div id="traits-value">5</div>
-                        </div>
-                    </div>
-                    
-                    <div class="derived-stats-column">
-                        <div class="derived-stat">
-                            <div>Бдительность</div>
-                            <div id="vigilance-value">10</div>
-                        </div>
-                        
-                        <div class="derived-stat">
-                            <div>Борьба</div>
-                            <div id="combat-value">10</div>
-                        </div>
-                        
-                        <div class="derived-stat">
-                            <div>Логика</div>
-                            <div id="logic-value">10</div>
-                        </div>
-                        
-                        <div class="derived-stat">
-                            <div>Самообладание</div>
-                            <div id="composure-value">10</div>
-                        </div>
-                        
-                        <div class="derived-stat">
-                            <div>Сила Воли</div>
-                            <div id="willpower-value">10</div>
-                        </div>
-                        
-                        <div class="derived-stat">
-                            <div>Стойкость</div>
-                            <div id="resilience-value">10</div>
-                        </div>
-                        
-                        <div class="derived-stat">
-                            <div>Уклонение</div>
-                            <div id="evasion-value">10</div>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
@@ -510,283 +266,204 @@
         };
         
         // Инициализируем Firebase
-        firebase.initializeApp(firebaseConfig);
+        const app = firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
         
-        document.addEventListener('DOMContentLoaded', () => {
-            const portraitUpload = document.getElementById('portrait-upload');
-            const portraitContainer = document.getElementById('character-portrait');
-            const statButtons = document.querySelectorAll('.stat-btn');
-            const pointsLeftElement = document.getElementById('points-left');
-            const loadUidInput = document.getElementById('load-uid-input');
+        // Состояние приложения
+        const state = {
+            pointsLeft: 36,
+            stats: {
+                str: 0,
+                con: 0,
+                dex: 0,
+                agi: 0,
+                int: 0,
+                wis: 0,
+                cha: 0
+            },
+            portrait: null
+        };
+        
+        // DOM элементы
+        const elements = {
+            portraitUpload: document.getElementById('portrait-upload'),
+            portraitContainer: document.getElementById('character-portrait'),
+            characterName: document.getElementById('character-name'),
+            characterBio: document.getElementById('character-bio'),
+            characterUid: document.getElementById('character-uid'),
+            loadUidInput: document.getElementById('load-uid-input'),
+            pointsLeft: document.getElementById('points-left'),
+            statValues: {
+                str: document.getElementById('str-value'),
+                con: document.getElementById('con-value'),
+                dex: document.getElementById('dex-value'),
+                agi: document.getElementById('agi-value'),
+                int: document.getElementById('int-value'),
+                wis: document.getElementById('wis-value'),
+                cha: document.getElementById('cha-value')
+            }
+        };
+        
+        // Инициализация приложения
+        function init() {
+            // Обработчики для кнопок характеристик
+            document.querySelectorAll('.stat-btn').forEach(btn => {
+                btn.addEventListener('click', handleStatChange);
+            });
             
-            let pointsLeft = 36;
-            const stats = {
-                str: 5,
-                con: 5,
-                dex: 5,
-                agi: 5,
-                int: 5,
-                wis: 5,
-                cha: 5
+            // Обработчики для основных кнопок
+            document.getElementById('generate-uid-btn').addEventListener('click', generateUid);
+            document.getElementById('save-character-btn').addEventListener('click', saveCharacter);
+            document.getElementById('load-character-btn').addEventListener('click', loadCharacter);
+            document.getElementById('clear-character-btn').addEventListener('click', clearCharacter);
+            
+            // Обработчик загрузки портрета
+            elements.portraitContainer.addEventListener('click', () => elements.portraitUpload.click());
+            elements.portraitUpload.addEventListener('change', handlePortraitUpload);
+            
+            // Обновляем отображение
+            updateUI();
+        }
+        
+        // Обработчик изменения характеристик
+        function handleStatChange(e) {
+            const stat = e.target.getAttribute('data-stat');
+            const action = e.target.getAttribute('data-action');
+            
+            if (action === 'increase' && state.pointsLeft > 0 && state.stats[stat] < 10) {
+                state.stats[stat]++;
+                state.pointsLeft--;
+                updateUI();
+            } else if (action === 'decrease' && state.stats[stat] > 0) {
+                state.stats[stat]--;
+                state.pointsLeft++;
+                updateUI();
+            }
+        }
+        
+        // Обработчик загрузки портрета
+        function handlePortraitUpload(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    elements.portraitContainer.innerHTML = `<img src="${event.target.result}" alt="Character Portrait">`;
+                    state.portrait = event.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+        
+        // Генерация UID
+        function generateUid() {
+            const uid = 'xxxx-xxxx'.replace(/[x]/g, () => 
+                Math.floor(Math.random() * 16).toString(16)
+            );
+            elements.characterUid.value = uid;
+            elements.loadUidInput.value = uid;
+        }
+        
+        // Сохранение персонажа
+        function saveCharacter() {
+            const uid = elements.characterUid.value;
+            if (!uid) {
+                alert('Пожалуйста, сгенерируйте UID сначала');
+                return;
+            }
+            
+            const characterData = {
+                name: elements.characterName.value,
+                bio: elements.characterBio.value,
+                stats: state.stats,
+                portrait: state.portrait,
+                timestamp: firebase.database.ServerValue.TIMESTAMP
             };
             
-            // Загрузка портрета
-            portraitContainer.addEventListener('click', () => {
-                portraitUpload.click();
-            });
-            
-            portraitUpload.addEventListener('change', (e) => {
-                const file = e.target.files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = (event) => {
-                        portraitContainer.innerHTML = `<img src="${event.target.result}" alt="Character Portrait">`;
-                    };
-                    reader.readAsDataURL(file);
-                }
-            });
-            
-            // Управление характеристиками
-            statButtons.forEach(button => {
-                button.addEventListener('click', () => {
-                    const stat = button.getAttribute('data-stat');
-                    const action = button.getAttribute('data-action');
-                    
-                    if (action === 'increase' && pointsLeft > 0 && stats[stat] < 10) {
-                        stats[stat]++;
-                        pointsLeft--;
-                        updateStats();
-                    } else if (action === 'decrease' && stats[stat] > 0) {
-                        stats[stat]--;
-                        pointsLeft++;
-                        updateStats();
-                    }
-                });
-            });
-            
-            function updateStats() {
-                // Обновляем значения характеристик
-                for (const stat in stats) {
-                    document.getElementById(`${stat}-value`).textContent = stats[stat];
-                }
-                
-                // Обновляем оставшиеся очки
-                pointsLeftElement.textContent = pointsLeft;
-                
-                // Обновляем производные характеристики
-                updateDerivedStats();
+            database.ref('characters/' + uid).set(characterData)
+                .then(() => alert('Персонаж сохранен с UID: ' + uid))
+                .catch(error => alert('Ошибка сохранения: ' + error.message));
+        }
+        
+        // Загрузка персонажа
+        function loadCharacter() {
+            const uid = elements.loadUidInput.value.trim();
+            if (!uid) {
+                alert('Пожалуйста, введите UID для загрузки');
+                return;
             }
             
-            function updateDerivedStats() {
-                const str = stats.str;
-                const con = stats.con;
-                const dex = stats.dex;
-                const agi = stats.agi;
-                const int = stats.int;
-                const wis = stats.wis;
-                const cha = stats.cha;
-                
-                // Рассчитываем производные характеристики по формулам
-                document.getElementById('health-value').textContent = (con + str) * 20;
-                document.getElementById('might-value').textContent = str + dex;
-                document.getElementById('combat-value').textContent = 10 + Math.floor((str + agi) / 2);
-                document.getElementById('threat-value').textContent = Math.floor((str + int) / 2);
-                document.getElementById('influence-value').textContent = Math.floor((str + wis) / 2);
-                document.getElementById('composure-value').textContent = 10 + Math.floor((str + cha) / 2);
-                document.getElementById('resilience-value').textContent = 10 + Math.floor((con + dex) / 2);
-                document.getElementById('reactions-value').textContent = Math.floor((con + agi) / 4);
-                document.getElementById('vigilance-value').textContent = 10 + Math.floor((con + int) / 2);
-                document.getElementById('concentration-value').textContent = Math.floor((con + wis) / 4);
-                document.getElementById('charisma-value').textContent = Math.floor((con + cha) / 4);
-                document.getElementById('premonition-value').textContent = Math.floor((dex + agi) / 4);
-                document.getElementById('skills-value').textContent = 4 + dex + int;
-                document.getElementById('focus-value').textContent = (dex + wis) * 20;
-                document.getElementById('willpower-value').textContent = 10 + Math.floor((dex + cha) / 2);
-                document.getElementById('mastery-value').textContent = agi + int;
-                document.getElementById('evasion-value').textContent = 10 + Math.floor((agi + wis) / 2);
-                document.getElementById('grace-value').textContent = Math.floor((agi + cha) / 4);
-                document.getElementById('logic-value').textContent = 10 + Math.floor((int + wis) / 2);
-                document.getElementById('traits-value').textContent = Math.floor((cha + int) / 2);
-                document.getElementById('witchcraft-value').textContent = wis + cha;
-            }
-            
-            // Генерация UID
-            document.getElementById('generate-uid-btn').addEventListener('click', () => {
-                const uid = generateUID();
-                document.getElementById('character-uid').value = uid;
-                loadUidInput.value = uid; // Автоматически заполняем поле для загрузки
-            });
-            
-            // Сохранение персонажа
-            document.getElementById('save-character-btn').addEventListener('click', () => {
-                saveCharacter();
-            });
-            
-            // Загрузка персонажа
-            document.getElementById('load-character-btn').addEventListener('click', () => {
-                const uid = loadUidInput.value.trim();
-                if (uid) {
-                    loadCharacter(uid);
-                } else {
-                    alert('Please enter a UID to load');
-                }
-            });
-            
-            // Очистка формы
-            document.getElementById('clear-character-btn').addEventListener('click', () => {
-                if (confirm('Are you sure you want to clear all character data?')) {
-                    resetCharacter();
-                }
-            });
-            
-            // Генерация случайного UID
-            function generateUID() {
-                return 'xxxx-xxxx'.replace(/[x]/g, function(c) {
-                    const r = Math.floor(Math.random() * 16);
-                    return r.toString(16);
-                });
-            }
-            
-            // Сохранение персонажа в Firebase
-            function saveCharacter() {
-                const uid = document.getElementById('character-uid').value;
-                if (!uid) {
-                    alert('Please generate a UID first');
-                    return;
-                }
-                
-                const characterData = {
-                    name: document.getElementById('character-name').value,
-                    bio: document.getElementById('character-bio').value,
-                    stats: stats,
-                    portrait: portraitContainer.querySelector('img')?.src || '',
-                    timestamp: firebase.database.ServerValue.TIMESTAMP
-                };
-                
-                database.ref('characters/' + uid).set(characterData)
-                    .then(() => {
-                        alert('Character saved successfully with UID: ' + uid);
-                    })
-                    .catch((error) => {
-                        console.error('Error saving character:', error);
-                        alert('Error saving character: ' + error.message);
-                    });
-            }
-            
-            // Загрузка персонажа из Firebase
-            function loadCharacter(uid) {
-                database.ref('characters/' + uid).once('value')
-                    .then((snapshot) => {
-                        const characterData = snapshot.val();
-                        if (characterData) {
-                            // Заполняем данные персонажа
-                            document.getElementById('character-name').value = characterData.name || '';
-                            document.getElementById('character-bio').value = characterData.bio || '';
-                            document.getElementById('character-uid').value = uid;
-                            
-                            // Восстанавливаем характеристики
-                            for (const stat in characterData.stats) {
-                                stats[stat] = characterData.stats[stat];
-                            }
-                            pointsLeft = 36 - Object.values(stats).reduce((a, b) => a + b, 0) + 35; // 7*5=35 начальных очков
-                            updateStats();
-                            
-                            // Восстанавливаем портрет
-                            if (characterData.portrait) {
-                                portraitContainer.innerHTML = `<img src="${characterData.portrait}" alt="Character Portrait">`;
-                            }
-                            
-                            alert('Character loaded successfully!');
+            database.ref('characters/' + uid).once('value')
+                .then(snapshot => {
+                    const data = snapshot.val();
+                    if (data) {
+                        // Загружаем данные
+                        elements.characterName.value = data.name || '';
+                        elements.characterBio.value = data.bio || '';
+                        elements.characterUid.value = uid;
+                        
+                        // Загружаем характеристики
+                        state.stats = data.stats || {
+                            str: 0, con: 0, dex: 0, agi: 0, 
+                            int: 0, wis: 0, cha: 0
+                        };
+                        
+                        // Пересчитываем очки
+                        state.pointsLeft = 36 - Object.values(state.stats).reduce((a, b) => a + b, 0);
+                        
+                        // Загружаем портрет
+                        if (data.portrait) {
+                            elements.portraitContainer.innerHTML = `<img src="${data.portrait}" alt="Character Portrait">`;
+                            state.portrait = data.portrait;
                         } else {
-                            alert('No character found with this UID');
+                            elements.portraitContainer.innerHTML = '<span>Click to upload portrait</span>';
+                            state.portrait = null;
                         }
-                    })
-                    .catch((error) => {
-                        console.error('Error loading character:', error);
-                        alert('Error loading character: ' + error.message);
-                    });
-            }
-            
-            // Сброс персонажа
-            function resetCharacter() {
-                // Сброс характеристик
-                for (const stat in stats) {
-                    stats[stat] = 5;
-                }
-                pointsLeft = 36;
-                updateStats();
+                        
+                        updateUI();
+                        alert('Персонаж успешно загружен!');
+                    } else {
+                        alert('Персонаж с таким UID не найден');
+                    }
+                })
+                .catch(error => alert('Ошибка загрузки: ' + error.message));
+        }
+        
+        // Очистка формы
+        function clearCharacter() {
+            if (confirm('Вы уверены, что хотите очистить все данные персонажа?')) {
+                // Сбрасываем характеристики
+                state.stats = {
+                    str: 0, con: 0, dex: 0, agi: 0, 
+                    int: 0, wis: 0, cha: 0
+                };
+                state.pointsLeft = 36;
+                state.portrait = null;
                 
-                // Очистка полей
-                document.getElementById('character-name').value = '';
-                document.getElementById('character-bio').value = '';
-                document.getElementById('character-uid').value = '';
-                loadUidInput.value = '';
-                portraitContainer.innerHTML = '<span>Click to upload portrait</span>';
+                // Очищаем поля
+                elements.characterName.value = '';
+                elements.characterBio.value = '';
+                elements.characterUid.value = '';
+                elements.loadUidInput.value = '';
+                elements.portraitContainer.innerHTML = '<span>Click to upload portrait</span>';
+                elements.portraitUpload.value = '';
                 
-                // Очистка загруженного файла
-                document.getElementById('portrait-upload').value = '';
+                updateUI();
+            }
+        }
+        
+        // Обновление интерфейса
+        function updateUI() {
+            // Обновляем значения характеристик
+            for (const stat in state.stats) {
+                elements.statValues[stat].textContent = state.stats[stat];
             }
             
-            // Анимация частиц
-            const canvas = document.getElementById('particle-canvas');
-            const ctx = canvas.getContext('2d');
-            let particles = [];
-
-            function resizeCanvas() {
-                canvas.width = window.innerWidth;
-                canvas.height = window.innerHeight;
-            }
-            resizeCanvas();
-            window.addEventListener('resize', resizeCanvas);
-
-            class Particle {
-                constructor() {
-                    this.x = Math.random() * canvas.width;
-                    this.y = Math.random() * canvas.height;
-                    this.size = Math.random() * 2 + 1;
-                    this.speedX = Math.random() * 0.5 - 0.25;
-                    this.speedY = Math.random() * 0.5 - 0.25;
-                    this.opacity = Math.random() * 0.6 + 0.4;
-                }
-
-                update() {
-                    this.x += this.speedX;
-                    this.y += this.speedY;
-                    if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
-                    if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
-                }
-
-                draw() {
-                    ctx.fillStyle = `rgba(0, 163, 224, ${this.opacity})`;
-                    ctx.beginPath();
-                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                    ctx.fill();
-                }
-            }
-
-            function initParticles() {
-                particles = [];
-                for (let i = 0; i < 50; i++) {
-                    particles.push(new Particle());
-                }
-            }
-
-            function animateParticles() {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                particles.forEach(p => {
-                    p.update();
-                    p.draw();
-                });
-                requestAnimationFrame(animateParticles);
-            }
-
-            initParticles();
-            animateParticles();
-            
-            // Инициализация характеристик
-            updateStats();
-        });
+            // Обновляем оставшиеся очки
+            elements.pointsLeft.textContent = state.pointsLeft;
+        }
+        
+        // Запускаем приложение
+        init();
     </script>
 </body>
 </html>
