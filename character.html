@@ -6,6 +6,9 @@
     <title>Lost Edge of Time - Character</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto&family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database-compat.js"></script>
     <style>
         .tab-container {
             display: flex;
@@ -60,7 +63,7 @@
         
         .character-portrait {
             width: 100%;
-            height: 350px;
+            height: 250px;
             background: #1A2639;
             border: 2px solid #00A3E0;
             display: flex;
@@ -68,7 +71,6 @@
             justify-content: center;
             cursor: pointer;
             overflow: hidden;
-            margin-bottom: 1rem;
         }
         
         .character-portrait img {
@@ -81,6 +83,65 @@
             color: #D9E4DD;
         }
         
+        .character-info {
+            margin-top: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .character-info input, 
+        .character-info textarea {
+            background: rgba(26, 38, 57, 0.8);
+            border: 1px solid #00A3E0;
+            color: #D9E4DD;
+            padding: 0.5rem;
+            border-radius: 5px;
+            font-family: 'Roboto', sans-serif;
+        }
+        
+        .character-info textarea {
+            height: 80px;
+            resize: vertical;
+        }
+        
+        .character-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+        
+        .character-action-btn {
+            flex: 1;
+            padding: 0.5rem;
+            background: #00A3E0;
+            color: #0A0A0A;
+            border: none;
+            border-radius: 5px;
+            font-family: 'Cinzel', serif;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        
+        .character-action-btn:hover {
+            background: #D9E4DD;
+        }
+        
+        .uid-container {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+        
+        .uid-input {
+            flex: 1;
+            background: rgba(26, 38, 57, 0.8);
+            border: 1px solid #00A3E0;
+            color: #D9E4DD;
+            padding: 0.5rem;
+            border-radius: 5px;
+        }
+        
         .points-left {
             text-align: center;
             padding: 0.5rem;
@@ -88,6 +149,7 @@
             background: rgba(26, 38, 57, 0.8);
             border: 1px solid #00A3E0;
             border-radius: 5px;
+            margin-top: 1rem;
         }
         
         .stats-content {
@@ -208,6 +270,22 @@
                     <span>Click to upload portrait</span>
                     <input type="file" id="portrait-upload" accept="image/*" style="display: none;">
                 </div>
+                
+                <div class="character-info">
+                    <input type="text" id="character-name" placeholder="Character Name">
+                    <textarea id="character-bio" placeholder="Character Biography"></textarea>
+                    
+                    <div class="uid-container">
+                        <input type="text" id="character-uid" class="uid-input" placeholder="Character UID" readonly>
+                        <button class="character-action-btn" id="generate-uid-btn">Generate UID</button>
+                    </div>
+                    
+                    <div class="character-actions">
+                        <button class="character-action-btn" id="save-character-btn">Save Character</button>
+                        <button class="character-action-btn" id="load-character-btn">Load Character</button>
+                    </div>
+                </div>
+                
                 <div class="points-left">
                     Points left: <span id="points-left">36</span>
                 </div>
@@ -399,21 +477,56 @@
     </div>
 
     <script>
+        // Инициализация Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyATqz2FEvuqJuFpeRNWs7MZ_G-jeEPk_dA",
+            authDomain: "leot-rpg.firebaseapp.com",
+            databaseURL: "https://leot-rpg-default-rtdb.firebaseio.com",
+            projectId: "leot-rpg",
+            storageBucket: "leot-rpg.appspot.com",
+            messagingSenderId: "778831773412",
+            appId: "1:778831773412:web:b27c883c463e41a25d36f1",
+            measurementId: "G-P40D2VF1TQ"
+        };
+        
+        // Инициализируем Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+        
         document.addEventListener('DOMContentLoaded', () => {
-            // Управление характеристиками персонажа
+            const portraitUpload = document.getElementById('portrait-upload');
+            const portraitContainer = document.getElementById('character-portrait');
             const statButtons = document.querySelectorAll('.stat-btn');
             const pointsLeftElement = document.getElementById('points-left');
+            
             let pointsLeft = 36;
             const stats = {
-                str: 5,
-                con: 5,
-                dex: 5,
-                agi: 5,
-                int: 5,
-                wis: 5,
-                cha: 5
+                str: 0,
+                con: 0,
+                dex: 0,
+                agi: 0,
+                int: 0,
+                wis: 0,
+                cha: 0
             };
             
+            // Загрузка портрета
+            portraitContainer.addEventListener('click', () => {
+                portraitUpload.click();
+            });
+            
+            portraitUpload.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        portraitContainer.innerHTML = `<img src="${event.target.result}" alt="Character Portrait">`;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+            
+            // Управление характеристиками
             statButtons.forEach(button => {
                 button.addEventListener('click', () => {
                     const stat = button.getAttribute('data-stat');
@@ -477,26 +590,95 @@
                 document.getElementById('witchcraft-value').textContent = wis + cha;
             }
             
-            // Загрузка портрета персонажа
-            const portraitUpload = document.getElementById('portrait-upload');
-            const portraitContainer = document.getElementById('character-portrait');
-            
-            portraitContainer.addEventListener('click', () => {
-                portraitUpload.click();
+            // Генерация UID
+            document.getElementById('generate-uid-btn').addEventListener('click', () => {
+                const uid = generateUID();
+                document.getElementById('character-uid').value = uid;
             });
             
-            portraitUpload.addEventListener('change', (e) => {
-                const file = e.target.files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = (event) => {
-                        portraitContainer.innerHTML = `<img src="${event.target.result}" alt="Character Portrait">`;
-                    };
-                    reader.readAsDataURL(file);
+            // Сохранение персонажа
+            document.getElementById('save-character-btn').addEventListener('click', () => {
+                saveCharacter();
+            });
+            
+            // Загрузка персонажа
+            document.getElementById('load-character-btn').addEventListener('click', () => {
+                const uid = document.getElementById('character-uid').value;
+                if (uid) {
+                    loadCharacter(uid);
+                } else {
+                    alert('Please enter or generate a UID first');
                 }
             });
             
-            // Анимация частиц (аналогично index.html)
+            // Генерация случайного UID
+            function generateUID() {
+                return 'xxxx-xxxx'.replace(/[x]/g, function(c) {
+                    const r = Math.floor(Math.random() * 16);
+                    return r.toString(16);
+                });
+            }
+            
+            // Сохранение персонажа в Firebase
+            function saveCharacter() {
+                const uid = document.getElementById('character-uid').value;
+                if (!uid) {
+                    alert('Please generate a UID first');
+                    return;
+                }
+                
+                const characterData = {
+                    name: document.getElementById('character-name').value,
+                    bio: document.getElementById('character-bio').value,
+                    stats: stats,
+                    portrait: portraitContainer.querySelector('img')?.src || '',
+                    timestamp: firebase.database.ServerValue.TIMESTAMP
+                };
+                
+                database.ref('characters/' + uid).set(characterData)
+                    .then(() => {
+                        alert('Character saved successfully!');
+                    })
+                    .catch((error) => {
+                        console.error('Error saving character:', error);
+                        alert('Error saving character: ' + error.message);
+                    });
+            }
+            
+            // Загрузка персонажа из Firebase
+            function loadCharacter(uid) {
+                database.ref('characters/' + uid).once('value')
+                    .then((snapshot) => {
+                        const characterData = snapshot.val();
+                        if (characterData) {
+                            // Заполняем данные персонажа
+                            document.getElementById('character-name').value = characterData.name || '';
+                            document.getElementById('character-bio').value = characterData.bio || '';
+                            
+                            // Восстанавливаем характеристики
+                            for (const stat in characterData.stats) {
+                                stats[stat] = characterData.stats[stat];
+                            }
+                            pointsLeft = 36 - Object.values(stats).reduce((a, b) => a + b, 0) + 35; // 7*5=35 начальных очков
+                            updateStats();
+                            
+                            // Восстанавливаем портрет
+                            if (characterData.portrait) {
+                                portraitContainer.innerHTML = `<img src="${characterData.portrait}" alt="Character Portrait">`;
+                            }
+                            
+                            alert('Character loaded successfully!');
+                        } else {
+                            alert('No character found with this UID');
+                        }
+                    })
+                    .catch((error) => {
+                        console.error('Error loading character:', error);
+                        alert('Error loading character: ' + error.message);
+                    });
+            }
+            
+            // Анимация частиц
             const canvas = document.getElementById('particle-canvas');
             const ctx = canvas.getContext('2d');
             let particles = [];
