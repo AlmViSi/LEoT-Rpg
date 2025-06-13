@@ -9,9 +9,52 @@
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-storage-compat.js"></script>
     <style>
-        /* Стили остаются такими же как в предыдущем варианте */
+        /* Все стили остаются такими же как в предыдущем варианте */
+        body {
+            background: #0A0A0A;
+            color: #D9E4DD;
+            font-family: 'Roboto', sans-serif;
+            overflow: hidden;
+            position: relative;
+            height: 100vh;
+            width: 100vw;
+        }
+
+        canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+            opacity: 0.8;
+        }
+
+        header {
+            text-align: center;
+            padding: 0.5rem;
+            background: linear-gradient(to bottom, rgba(26, 38, 57, 0.8), transparent);
+            position: absolute;
+            width: 100%;
+            z-index: 10;
+        }
+
+        header h1 {
+            font-family: 'Cinzel', serif;
+            font-size: 1.5rem;
+            color: #00A3E0;
+            text-shadow: 0 0 8px #00A3E0;
+        }
+
+        .main-container {
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            position: relative;
+            z-index: 5;
+        }
+
         .tab-container {
             display: flex;
             justify-content: center;
@@ -511,9 +554,8 @@
         };
         
         // Инициализируем Firebase
-        const app = firebase.initializeApp(firebaseConfig);
+        firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
-        const storage = firebase.storage();
         
         document.addEventListener('DOMContentLoaded', () => {
             const portraitUpload = document.getElementById('portrait-upload');
@@ -651,111 +693,66 @@
             }
             
             // Сохранение персонажа в Firebase
-            async function saveCharacter() {
+            function saveCharacter() {
                 const uid = document.getElementById('character-uid').value;
                 if (!uid) {
                     alert('Please generate a UID first');
                     return;
                 }
                 
-                // Загрузка изображения в Storage (если есть)
-                let portraitUrl = '';
-                const portraitFile = document.getElementById('portrait-upload').files[0];
-                
-                if (portraitFile) {
-                    try {
-                        const storageRef = storage.ref(`character_portraits/${uid}`);
-                        const snapshot = await storageRef.put(portraitFile);
-                        portraitUrl = await snapshot.ref.getDownloadURL();
-                    } catch (error) {
-                        console.error('Error uploading portrait:', error);
-                        alert('Error uploading portrait: ' + error.message);
-                        return;
-                    }
-                } else if (portraitContainer.querySelector('img')) {
-                    // Если файл не выбран, но изображение есть (возможно, уже загружено)
-                    portraitUrl = portraitContainer.querySelector('img').src;
-                }
-                
                 const characterData = {
                     name: document.getElementById('character-name').value,
                     bio: document.getElementById('character-bio').value,
                     stats: stats,
-                    portraitUrl: portraitUrl,
+                    portrait: portraitContainer.querySelector('img')?.src || '',
                     timestamp: firebase.database.ServerValue.TIMESTAMP
                 };
                 
-                try {
-                    await database.ref('characters/' + uid).set(characterData);
-                    alert('Character saved successfully with UID: ' + uid);
-                } catch (error) {
-                    console.error('Error saving character:', error);
-                    alert('Error saving character: ' + error.message);
-                }
-            }
-                
+                // Сохраняем в Firebase
                 database.ref('characters/' + uid).set(characterData)
                     .then(() => {
                         alert('Character saved successfully with UID: ' + uid);
+                        console.log('Data saved to Firebase:', characterData);
                     })
                     .catch((error) => {
-                        console.error('Error saving character:', error);
+                        console.error('Error saving to Firebase:', error);
                         alert('Error saving character: ' + error.message);
                     });
             }
             
             // Загрузка персонажа из Firebase
-            async function loadCharacter(uid) {
-                try {
-                    const snapshot = await database.ref('characters/' + uid).once('value');
-                    const characterData = snapshot.val();
-                    
-                    if (!characterData) {
-                        alert('No character found with this UID');
-                        return;
-                    }
-                    
-                    // Заполняем данные персонажа
-                    document.getElementById('character-name').value = characterData.name || '';
-                    document.getElementById('character-bio').value = characterData.bio || '';
-                    document.getElementById('character-uid').value = uid;
-                    
-                    // Восстанавливаем характеристики
-                    for (const stat in characterData.stats) {
-                        stats[stat] = characterData.stats[stat];
-                    }
-                    pointsLeft = 36 - Object.values(stats).reduce((a, b) => a + b, 0) + 35;
-                    updateStats();
-                    
-                    // Восстанавливаем портрет
-                    if (characterData.portraitUrl) {
-                        try {
-                            // Проверяем, является ли URL ссылкой на Firebase Storage
-                            if (characterData.portraitUrl.includes('firebasestorage.googleapis.com')) {
-                                // Добавляем токен доступа, если его нет
-                                let portraitUrl = characterData.portraitUrl;
-                                if (!portraitUrl.includes('token=')) {
-                                    const token = await storage.refFromURL(portraitUrl).getDownloadURL();
-                                    portraitUrl = token;
-                                }
-                                portraitContainer.innerHTML = `<img src="${portraitUrl}" alt="Character Portrait">`;
-                            } else {
-                                // Если это base64 или другой URL
-                                portraitContainer.innerHTML = `<img src="${characterData.portraitUrl}" alt="Character Portrait">`;
+            function loadCharacter(uid) {
+                database.ref('characters/' + uid).once('value')
+                    .then((snapshot) => {
+                        const characterData = snapshot.val();
+                        if (characterData) {
+                            // Заполняем данные персонажа
+                            document.getElementById('character-name').value = characterData.name || '';
+                            document.getElementById('character-bio').value = characterData.bio || '';
+                            document.getElementById('character-uid').value = uid;
+                            
+                            // Восстанавливаем характеристики
+                            for (const stat in characterData.stats) {
+                                stats[stat] = characterData.stats[stat];
                             }
-                        } catch (error) {
-                            console.error('Error loading portrait:', error);
-                            portraitContainer.innerHTML = '<span>Error loading portrait</span>';
+                            pointsLeft = 36 - Object.values(stats).reduce((a, b) => a + b, 0); // 7*5=35 начальных очков
+                            updateStats();
+                            
+                            // Восстанавливаем портрет
+                            if (characterData.portrait) {
+                                portraitContainer.innerHTML = `<img src="${characterData.portrait}" alt="Character Portrait">`;
+                            }
+                            
+                            console.log('Data loaded from Firebase:', characterData);
+                            alert('Character loaded successfully!');
+                        } else {
+                            alert('No character found with this UID');
                         }
-                    } else {
-                        portraitContainer.innerHTML = '<span>Click to upload portrait</span>';
-                    }
-                    
-                    alert('Character loaded successfully!');
-                } catch (error) {
-                    console.error('Error loading character:', error);
-                    alert('Error loading character: ' + error.message);
-                }
+                    })
+                    .catch((error) => {
+                        console.error('Error loading from Firebase:', error);
+                        alert('Error loading character: ' + error.message);
+                    });
             }
             
             // Сброс персонажа
