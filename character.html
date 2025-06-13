@@ -10,7 +10,43 @@
     <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database-compat.js"></script>
     <style>
-        /* Стили остаются такими же как в предыдущем варианте */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Roboto', sans-serif;
+            background-color: #0A0A0A;
+            color: #D9E4DD;
+            overflow-x: hidden;
+        }
+        
+        #particle-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+        
+        header {
+            background: rgba(26, 38, 57, 0.8);
+            padding: 1rem;
+            text-align: center;
+            border-bottom: 2px solid #00A3E0;
+        }
+        
+        header h1 {
+            margin: 0;
+            font-family: 'Cinzel', serif;
+            color: #D9E4DD;
+        }
+        
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+        
         .tab-container {
             display: flex;
             justify-content: center;
@@ -316,7 +352,7 @@
                         <span>Сила (STR):</span>
                         <div class="stat-controls">
                             <button class="stat-btn" data-stat="str" data-action="decrease">-</button>
-                            <span class="stat-value" id="str-value">5</span>
+                            <span class="stat-value" id="str-value">0</span>
                             <button class="stat-btn" data-stat="str" data-action="increase">+</button>
                         </div>
                     </div>
@@ -325,7 +361,7 @@
                         <span>Выносливость (CON):</span>
                         <div class="stat-controls">
                             <button class="stat-btn" data-stat="con" data-action="decrease">-</button>
-                            <span class="stat-value" id="con-value">5</span>
+                            <span class="stat-value" id="con-value">0</span>
                             <button class="stat-btn" data-stat="con" data-action="increase">+</button>
                         </div>
                     </div>
@@ -334,7 +370,7 @@
                         <span>Сноровка (DEX):</span>
                         <div class="stat-controls">
                             <button class="stat-btn" data-stat="dex" data-action="decrease">-</button>
-                            <span class="stat-value" id="dex-value">5</span>
+                            <span class="stat-value" id="dex-value">0</span>
                             <button class="stat-btn" data-stat="dex" data-action="increase">+</button>
                         </div>
                     </div>
@@ -343,7 +379,7 @@
                         <span>Ловкость (AGI):</span>
                         <div class="stat-controls">
                             <button class="stat-btn" data-stat="agi" data-action="decrease">-</button>
-                            <span class="stat-value" id="agi-value">5</span>
+                            <span class="stat-value" id="agi-value">0</span>
                             <button class="stat-btn" data-stat="agi" data-action="increase">+</button>
                         </div>
                     </div>
@@ -352,7 +388,7 @@
                         <span>Интеллект (INT):</span>
                         <div class="stat-controls">
                             <button class="stat-btn" data-stat="int" data-action="decrease">-</button>
-                            <span class="stat-value" id="int-value">5</span>
+                            <span class="stat-value" id="int-value">0</span>
                             <button class="stat-btn" data-stat="int" data-action="increase">+</button>
                         </div>
                     </div>
@@ -361,7 +397,7 @@
                         <span>Мудрость (WIS):</span>
                         <div class="stat-controls">
                             <button class="stat-btn" data-stat="wis" data-action="decrease">-</button>
-                            <span class="stat-value" id="wis-value">5</span>
+                            <span class="stat-value" id="wis-value">0</span>
                             <button class="stat-btn" data-stat="wis" data-action="increase">+</button>
                         </div>
                     </div>
@@ -370,7 +406,7 @@
                         <span>Обаяние (CHA):</span>
                         <div class="stat-controls">
                             <button class="stat-btn" data-stat="cha" data-action="decrease">-</button>
-                            <span class="stat-value" id="cha-value">5</span>
+                            <span class="stat-value" id="cha-value">0</span>
                             <button class="stat-btn" data-stat="cha" data-action="increase">+</button>
                         </div>
                     </div>
@@ -384,111 +420,111 @@
                     <div class="derived-stats-column">
                         <div class="derived-stat">
                             <div>Запас Здоровья</div>
-                            <div id="health-value">200</div>
+                            <div id="health-value">0</div>
                         </div>
                         
                         <div class="derived-stat">
                             <div>Запас Фокуса</div>
-                            <div id="focus-value">200</div>
+                            <div id="focus-value">0</div>
                         </div>
                         
                         <div class="derived-stat special">
                             <div>Колдовство</div>
-                            <div id="witchcraft-value">10</div>
+                            <div id="witchcraft-value">0</div>
                         </div>
                         
                         <div class="derived-stat special">
                             <div>Мастерство</div>
-                            <div id="mastery-value">10</div>
+                            <div id="mastery-value">0</div>
                         </div>
                         
                         <div class="derived-stat special">
                             <div>Могущество</div>
-                            <div id="might-value">10</div>
+                            <div id="might-value">0</div>
                         </div>
                         
                         <div class="derived-stat">
                             <div>Концентрация</div>
-                            <div id="concentration-value">2</div>
+                            <div id="concentration-value">0</div>
                         </div>
                         
                         <div class="derived-stat">
                             <div>Число Реакций</div>
-                            <div id="reactions-value">2</div>
+                            <div id="reactions-value">0</div>
                         </div>
                     </div>
                     
                     <div class="derived-stats-column">
                         <div class="derived-stat">
                             <div>Грация</div>
-                            <div id="grace-value">2</div>
+                            <div id="grace-value">0</div>
                         </div>
                         
                         <div class="derived-stat">
                             <div>Предчувствие</div>
-                            <div id="premonition-value">2</div>
+                            <div id="premonition-value">0</div>
                         </div>
                         
                         <div class="derived-stat special">
                             <div>Снижение Угрозы</div>
-                            <div id="threat-value">5</div>
+                            <div id="threat-value">0</div>
                         </div>
                         
                         <div class="derived-stat special">
                             <div>Влияние</div>
-                            <div id="influence-value">5</div>
+                            <div id="influence-value">0</div>
                         </div>
                         
                         <div class="derived-stat special">
                             <div>Харизма</div>
-                            <div id="charisma-value">2</div>
+                            <div id="charisma-value">0</div>
                         </div>
                         
                         <div class="derived-stat">
                             <div>Число Умений</div>
-                            <div id="skills-value">14</div>
+                            <div id="skills-value">0</div>
                         </div>
                         
                         <div class="derived-stat">
                             <div>Число Черт</div>
-                            <div id="traits-value">5</div>
+                            <div id="traits-value">0</div>
                         </div>
                     </div>
                     
                     <div class="derived-stats-column">
                         <div class="derived-stat">
                             <div>Бдительность</div>
-                            <div id="vigilance-value">10</div>
+                            <div id="vigilance-value">0</div>
                         </div>
                         
                         <div class="derived-stat">
                             <div>Борьба</div>
-                            <div id="combat-value">10</div>
+                            <div id="combat-value">0</div>
                         </div>
                         
                         <div class="derived-stat">
                             <div>Логика</div>
-                            <div id="logic-value">10</div>
+                            <div id="logic-value">0</div>
                         </div>
                         
                         <div class="derived-stat">
                             <div>Самообладание</div>
-                            <div id="composure-value">10</div>
+                            <div id="composure-value">0</div>
                         </div>
                         
                         <div class="derived-stat">
                             <div>Сила Воли</div>
-                            <div id="willpower-value">10</div>
+                            <div id="willpower-value">0</div>
                         </div>
                         
                         <div class="derived-stat">
                             <div>Стойкость</div>
-                            <div id="resilience-value">10</div>
+                            <div id="resilience-value">0</div>
                         </div>
                         
                         <div class="derived-stat">
                             <div>Уклонение</div>
-                            <div id="evasion-value">10</div>
+                            <div id="evasion-value">0</div>
                         </div>
                     </div>
                 </div>
@@ -522,13 +558,13 @@
             
             let pointsLeft = 36;
             const stats = {
-                str: 5,
-                con: 5,
-                dex: 5,
-                agi: 5,
-                int: 5,
-                wis: 5,
-                cha: 5
+                str: 0,
+                con: 0,
+                dex: 0,
+                agi: 0,
+                int: 0,
+                wis: 0,
+                cha: 0
             };
             
             // Загрузка портрета
@@ -689,7 +725,7 @@
                             for (const stat in characterData.stats) {
                                 stats[stat] = characterData.stats[stat];
                             }
-                            pointsLeft = 36 - Object.values(stats).reduce((a, b) => a + b, 0) + 35; // 7*5=35 начальных очков
+                            pointsLeft = 36 - Object.values(stats).reduce((a, b) => a + b, 0);
                             updateStats();
                             
                             // Восстанавливаем портрет
@@ -712,7 +748,7 @@
             function resetCharacter() {
                 // Сброс характеристик
                 for (const stat in stats) {
-                    stats[stat] = 5;
+                    stats[stat] = 0;
                 }
                 pointsLeft = 36;
                 updateStats();
