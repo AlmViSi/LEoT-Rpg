@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lost Edge of Time - Character</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .tab-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 1rem;
+            position: relative;
+            z-index: 10;
+        }
+        
+        .tab {
+            padding: 0.5rem 1rem;
+            background: #1A2639;
+            color: #D9E4DD;
+            border: 1px solid #00A3E0;
+            cursor: pointer;
+            font-family: 'Cinzel', serif;
+            transition: all 0.3s ease;
+        }
+        
+        .tab:first-child {
+            border-radius: 5px 0 0 5px;
+        }
+        
+        .tab:last-child {
+            border-radius: 0 5px 5px 0;
+        }
+        
+        .tab.active {
+            background: #00A3E0;
+            color: #0A0A0A;
+            font-weight: bold;
+        }
+        
+        .tab:hover:not(.active) {
+            background: rgba(0, 163, 224, 0.3);
+        }
+        
+        .character-container {
+            height: calc(100vh - 80px);
+            padding: 1rem;
+            overflow-y: auto;
+            color: #D9E4DD;
+        }
+        
+        .character-portrait {
+            width: 200px;
+            height: 250px;
+            margin: 0 auto;
+            background: #1A2639;
+            border: 2px solid #00A3E0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            overflow: hidden;
+        }
+        
+        .character-portrait img {
+            max-width: 100%;
+            max-height: 100%;
+        }
+        
+        .character-portrait span {
+            font-family: 'Cinzel', serif;
+            color: #D9E4DD;
+        }
+        
+        .points-left {
+            text-align: center;
+            margin: 1rem 0;
+            font-family: 'Cinzel', serif;
+            font-size: 1.2rem;
+        }
+        
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+        
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(26, 38, 57, 0.8);
+            padding: 0.5rem;
+            border-radius: 5px;
+            border: 1px solid #00A3E0;
+        }
+        
+        .stat-controls {
+            display: flex;
+            align-items: center;
+        }
+        
+        .stat-value {
+            min-width: 30px;
+            text-align: center;
+            font-weight: bold;
+        }
+        
+        .stat-btn {
+            width: 25px;
+            height: 25px;
+            background: #00A3E0;
+            border: none;
+            color: #0A0A0A;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 3px;
+            margin: 0 0.3rem;
+        }
+        
+        .stat-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .derived-stats-title {
+            color: #d9bd0b;
+            font-family: 'Cinzel', serif;
+            margin: 1rem 0;
+            border-bottom: 1px solid #00A3E0;
+            padding-bottom: 0.3rem;
+        }
+        
+        .derived-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+        }
+        
+        .derived-stat {
+            background: rgba(26, 38, 57, 0.8);
+            padding: 0.5rem;
+            border: 1px solid #00A3E0;
+            border-radius: 5px;
+        }
+        
+        .derived-stat div:first-child {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        
+        .derived-stat div:last-child {
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+        
+        @media (max-width: 768px) {
+            .stats-container, .derived-stats {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="particle-canvas"></canvas>
+    <header>
+        <h1>Lost Edge of Time - Character</h1>
+    </header>
+    
+    <div class="tab-container">
+        <a href="index.html" class="tab">Origin</a>
+        <a href="race.html" class="tab">Race</a>
+        <a href="traits.html" class="tab">Traits</a>
+        <a href="powersets.html" class="tab">Power Sets</a>
+        <a href="character.html" class="tab active">Character</a>
+    </div>
+    
+    <div class="main-container">
+        <div class="character-container">
+            <div class="character-portrait" id="character-portrait">
+                <span>Click to upload portrait</span>
+                <input type="file" id="portrait-upload" accept="image/*" style="display: none;">
+            </div>
+            
+            <div class="points-left">
+                Points left: <span id="points-left">36</span>
+            </div>
+            
+            <div class="stats-container">
+                <div class="stat-item">
+                    <span>Сила (STR):</span>
+                    <div class="stat-controls">
+                        <button class="stat-btn" data-stat="str" data-action="decrease">-</button>
+                        <span class="stat-value" id="str-value">5</span>
+                        <button class="stat-btn" data-stat="str" data-action="increase">+</button>
+                    </div>
+                </div>
+                
+                <div class="stat-item">
+                    <span>Выносливость (CON):</span>
+                    <div class="stat-controls">
+                        <button class="stat-btn" data-stat="con" data-action="decrease">-</button>
+                        <span class="stat-value" id="con-value">5</span>
+                        <button class="stat-btn" data-stat="con" data-action="increase">+</button>
+                    </div>
+                </div>
+                
+                <div class="stat-item">
+                    <span>Сноровка (DEX):</span>
+                    <div class="stat-controls">
+                        <button class="stat-btn" data-stat="dex" data-action="decrease">-</button>
+                        <span class="stat-value" id="dex-value">5</span>
+                        <button class="stat-btn" data-stat="dex" data-action="increase">+</button>
+                    </div>
+                </div>
+                
+                <div class="stat-item">
+                    <span>Ловкость (AGI):</span>
+                    <div class="stat-controls">
+                        <button class="stat-btn" data-stat="agi" data-action="decrease">-</button>
+                        <span class="stat-value" id="agi-value">5</span>
+                        <button class="stat-btn" data-stat="agi" data-action="increase">+</button>
+                    </div>
+                </div>
+                
+                <div class="stat-item">
+                    <span>Интеллект (INT):</span>
+                    <div class="stat-controls">
+                        <button class="stat-btn" data-stat="int" data-action="decrease">-</button>
+                        <span class="stat-value" id="int-value">5</span>
+                        <button class="stat-btn" data-stat="int" data-action="increase">+</button>
+                    </div>
+                </div>
+                
+                <div class="stat-item">
+                    <span>Мудрость (WIS):</span>
+                    <div class="stat-controls">
+                        <button class="stat-btn" data-stat="wis" data-action="decrease">-</button>
+                        <span class="stat-value" id="wis-value">5</span>
+                        <button class="stat-btn" data-stat="wis" data-action="increase">+</button>
+                    </div>
+                </div>
+                
+                <div class="stat-item">
+                    <span>Обаяние (CHA):</span>
+                    <div class="stat-controls">
+                        <button class="stat-btn" data-stat="cha" data-action="decrease">-</button>
+                        <span class="stat-value" id="cha-value">5</span>
+                        <button class="stat-btn" data-stat="cha" data-action="increase">+</button>
+                    </div>
+                </div>
+            </div>
+            
+            <h3 class="derived-stats-title">Derived Stats</h3>
+            
+            <div class="derived-stats">
+                <div class="derived-stat">
+                    <div>ЗапасЗдоровья</div>
+                    <div id="health-value">200</div>
+                </div>
+                
+                <div class="derived-stat">
+                    <div>Могущество</div>
+                    <div id="might-value">10</div>
+                </div>
+                
+                <div class="derived-stat">
+                    <div>Борьба</div>
+                    <div id="combat-value">10</div>
+                </div>
+                
+                <div class="derived-stat">
+                    <div>Снижение Угрозы</div>
+                    <div id="threat-value">5</div>
+                </div>
+                
+                <div class="derived-stat">
+                    <div>Влияние</div>
+                    <div id="influence-value">5</div>
+                </div>
+                
+                <div class="derived-stat">
+                    <div>Самообладание</div>
+                    <div id="composure-value">10</div>
+                </div>
+                
+                <div class="derived-stat">
+                    <div>Стойкость</div>
+                    <div id="resilience-value">10</div>
+                </div>
+                
+                <div class="derived-stat">
+                    <div>ЧислоРеакций</div>
+                    <div id="reactions-value">2</div>
+                </div>
+                
+                <div class="derived-stat">
+                    <div>Бдительность</div>
+                    <div id="vigilance-value">10</div>
+                </div>
+                
+                <div class="derived-stat">
+                    <div>Концентрация</div>
+                    <div id="concentration-value">2</div>
+                </div>
+                
+                <div class="derived-stat">
+                    <div>Харизма</div>
+                    <div id="charisma-value">2</div>
+                </div>
+                
+                <div class="derived-stat">
+                    <div>Предчувствие</div>
+                    <div id="premonition-value">2</div>
+                </div>
+                
+                <div class="derived-stat">
+                    <div>ЧислоУмений</div>
+                    <div id="skills-value">14</div>
+                </div>
+                
+                <div class="derived-stat">
+                    <div>ЗапасФокуса</div>
+                    <div id="focus-value">200</div>
+                </div>
+                
+                <div class="derived-stat">
+                    <div>СилаВоли</div>
+                    <div id="willpower-value">10</div>
+                </div>
+                
+                <div class="derived-stat">
+                    <div>Мастерство</div>
+                    <div id="mastery-value">10</div>
+                </div>
+                
+                <div class="derived-stat">
+                    <div>Уклонение</div>
+                    <div id="evasion-value">10</div>
+                </div>
+                
+                <div class="derived-stat">
+                    <div>Грация</div>
+                    <div id="grace-value">2</div>
+                </div>
+                
+                <div class="derived-stat">
+                    <div>Логика</div>
+                    <div id="logic-value">10</div>
+                </div>
+                
+                <div class="derived-stat">
+                    <div>ЧислоЧерт</div>
+                    <div id="traits-value">5</div>
+                </div>
+                
+                <div class="derived-stat">
+                    <div>Колдовство</div>
+                    <div id="witchcraft-value">10</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Управление характеристиками персонажа
+            const statButtons = document.querySelectorAll('.stat-btn');
+            const pointsLeftElement = document.getElementById('points-left');
+            let pointsLeft = 36;
+            const stats = {
+                str: 5,
+                con: 5,
+                dex: 5,
+                agi: 5,
+                int: 5,
+                wis: 5,
+                cha: 5
+            };
+            
+            statButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const stat = button.getAttribute('data-stat');
+                    const action = button.getAttribute('data-action');
+                    
+                    if (action === 'increase' && pointsLeft > 0 && stats[stat] < 10) {
+                        stats[stat]++;
+                        pointsLeft--;
+                        updateStats();
+                    } else if (action === 'decrease' && stats[stat] > 0) {
+                        stats[stat]--;
+                        pointsLeft++;
+                        updateStats();
+                    }
+                });
+            });
+            
+            function updateStats() {
+                // Обновляем значения характеристик
+                for (const stat in stats) {
+                    document.getElementById(`${stat}-value`).textContent = stats[stat];
+                }
+                
+                // Обновляем оставшиеся очки
+                pointsLeftElement.textContent = pointsLeft;
+                
+                // Обновляем производные характеристики
+                updateDerivedStats();
+            }
+            
+            function updateDerivedStats() {
+                const str = stats.str;
+                const con = stats.con;
+                const dex = stats.dex;
+                const agi = stats.agi;
+                const int = stats.int;
+                const wis = stats.wis;
+                const cha = stats.cha;
+                
+                // Рассчитываем производные характеристики по формулам
+                document.getElementById('health-value').textContent = (con + str) * 20;
+                document.getElementById('might-value').textContent = str + dex;
+                document.getElementById('combat-value').textContent = 10 + Math.floor((str + agi) / 2);
+                document.getElementById('threat-value').textContent = Math.floor((str + int) / 2);
+                document.getElementById('influence-value').textContent = Math.floor((str + wis) / 2);
+                document.getElementById('composure-value').textContent = 10 + Math.floor((str + cha) / 2);
+                document.getElementById('resilience-value').textContent = 10 + Math.floor((con + dex) / 2);
+                document.getElementById('reactions-value').textContent = Math.floor((con + agi) / 4);
+                document.getElementById('vigilance-value').textContent = 10 + Math.floor((con + int) / 2);
+                document.getElementById('concentration-value').textContent = Math.floor((con + wis) / 4);
+                document.getElementById('charisma-value').textContent = Math.floor((con + cha) / 4);
+                document.getElementById('premonition-value').textContent = Math.floor((dex + agi) / 4);
+                document.getElementById('skills-value').textContent = 4 + dex + int;
+                document.getElementById('focus-value').textContent = (dex + wis) * 20;
+                document.getElementById('willpower-value').textContent = 10 + Math.floor((dex + cha) / 2);
+                document.getElementById('mastery-value').textContent = agi + int;
+                document.getElementById('evasion-value').textContent = 10 + Math.floor((agi + wis) / 2);
+                document.getElementById('grace-value').textContent = Math.floor((agi + cha) / 4);
+                document.getElementById('logic-value').textContent = 10 + Math.floor((int + wis) / 2);
+                document.getElementById('traits-value').textContent = Math.floor((cha + int) / 2);
+                document.getElementById('witchcraft-value').textContent = wis + cha;
+            }
+            
+            // Загрузка портрета персонажа
+            const portraitUpload = document.getElementById('portrait-upload');
+            const portraitContainer = document.getElementById('character-portrait');
+            
+            portraitContainer.addEventListener('click', () => {
+                portraitUpload.click();
+            });
+            
+            portraitUpload.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        portraitContainer.innerHTML = `<img src="${event.target.result}" alt="Character Portrait">`;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+            
+            // Анимация частиц (аналогично index.html)
+            const canvas = document.getElementById('particle-canvas');
+            const ctx = canvas.getContext('2d');
+            let particles = [];
+
+            function resizeCanvas() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+            resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
+
+            class Particle {
+                constructor() {
+                    this.x = Math.random() * canvas.width;
+                    this.y = Math.random() * canvas.height;
+                    this.size = Math.random() * 2 + 1;
+                    this.speedX = Math.random() * 0.5 - 0.25;
+                    this.speedY = Math.random() * 0.5 - 0.25;
+                    this.opacity = Math.random() * 0.6 + 0.4;
+                }
+
+                update() {
+                    this.x += this.speedX;
+                    this.y += this.speedY;
+                    if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
+                    if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
+                }
+
+                draw() {
+                    ctx.fillStyle = `rgba(0, 163, 224, ${this.opacity})`;
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+
+            function initParticles() {
+                particles = [];
+                for (let i = 0; i < 50; i++) {
+                    particles.push(new Particle());
+                }
+            }
+
+            function animateParticles() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                particles.forEach(p => {
+                    p.update();
+                    p.draw();
+                });
+                requestAnimationFrame(animateParticles);
+            }
+
+            initParticles();
+            animateParticles();
+            
+            // Инициализация характеристик
+            updateStats();
+        });
+    </script>
+</body>
+</html>
