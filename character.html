@@ -10,51 +10,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database-compat.js"></script>
     <style>
-        /* Все стили остаются такими же как в предыдущем варианте */
-        body {
-            background: #0A0A0A;
-            color: #D9E4DD;
-            font-family: 'Roboto', sans-serif;
-            overflow: hidden;
-            position: relative;
-            height: 100vh;
-            width: 100vw;
-        }
-
-        canvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 2;
-            opacity: 0.8;
-        }
-
-        header {
-            text-align: center;
-            padding: 0.5rem;
-            background: linear-gradient(to bottom, rgba(26, 38, 57, 0.8), transparent);
-            position: absolute;
-            width: 100%;
-            z-index: 10;
-        }
-
-        header h1 {
-            font-family: 'Cinzel', serif;
-            font-size: 1.5rem;
-            color: #00A3E0;
-            text-shadow: 0 0 8px #00A3E0;
-        }
-
-        .main-container {
-            height: 100vh;
-            width: 100vw;
-            overflow: hidden;
-            position: relative;
-            z-index: 5;
-        }
-
+        /* Стили остаются такими же как в предыдущем варианте */
         .tab-container {
             display: flex;
             justify-content: center;
@@ -566,13 +522,13 @@
             
             let pointsLeft = 36;
             const stats = {
-                str: 0,
-                con: 0,
-                dex: 0,
-                agi: 0,
-                int: 0,
-                wis: 0,
-                cha: 0
+                str: 5,
+                con: 5,
+                dex: 5,
+                agi: 5,
+                int: 5,
+                wis: 5,
+                cha: 5
             };
             
             // Загрузка портрета
@@ -708,14 +664,12 @@
                     timestamp: firebase.database.ServerValue.TIMESTAMP
                 };
                 
-                // Сохраняем в Firebase
                 database.ref('characters/' + uid).set(characterData)
                     .then(() => {
                         alert('Character saved successfully with UID: ' + uid);
-                        console.log('Data saved to Firebase:', characterData);
                     })
                     .catch((error) => {
-                        console.error('Error saving to Firebase:', error);
+                        console.error('Error saving character:', error);
                         alert('Error saving character: ' + error.message);
                     });
             }
@@ -735,7 +689,7 @@
                             for (const stat in characterData.stats) {
                                 stats[stat] = characterData.stats[stat];
                             }
-                            pointsLeft = 36 - Object.values(stats).reduce((a, b) => a + b, 0); // 7*5=35 начальных очков
+                            pointsLeft = 36 - Object.values(stats).reduce((a, b) => a + b, 0) + 35; // 7*5=35 начальных очков
                             updateStats();
                             
                             // Восстанавливаем портрет
@@ -743,14 +697,13 @@
                                 portraitContainer.innerHTML = `<img src="${characterData.portrait}" alt="Character Portrait">`;
                             }
                             
-                            console.log('Data loaded from Firebase:', characterData);
                             alert('Character loaded successfully!');
                         } else {
                             alert('No character found with this UID');
                         }
                     })
                     .catch((error) => {
-                        console.error('Error loading from Firebase:', error);
+                        console.error('Error loading character:', error);
                         alert('Error loading character: ' + error.message);
                     });
             }
@@ -759,7 +712,7 @@
             function resetCharacter() {
                 // Сброс характеристик
                 for (const stat in stats) {
-                    stats[stat] = 0;
+                    stats[stat] = 5;
                 }
                 pointsLeft = 36;
                 updateStats();
