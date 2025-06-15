@@ -1,3 +1,4 @@
+const database = window.database;
 
 document.addEventListener('DOMContentLoaded', () => {
     // DOM Elements
