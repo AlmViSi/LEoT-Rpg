@@ -1,12 +1,26 @@
-const database = window.database;
+// scripts/character.js
+
+// Получаем глобально доступный экземпляр базы данных, который был установлен в firebase-init.js
+// ЭТА СТРОКА ДОЛЖНА БЫТЬ В НАЧАЛЕ ФАЙЛА
+const database = window.database; 
 
 document.addEventListener('DOMContentLoaded', () => {
-    // DOM Elements
+    // DOM Elements - проверяем их наличие при получении
     const portraitUpload = document.getElementById('portrait-upload');
     const portraitContainer = document.getElementById('character-portrait');
     const statButtons = document.querySelectorAll('.stat-btn');
     const pointsLeftElement = document.getElementById('points-left');
     const loadUidInput = document.getElementById('load-uid-input');
+    const characterNameInput = document.getElementById('character-name');
+    const characterBioInput = document.getElementById('character-bio');
+    const characterUidDisplay = document.getElementById('character-uid'); // Для отображения/генерации UID
+
+    // Проверка, что основные элементы DOM найдены
+    if (!portraitUpload || !portraitContainer || !pointsLeftElement || !loadUidInput || !characterNameInput || !characterBioInput || !characterUidDisplay) {
+        console.error("One or more required DOM elements not found. Please check character.html for correct IDs.");
+        alert("Ошибка: Не найдены необходимые элементы на странице. Проверьте HTML-код.");
+        return; // Прекращаем выполнение скрипта, если элементы не найдены
+    }
     
     // Character state
     let pointsLeft = 36;
@@ -34,7 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Initialize
-    initParticles();
+    initParticles(); // Убедитесь, что particles.js загружен до character.js, если эта функция используется
     updateStats();
 
     // Functions
@@ -49,158 +63,154 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function handleStatButtonClick() {
-        const stat = this.getAttribute('data-stat');
-        const action = this.getAttribute('data-action');
-        
-        if (action === 'increase' && pointsLeft > 0 && stats[stat] < 10) {
-            stats[stat]++;
-            pointsLeft--;
-        } else if (action === 'decrease' && stats[stat] > 0) {
-            stats[stat]--;
-            pointsLeft++;
-        }
-        
-        updateStats();
+    function generateCharacterUID() {
+        // Генерируем уникальный ID для персонажа
+        const uid = Date.now().toString(36) + Math.random().toString(36).substring(2);
+        characterUidDisplay.value = uid;
     }
 
     function updateStats() {
-        // Update base stats
-        for (const stat in stats) {
-            document.getElementById(`${stat}-value`).textContent = stats[stat];
-        }
-        
-        // Update points left
+        // Обновление отображения оставшихся очков
         pointsLeftElement.textContent = pointsLeft;
-        
-        // Update derived stats
-        updateDerivedStats();
+
+        // Обновление значений характеристик
+        document.getElementById('str-value').textContent = stats.str;
+        document.getElementById('con-value').textContent = stats.con;
+        document.getElementById('dex-value').textContent = stats.dex;
+        document.getElementById('agi-value').textContent = stats.agi;
+        document.getElementById('int-value').textContent = stats.int;
+        document.getElementById('wis-value').textContent = stats.wis;
+        document.getElementById('cha-value').textContent = stats.cha;
+
+        // Обновление производных характеристик (примеры расчетов)
+        document.getElementById('combat-value').textContent = stats.str + stats.dex;
+        document.getElementById('logic-value').textContent = stats.int + stats.wis;
+        document.getElementById('composure-value').textContent = stats.wis + stats.cha;
+        document.getElementById('willpower-value').textContent = stats.int + stats.con;
+        document.getElementById('resilience-value').textContent = stats.con + stats.str;
+        document.getElementById('evasion-value').textContent = stats.agi + stats.dex;
     }
-    
-    function updateDerivedStats() {
-        const { str, con, dex, agi, int, wis, cha } = stats;
-        
-        // Health and combat stats
-        document.getElementById('health-value').textContent = (con + str) * 20;
-        document.getElementById('might-value').textContent = str + dex;
-        document.getElementById('combat-value').textContent = 10 + Math.floor((str + agi) / 2);
-        document.getElementById('threat-value').textContent = Math.floor((str + int) / 2);
-        
-        // Mental and social stats
-        document.getElementById('influence-value').textContent = Math.floor((str + wis) / 2);
-        document.getElementById('composure-value').textContent = 10 + Math.floor((str + cha) / 2);
-        document.getElementById('resilience-value').textContent = 10 + Math.floor((con + dex) / 2);
-        
-        // Reaction and focus stats
-        document.getElementById('reactions-value').textContent = Math.floor((con + agi) / 4);
-        document.getElementById('vigilance-value').textContent = 10 + Math.floor((con + int) / 2);
-        document.getElementById('concentration-value').textContent = Math.floor((con + wis) / 4);
-        
-        // Charisma and magic stats
-        document.getElementById('charisma-value').textContent = Math.floor((con + cha) / 4);
-        document.getElementById('premonition-value').textContent = Math.floor((dex + agi) / 4);
-        document.getElementById('skills-value').textContent = 4 + dex + int;
-        
-        // Physical stats
-        document.getElementById('focus-value').textContent = (dex + wis) * 20;
-        document.getElementById('willpower-value').textContent = 10 + Math.floor((dex + cha) / 2);
-        document.getElementById('mastery-value').textContent = agi + int;
-        
-        // Defense stats
-        document.getElementById('evasion-value').textContent = 10 + Math.floor((agi + wis) / 2);
-        document.getElementById('grace-value').textContent = Math.floor((agi + cha) / 4);
-        document.getElementById('logic-value').textContent = 10 + Math.floor((int + wis) / 2);
-        
-        // Special stats
-        document.getElementById('traits-value').textContent = Math.floor((cha + int) / 2);
-        document.getElementById('witchcraft-value').textContent = wis + cha;
+
+    function handleStatButtonClick(event) {
+        const statType = event.target.dataset.stat; // 'str', 'con', etc.
+        const action = event.target.dataset.action; // 'increase' or 'decrease'
+
+        if (action === 'increase' && pointsLeft > 0) {
+            stats[statType]++;
+            pointsLeft--;
+        } else if (action === 'decrease' && stats[statType] > 0) {
+            stats[statType]--;
+            pointsLeft++;
+        }
+        updateStats();
     }
-    
-    function generateCharacterUID() {
-        const uid = 'xxxx-xxxx'.replace(/[x]/g, () => 
-            Math.floor(Math.random() * 16).toString(16)
-        );
-        document.getElementById('character-uid').value = uid;
-        loadUidInput.value = uid;
-    }
-    
+
     function saveCharacter() {
-        const uid = document.getElementById('character-uid').value;
-        if (!uid) {
-            alert('Please generate a UID first');
+        // Проверка инициализации базы данных
+        if (!database) {
+            console.error("Firebase database is not initialized. Cannot save character.");
+            alert('Ошибка: База данных не готова. Попробуйте обновить страницу.');
             return;
         }
-        
+
+        const charUID = characterUidDisplay.value;
+        if (!charUID) {
+            alert('Пожалуйста, сгенерируйте UID персонажа!');
+            return;
+        }
+
         const characterData = {
-            name: document.getElementById('character-name').value,
-            bio: document.getElementById('character-bio').value,
-            stats: stats,
-            portrait: portraitContainer.querySelector('img')?.src || '',
-            timestamp: firebase.database.ServerValue.TIMESTAMP
+            name: characterNameInput.value,
+            bio: characterBioInput.value,
+            stats: { ...stats }, // Копируем характеристики
+            pointsLeft: pointsLeft,
+            portrait: portraitContainer.querySelector('img')?.src || null // Сохраняем портрет в Base64
         };
-        
-        database.ref('characters/' + uid).set(characterData)
-            .then(() => alert(`Character saved successfully with UID: ${uid}`))
+
+        database.ref('characters/' + charUID).set(characterData)
+            .then(() => {
+                alert('Персонаж успешно сохранен!');
+            })
             .catch(error => {
-                console.error('Error saving character:', error);
-                alert(`Error saving character: ${error.message}`);
+                console.error('Ошибка при сохранении персонажа:', error);
+                alert(`Ошибка при сохранении персонажа: ${error.message}. Проверьте правила доступа Firebase.`);
             });
     }
-    
-    function loadCharacter(uid) {
-	const charUID = loadUidInput.value ? String(loadUidInput.value).trim() : ''; 
-       	 if (!uid.trim()) {
-            alert('Please enter a UID to load');
+
+    function loadCharacter() {
+        // Проверка инициализации базы данных
+        if (!database) {
+            console.error("Firebase database is not initialized. Cannot load character.");
+            alert('Ошибка: База данных не готова. Попробуйте обновить страницу.');
             return;
         }
-        
-        database.ref('characters/' + uid).once('value')
-            .then((snapshot) => {
+
+        // Убеждаемся, что loadUidInput существует и получаем его значение безопасно
+        if (!loadUidInput) {
+            console.error("Элемент с ID 'load-uid-input' не найден.");
+            alert('Ошибка: Поле для загрузки персонажа не найдено. Проверьте HTML.');
+            return;
+        }
+
+        // Получаем значение из поля ввода, преобразуем в строку и обрезаем пробелы
+        const charUID = String(loadUidInput.value || '').trim();
+
+        if (!charUID) {
+            alert('Пожалуйста, введите UID персонажа для загрузки!');
+            return;
+        }
+
+        database.ref('characters/' + charUID).once('value')
+            .then(snapshot => {
                 const characterData = snapshot.val();
                 if (!characterData) {
-                    alert('No character found with this UID');
+                    alert('Персонаж не найден!');
                     return;
                 }
-                
-                // Restore character data
-                document.getElementById('character-name').value = characterData.name || '';
-                document.getElementById('character-bio').value = characterData.bio || '';
-                document.getElementById('character-uid').value = uid;
-                
-                // Restore stats
-                Object.keys(characterData.stats).forEach(stat => {
+
+                // Восстанавливаем данные
+                characterNameInput.value = characterData.name || '';
+                characterBioInput.value = characterData.bio || '';
+                characterUidDisplay.value = charUID;
+
+                // Восстанавливаем характеристики
+                // Используем Object.keys(characterData.stats || {}) для безопасности
+                Object.keys(characterData.stats || {}).forEach(stat => {
                     stats[stat] = characterData.stats[stat];
                 });
+                // Пересчитываем pointsLeft на основе загруженных статов
                 pointsLeft = 36 - Object.values(stats).reduce((a, b) => a + b, 0);
                 
-                // Restore portrait
+                // Восстанавливаем портрет
                 if (characterData.portrait) {
                     portraitContainer.innerHTML = `<img src="${characterData.portrait}" alt="Character Portrait">`;
+                } else {
+                    portraitContainer.innerHTML = '<span>Нажмите, чтобы загрузить портрет</span>'; // Очищаем, если нет портрета
                 }
                 
                 updateStats();
-                alert('Character loaded successfully!');
+                alert('Персонаж успешно загружен!');
             })
             .catch(error => {
-                console.error('Error loading character:', error);
-                alert(`Error loading character: ${error.message}`);
+                console.error('Ошибка при загрузке персонажа:', error);
+                alert(`Ошибка при загрузке персонажа: ${error.message}. Проверьте правила доступа Firebase.`);
             });
     }
     
     function resetCharacter() {
-        if (!confirm('Are you sure you want to clear all character data?')) return;
+        if (!confirm('Вы уверены, что хотите очистить все данные персонажа?')) return;
         
-        // Reset stats
+        // Сброс характеристик
         Object.keys(stats).forEach(stat => stats[stat] = 0);
         pointsLeft = 36;
         
-        // Clear fields
-        document.getElementById('character-name').value = '';
-        document.getElementById('character-bio').value = '';
-        document.getElementById('character-uid').value = '';
+        // Очистка полей
+        characterNameInput.value = '';
+        characterBioInput.value = '';
+        characterUidDisplay.value = '';
         loadUidInput.value = '';
-        portraitContainer.innerHTML = '<span>Click to upload portrait</span>';
-        document.getElementById('portrait-upload').value = '';
+        portraitContainer.innerHTML = '<span>Нажмите, чтобы загрузить портрет</span>';
+        portraitUpload.value = ''; // Сброс выбранного файла в инпуте типа file
         
         updateStats();
     }
