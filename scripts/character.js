@@ -1,4 +1,3 @@
-const database = firebase.database();
 
 document.addEventListener('DOMContentLoaded', () => {
     // DOM Elements

@@ -4,4 +4,5 @@ if (typeof firebaseConfig === 'undefined') {
     if (!firebase.apps.length) {
         firebase.initializeApp(firebaseConfig);
     }
+    window.database = firebase.database();
 }

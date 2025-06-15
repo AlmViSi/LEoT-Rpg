@@ -1,6 +1,3 @@
-// --- Глобальные переменные ---
-const database = firebase.database();
-
 let allSpells = []; // Все заклинания из JSON
 let currentCharacterId = 'testCharacter1'; // TODO: Замените на реальный ID персонажа (например, из localStorage или URL)
 let currentManagedSpells = {}; // Объект для управления выбранными заклинаниями
