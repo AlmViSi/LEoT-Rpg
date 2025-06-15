@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lost Edge of Time - Power Sets</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .tab-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 1rem;
+            position: relative;
+            z-index: 10;
+        }
+        
+        .tab {
+            padding: 0.5rem 1rem;
+            background: #1A2639;
+            color: #D9E4DD;
+            border: 1px solid #00A3E0;
+            cursor: pointer;
+            font-family: 'Cinzel', serif;
+            transition: all 0.3s ease;
+        }
+        
+        .tab:first-child {
+            border-radius: 5px 0 0 5px;
+        }
+        
+        .tab:last-child {
+            border-radius: 0 5px 5px 0;
+        }
+        
+        .tab.active {
+            background: #00A3E0;
+            color: #0A0A0A;
+            font-weight: bold;
+        }
+        
+        .tab:hover:not(.active) {
+            background: rgba(0, 163, 224, 0.3);
+        }
+        
+        .powersets-container {
+            height: calc(100vh - 80px);
+            padding: 1rem;
+            overflow-y: auto;
+        }
+        
+        .powerset-category {
+            margin-bottom: 2rem;
+            background: rgba(26, 38, 57, 0.8);
+            padding: 1rem;
+            border-radius: 5px;
+            border: 1px solid #00A3E0;
+        }
+        
+        .powerset-category h2 {
+            color: #d9bd0b;
+            font-family: 'Cinzel', serif;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid #00A3E0;
+            padding-bottom: 0.5rem;
+        }
+        
+        .powerset-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 0.5rem;
+        }
+        
+        .powerset-item {
+            background: rgba(10, 10, 10, 0.5);
+            padding: 0.5rem;
+            border: 1px solid #00A3E0;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .powerset-item:hover {
+            background: rgba(0, 163, 224, 0.2);
+        }
+        
+        @media (max-width: 768px) {
+            .powerset-list {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="particle-canvas"></canvas>
+    <header>
+        <h1>Lost Edge of Time - Power Sets</h1>
+    </header>
+    
+    <div class="tab-container">
+        <a href="index.html" class="tab">Origin</a>
+        <a href="race.html" class="tab">Race</a>
+        <a href="traits.html" class="tab">Traits</a>
+        <a href="powersets.html" class="tab active">Power Sets</a>
+        <a href="character.html" class="tab">Character</a>
+    </div>
+    
+    <div class="main-container">
+        <div class="powersets-container">
+            <!-- Academic -->
+            <div class="powerset-category">
+                <h2>Academic</h2>
+                <div class="powerset-list">
+                    <div class="powerset-item">Culture and History</div>
+                    <div class="powerset-item">Law and Politics</div>
+                    <div class="powerset-item">Linguistics</div>
+                    <div class="powerset-item">Mathematics</div>
+                    <div class="powerset-item">Natural Sciences</div>
+                    <div class="powerset-item">Religion and Magic</div>
+                </div>
+            </div>
+            
+            <!-- Dark Arts -->
+            <div class="powerset-category">
+                <h2>Dark Arts</h2>
+                <div class="powerset-list">
+                    <div class="powerset-item">Curses</div>
+                    <div class="powerset-item">Dark Rituals</div>
+                    <div class="powerset-item">Death Magic</div>
+                    <div class="powerset-item">Demonology</div>
+                    <div class="powerset-item">Forbidden Knowledge</div>
+                    <div class="powerset-item">Necromancy</div>
+                </div>
+            </div>
+            
+            <!-- Blood Magic -->
+            <div class="powerset-category">
+                <h2>Blood Magic</h2>
+                <div class="powerset-list">
+                    <div class="powerset-item">Blood Bonds</div>
+                    <div class="powerset-item">Blood Control</div>
+                    <div class="powerset-item">Blood Sense</div>
+                    <div class="powerset-item">Blood Transfusion</div>
+                    <div class="powerset-item">Crimson Empowerment</div>
+                    <div class="powerset-item">Power Drain</div>
+                </div>
+            </div>
+            
+            <!-- Crafting -->
+            <div class="powerset-category">
+                <h2>Crafting</h2>
+                <div class="powerset-list">
+                    <div class="powerset-item">Alchemy and gastronomy</div>
+                    <div class="powerset-item">Blacksmithing</div>
+                    <div class="powerset-item">Enchantment</div>
+                    <div class="powerset-item">Engineering</div>
+                    <div class="powerset-item">Jewelcrafting</div>
+                    <div class="powerset-item">Tailoring</div>
+                </div>
+            </div>
+            
+            <!-- Arts -->
+            <div class="powerset-category">
+                <h2>Arts</h2>
+                <div class="powerset-list">
+                    <div class="powerset-item">Acting</div>
+                    <div class="powerset-item">Architecture</div>
+                    <div class="powerset-item">Artificing</div>
+                    <div class="powerset-item">Literature</div>
+                    <div class="powerset-item">Music</div>
+                    <div class="powerset-item">Painting</div>
+                </div>
+            </div>
+            
+            <!-- Armor -->
+            <div class="powerset-category">
+                <h2>Armor</h2>
+                <div class="powerset-list">
+                    <div class="powerset-item">Heavy Armor</div>
+                    <div class="powerset-item">Light Armor</div>
+                    <div class="powerset-item">Medium Armor</div>
+                    <div class="powerset-item">Occult Defense</div>
+                    <div class="powerset-item">Shield Mastery</div>
+                    <div class="powerset-item">Unarmored</div>
+                </div>
+            </div>
+            
+            <!-- Elements -->
+            <div class="powerset-category">
+                <h2>Elements</h2>
+                <div class="powerset-list">
+                    <div class="powerset-item">Air</div>
+                    <div class="powerset-item">Earth</div>
+                    <div class="powerset-item">Electricity</div>
+                    <div class="powerset-item">Fire</div>
+                    <div class="powerset-item">Ice</div>
+                    <div class="powerset-item">Light</div>
+                </div>
+            </div>
+            
+            <!-- Magic Schools -->
+            <div class="powerset-category">
+                <h2>Magic Schools</h2>
+                <div class="powerset-list">
+                    <div class="powerset-item">Divination</div>
+                    <div class="powerset-item">Magic of Godstones</div>
+                    <div class="powerset-item">Portal Magic</div>
+                    <div class="powerset-item">Rune Magic</div>
+                    <div class="powerset-item">Soul Manipulation</div>
+                    <div class="powerset-item">Summoning</div>
+                </div>
+            </div>
+            
+            <!-- Weapons -->
+            <div class="powerset-category">
+                <h2>Weapons</h2>
+                <div class="powerset-list">
+                    <div class="powerset-item">Axes</div>
+                    <div class="powerset-item">Blunt</div>
+                    <div class="powerset-item">Daggers</div>
+                    <div class="powerset-item">Hand-To-Hand</div>
+                    <div class="powerset-item">Polearms</div>
+                    <div class="powerset-item">Swords</div>
+                </div>
+            </div>
+            
+            <!-- Mental Powers -->
+            <div class="powerset-category">
+                <h2>Mental Powers</h2>
+                <div class="powerset-list">
+                    <div class="powerset-item">Absorb Knowledge</div>
+                    <div class="powerset-item">Illusion</div>
+                    <div class="powerset-item">Mana Control</div>
+                    <div class="powerset-item">Memory Manipulation</div>
+                    <div class="powerset-item">Mental Fortress</div>
+                    <div class="powerset-item">Telepathy</div>
+                </div>
+            </div>
+            
+            <!-- Mental Attributes -->
+            <div class="powerset-category">
+                <h2>Mental Attributes</h2>
+                <div class="powerset-list">
+                    <div class="powerset-item">Discipline</div>
+                    <div class="powerset-item">Ego</div>
+                    <div class="powerset-item">Empathy</div>
+                    <div class="powerset-item">Intuition</div>
+                    <div class="powerset-item">Logic</div>
+                    <div class="powerset-item">Will</div>
+                </div>
+            </div>
+            
+            <!-- Physical Attributes -->
+            <div class="powerset-category">
+                <h2>Physical Attributes</h2>
+                <div class="powerset-list">
+                    <div class="powerset-item">Agility</div>
+                    <div class="powerset-item">Dexterity</div>
+                    <div class="powerset-item">Endurance</div>
+                    <div class="powerset-item">Resilience</div>
+                    <div class="powerset-item">Speed</div>
+                    <div class="powerset-item">Strength</div>
+                </div>
+            </div>
+            
+            <!-- Ranged Weapons -->
+            <div class="powerset-category">
+                <h2>Ranged Weapons</h2>
+                <div class="powerset-list">
+                    <div class="powerset-item">Bow</div>
+                    <div class="powerset-item">CrossBow</div>
+                    <div class="powerset-item">Fire-Arm Weapon</div>
+                    <div class="powerset-item">Magic Weapon</div>
+                    <div class="powerset-item">Siege Weapon</div>
+                    <div class="powerset-item">Throwing Weapon</div>
+                </div>
+            </div>
+            
+            <!-- Senses -->
+            <div class="powerset-category">
+                <h2>Senses</h2>
+                <div class="powerset-list">
+                    <div class="powerset-item">Foresight</div>
+                    <div class="powerset-item">Hearing</div>
+                    <div class="powerset-item">Memory</div>
+                    <div class="powerset-item">Sight</div>
+                    <div class="powerset-item">Taste and Smell</div>
+                    <div class="powerset-item">Touch</div>
+                </div>
+            </div>
+            
+            <!-- Social -->
+            <div class="powerset-category">
+                <h2>Social</h2>
+                <div class="powerset-list">
+                    <div class="powerset-item">Bluff</div>
+                    <div class="powerset-item">Intimidate</div>
+                    <div class="powerset-item">LeaderShip</div>
+                    <div class="powerset-item">Psychology</div>
+                    <div class="powerset-item">Seduction</div>
+                    <div class="powerset-item">Trade</div>
+                </div>
+            </div>
+            
+            <!-- Survival -->
+            <div class="powerset-category">
+                <h2>Survival</h2>
+                <div class="powerset-list">
+                    <div class="powerset-item">Cooking</div>
+                    <div class="powerset-item">Gathering</div>
+                    <div class="powerset-item">Hunting</div>
+                    <div class="powerset-item">Local Knowledge</div>
+                    <div class="powerset-item">Making Traps</div>
+                    <div class="powerset-item">Navigation</div>
+                </div>
+            </div>
+            
+            <!-- Travel -->
+            <div class="powerset-category">
+                <h2>Travel</h2>
+                <div class="powerset-list">
+                    <div class="powerset-item">Driving</div>
+                    <div class="powerset-item">Ethereal Travel</div>
+                    <div class="powerset-item">Piloting</div>
+                    <div class="powerset-item">Portal Mastery</div>
+                    <div class="powerset-item">Riding</div>
+                    <div class="powerset-item">Sailing</div>
+                </div>
+            </div>
+            
+            <!-- Divine -->
+            <div class="powerset-category">
+                <h2>Divine</h2>
+                <div class="powerset-list">
+                    <div class="powerset-item">Blessing</div>
+                    <div class="powerset-item">Calling</div>
+                    <div class="powerset-item">Purification</div>
+                    <div class="powerset-item">Restoration</div>
+                    <div class="powerset-item">Transmutation</div>
+                    <div class="powerset-item">Weather Control</div>
+                </div>
+            </div>
+            
+            <!-- Power Set Ability -->
+            <div class="powerset-category">
+                <h2>Power Set Ability</h2>
+                <div style="padding: 1rem; background: rgba(10, 10, 10, 0.5); border: 1px solid #00A3E0; border-radius: 5px;">
+                    <p>Select a power set to see abilities</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Анимация частиц (аналогично index.html)
+        document.addEventListener('DOMContentLoaded', () => {
+            const canvas = document.getElementById('particle-canvas');
+            const ctx = canvas.getContext('2d');
+            let particles = [];
+
+            function resizeCanvas() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+            resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
+
+            class Particle {
+                constructor() {
+                    this.x = Math.random() * canvas.width;
+                    this.y = Math.random() * canvas.height;
+                    this.size = Math.random() * 2 + 1;
+                    this.speedX = Math.random() * 0.5 - 0.25;
+                    this.speedY = Math.random() * 0.5 - 0.25;
+                    this.opacity = Math.random() * 0.6 + 0.4;
+                }
+
+                update() {
+                    this.x += this.speedX;
+                    this.y += this.speedY;
+                    if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
+                    if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
+                }
+
+                draw() {
+                    ctx.fillStyle = `rgba(0, 163, 224, ${this.opacity})`;
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+
+            function initParticles() {
+                particles = [];
+                for (let i = 0; i < 50; i++) {
+                    particles.push(new Particle());
+                }
+            }
+
+            function animateParticles() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                particles.forEach(p => {
+                    p.update();
+                    p.draw();
+                });
+                requestAnimationFrame(animateParticles);
+            }
+
+            initParticles();
+            animateParticles();
+            
+            // Обработка выбора Power Set
+            const powerSetItems = document.querySelectorAll('.powerset-item');
+            powerSetItems.forEach(item => {
+                item.addEventListener('click', () => {
+                    powerSetItems.forEach(i => i.style.background = 'rgba(10, 10, 10, 0.5)');
+                    item.style.background = 'rgba(0, 163, 224, 0.3)';
+                    // Здесь можно добавить логику отображения способностей
+                });
+            });
+        });
+    </script>
+</body>
+</html>

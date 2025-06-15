@@ -1,0 +1,55 @@
+.origin-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    margin-top: 1rem;
+}
+
+.origin-row {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.origin-card {
+    width: 180px;
+    height: 250px;
+    position: relative;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.origin-card:hover {
+    transform: scale(1.05);
+}
+
+.origin-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.origin-card .overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.7);
+    padding: 0.5rem;
+    text-align: center;
+    font-family: 'Cinzel', serif;
+}
+
+@media (max-width: 768px) {
+    .origin-row {
+        gap: 0.5rem;
+    }
+    
+    .origin-card {
+        width: 150px;
+        height: 200px;
+    }
+}

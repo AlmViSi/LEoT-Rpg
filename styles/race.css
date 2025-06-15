@@ -1,0 +1,35 @@
+.tab-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 1rem;
+    position: relative;
+    z-index: 10;
+}
+
+.tab {
+    padding: 0.5rem 1rem;
+    background: #1A2639;
+    color: #D9E4DD;
+    border: 1px solid #00A3E0;
+    cursor: pointer;
+    font-family: 'Cinzel', serif;
+    transition: all 0.3s ease;
+}
+
+.tab:first-child {
+    border-radius: 5px 0 0 5px;
+}
+
+.tab:last-child {
+    border-radius: 0 5px 5px 0;
+}
+
+.tab.active {
+    background: #00A3E0;
+    color: #0A0A0A;
+    font-weight: bold;
+}
+
+.tab:hover:not(.active) {
+    background: rgba(0, 163, 224, 0.3);
+}

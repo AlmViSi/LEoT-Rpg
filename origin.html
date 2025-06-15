@@ -3,19 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lost Edge of Time - Character Creator</title>
+    <title>Lost Edge of Time - Origin</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto&family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles/common.css">
-    <link rel="stylesheet" href="styles/index.css">
+    <link rel="stylesheet" href="styles/origin.css">
 </head>
 <body>
     <canvas id="particle-canvas"></canvas>
     <header>
-        <h1>Lost Edge of Time - Character Creator</h1>
+        <h1>Lost Edge of Time - Origin</h1>
     </header>
     
     <div class="tab-container">
-        <a href="index.html" class="tab active">Origin</a>
+        <a href="index.html" class="tab">Origin</a>
         <a href="race.html" class="tab">Race</a>
         <a href="traits.html" class="tab">Traits</a>
         <a href="powersets.html" class="tab">Power Sets</a>
@@ -23,13 +23,19 @@
     </div>
     
     <div class="main-container">
-        <div id="error-message" class="error-message">
-            Ошибка загрузки данных. Проверьте origins.json или наличие изображений в папке images/origins.
+        <div id="selected-view" class="selected-view">
+            <div id="selected-card" class="selected-card"></div>
+            <div class="description">
+                <h2 id="origin-title">Выберите Origin</h2>
+                <p id="origin-description">Выберите Origin, чтобы узнать его историю и способности.</p>
+                <div id="scroll-container" class="scroll-container"></div>
+            </div>
         </div>
-        <div id="origin-grid" class="origin-grid"></div>
     </div>
+    
+    <button id="reset-button" class="reset-button">Вернуться</button>
 
     <script src="scripts/particles.js"></script>
-    <script src="scripts/index.js"></script>
+    <script src="scripts/origin.js"></script>
 </body>
 </html>
