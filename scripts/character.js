@@ -137,7 +137,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
     }
 
-    function loadCharacter() {
+   function loadCharacter() {
         // Проверка инициализации базы данных
         if (!database) {
             console.error("Firebase database is not initialized. Cannot load character.");
@@ -153,7 +153,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // Получаем значение из поля ввода, преобразуем в строку и обрезаем пробелы
-        const charUID = String(loadUidInput.value || '').trim();
+        const charUID = String(loadUidInput.value || '');
 
         if (!charUID) {
             alert('Пожалуйста, введите UID персонажа для загрузки!');
@@ -196,6 +196,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 alert(`Ошибка при загрузке персонажа: ${error.message}. Проверьте правила доступа Firebase.`);
             });
     }
+
     
     function resetCharacter() {
         if (!confirm('Вы уверены, что хотите очистить все данные персонажа?')) return;
