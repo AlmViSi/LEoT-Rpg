@@ -137,66 +137,79 @@ document.addEventListener('DOMContentLoaded', () => {
             });
     }
 
-   function loadCharacter() {
-        // Проверка инициализации базы данных
-        if (!database) {
-            console.error("Firebase database is not initialized. Cannot load character.");
-            alert('Ошибка: База данных не готова. Попробуйте обновить страницу.');
-            return;
+async function loadCharacter() {
+    try {
+        // 1. Проверка инициализации Firebase
+        if (!firebase.apps.length || !database) {
+            throw new Error("База данных Firebase не инициализирована");
         }
 
-        // Убеждаемся, что loadUidInput существует и получаем его значение безопасно
+        // 2. Безопасное получение элемента ввода
+        const loadUidInput = document.getElementById('load-uid-input');
         if (!loadUidInput) {
-            console.error("Элемент с ID 'load-uid-input' не найден.");
-            alert('Ошибка: Поле для загрузки персонажа не найдено. Проверьте HTML.');
-            return;
+            throw new Error("Элемент для ввода UID не найден");
         }
 
-        // Получаем значение из поля ввода, преобразуем в строку и обрезаем пробелы
-        const charUID = String(loadUidInput.value || '');
+        // 3. Получение и валидация UID
+        const charUID = typeof loadUidInput.value === 'string' 
+            ? loadUidInput.value.trim() 
+            : String(loadUidInput.value || '').trim();
 
         if (!charUID) {
-            alert('Пожалуйста, введите UID персонажа для загрузки!');
+            alert('Пожалуйста, введите UID персонажа');
             return;
         }
 
-        database.ref('characters/' + charUID).once('value')
-            .then(snapshot => {
-                const characterData = snapshot.val();
-                if (!characterData) {
-                    alert('Персонаж не найден!');
-                    return;
-                }
+        // 4. Проверка необходимых DOM-элементов
+        const elements = {
+            nameInput: document.getElementById('character-name-input'),
+            bioInput: document.getElementById('character-bio-input'),
+            uidDisplay: document.getElementById('character-uid-display'),
+            portrait: document.getElementById('portrait-container'),
+            statsContainer: document.getElementById('stats-container')
+        };
 
-                // Восстанавливаем данные
-                characterNameInput.value = characterData.name || '';
-                characterBioInput.value = characterData.bio || '';
-                characterUidDisplay.value = charUID;
+        for (const [name, element] of Object.entries(elements)) {
+            if (!element) throw new Error(`Не найден элемент: ${name}`);
+        }
 
-                // Восстанавливаем характеристики
-                // Используем Object.keys(characterData.stats || {}) для безопасности
-                Object.keys(characterData.stats || {}).forEach(stat => {
-                    stats[stat] = characterData.stats[stat];
-                });
-                // Пересчитываем pointsLeft на основе загруженных статов
-                pointsLeft = 36 - Object.values(stats).reduce((a, b) => a + b, 0);
-                
-                // Восстанавливаем портрет
-                if (characterData.portrait) {
-                    portraitContainer.innerHTML = `<img src="${characterData.portrait}" alt="Character Portrait">`;
-                } else {
-                    portraitContainer.innerHTML = '<span>Нажмите, чтобы загрузить портрет</span>'; // Очищаем, если нет портрета
+        // 5. Загрузка данных из Firebase
+        const snapshot = await database.ref(`characters/${charUID}`).once('value');
+        
+        if (!snapshot.exists()) {
+            alert('Персонаж с таким UID не найден');
+            return;
+        }
+
+        const characterData = snapshot.val();
+
+        // 6. Восстановление данных персонажа
+        elements.nameInput.value = characterData.name || '';
+        elements.bioInput.value = characterData.bio || '';
+        elements.uidDisplay.value = charUID;
+
+        // 7. Восстановление характеристик
+        if (characterData.stats) {
+            for (const [stat, value] of Object.entries(characterData.stats)) {
+                if (stats.hasOwnProperty(stat)) {
+                    stats[stat] = Number(value) || 0;
                 }
-                
-                updateStats();
-                alert('Персонаж успешно загружен!');
-            })
-            .catch(error => {
-                console.error('Ошибка при загрузке персонажа:', error);
-                alert(`Ошибка при загрузке персонажа: ${error.message}. Проверьте правила доступа Firebase.`);
-            });
+            }
+            updateStats(); // Обновляем отображение характеристик
+        }
+
+        // 8. Восстановление портрета
+        elements.portrait.innerHTML = characterData.portrait
+            ? `<img src="${characterData.portrait}" alt="Портрет" class="portrait-img">`
+            : '<div class="no-portrait">Нет портрета</div>';
+
+        alert('Персонаж успешно загружен!');
+        
+    } catch (error) {
+        console.error('Ошибка загрузки персонажа:', error);
+        alert(`Ошибка: ${error.message}`);
     }
-
+}
     
     function resetCharacter() {
         if (!confirm('Вы уверены, что хотите очистить все данные персонажа?')) return;
