@@ -148,7 +148,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     function loadCharacter(uid) {
-        if (!uid.trim()) {
+	const charUID = loadUidInput.value ? String(loadUidInput.value).trim() : ''; 
+       	 if (!uid.trim()) {
             alert('Please enter a UID to load');
             return;
         }
