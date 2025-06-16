@@ -201,7 +201,7 @@ async function loadAndSyncAllPowerSets() {
         } else {
             // Если в Firebase пусто, загружаем из JSON
             console.log("No Power Sets in Firebase. Loading from powersets.json...");
-            const response = await fetch('data/powersets.json');
+            const response = await fetch('powersets.json');
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
@@ -215,7 +215,7 @@ async function loadAndSyncAllPowerSets() {
         console.error(texts[currentLanguage].errorLoading, error);
         // Если что-то пошло не так, попробуйте загрузить только из JSON
         try {
-            const response = await fetch('data/powersets.json');
+            const response = await fetch('powersets.json');
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
@@ -331,7 +331,9 @@ function updateSpellList() {
 
 function updateAutocomplete() {
     const filterNameInput = document.getElementById('filter-name');
+    if (!input) return;
     const autocompleteList = document.getElementById('autocomplete-list');
+    const value = input.value.toLowerCase();
     const searchTerm = filterNameInput.value.toLowerCase();
     autocompleteList.innerHTML = '';
 
@@ -457,8 +459,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     if (allSpells.length === 0) {
         try {
-            const response = await fetch('data/powersets.json');
-            if (!response.pk) throw new Error ('HTTP error! status: ${response.status}');
+            const response = await fetch('powersets.json');
+            if (!response.ok) throw new Error ('HTTP error! status: ${response.status}');
             const data = await responce.json();
 
             const spellsRef = database.ref(SPELLS_DB_PATH);
