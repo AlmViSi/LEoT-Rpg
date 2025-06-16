@@ -448,7 +448,9 @@ function showTab(tabId) {
 
 // --- Инициализация при загрузке DOM ---
 document.addEventListener('DOMContentLoaded', async () => {
-    applyTexts(); // Применяем тексты сразу
+      if (document.getElementById('powersets-title')) {
+        applyTexts();
+    }
 
     // Загрузка всех Power Sets (из Firebase или JSON)
     allSpells = await loadAllSpellsFromFirebase();
