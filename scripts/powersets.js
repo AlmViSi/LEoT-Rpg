@@ -59,7 +59,7 @@ async function deleteSpellFromFirebase(spellId){
 let allSpells = []; // Все заклинания из JSON
 let currentCharacterId = 'testCharacter1'; // TODO: Замените на реальный ID персонажа (например, из localStorage или URL)
 let currentManagedSpells = {}; // Объект для управления выбранными заклинаниями
-let currentLanguage = localStorage.getItem('language') || 'en'; // Язык по умолчанию
+// let currentLanguage = localStorage.getItem('language') || 'en'; // Язык по умолчанию
 
 // --- Тексты для локализации ---
 const texts = {
