@@ -1,4 +1,60 @@
 const database = window.database;
+const SPELLS_DB_PATH = 'spells';
+
+//@param{Object} spellData
+//@param {string} [spellId]
+//@returns {Promise<string>}
+
+async function saveSpellToFirebase(spellData, spellId = null) {
+    try {
+        const spellsRef =database.ref(SPELLS_DB_PATH);
+        let spellRef;
+
+        if (spellId) {
+            spellRef = spellsRef.child(spellId);
+            await spellRef.update(spellData);
+            console.log(texts[currentLanguage].powersetsSaved);
+            return spellId;
+        } else {
+            spellRef =spellsRef.push();
+            await spellRef.set(spellData);
+            console.log(texts[currentLanguage].spellAdded);
+            return spellRef.key;
+        }
+    } catch (error) {
+        console.error(text[currentLanguage].errorSaving, error);
+        throw error;
+    }
+}
+
+//@returns {Promise<Array>}
+
+async function loadAllSpellsFromFirebase(){
+    try {
+        const snapshot = await database.ref(SPELLS_DB_PATH).once('value');
+        const spells = snapshot.val();
+
+        if (!spells) return  [];
+
+        return Object.entries(spells).map(([id, data]) => ({ id, ...data }));  
+    } catch (error) {
+        console.error(texts[currentLanguage].errorLoading, error);
+        return [];
+    } 
+}
+
+//@param {string} spellId
+//@returns {Promise<void>}
+
+async function deleteSpellFromFirebase(spellId){
+    try {
+        await database.ref('${SPELLS_DB_PATH}/${spellId}}').remove();
+        console.log (texts[currentLanguage].spellRemoved);
+    } catch (error) {
+        console.error(texts[currentLanguage].errorSaving, error);
+        throw error;
+    }
+}
 
 let allSpells = []; // Все заклинания из JSON
 let currentCharacterId = 'testCharacter1'; // TODO: Замените на реальный ID персонажа (например, из localStorage или URL)
@@ -83,12 +139,7 @@ function applyTexts() {
     }
 }
 
-// --- Функции Firebase ---
 
-/**
- * Сохраняет выбранные Power Sets для текущего персонажа в Firebase.
- * @param {Object} managedSpells Объект с выбранными заклинаниями.
- */
 async function saveCharacterPowerSets(managedSpells) {
     if (!currentCharacterId) {
         console.warn("Character ID not set. Cannot save Power Sets.");
