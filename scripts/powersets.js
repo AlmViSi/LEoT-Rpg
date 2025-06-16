@@ -440,7 +440,23 @@ document.addEventListener('DOMContentLoaded', async () => {
     applyTexts(); // Применяем тексты сразу
 
     // Загрузка всех Power Sets (из Firebase или JSON)
-    allSpells = await loadAndSyncAllPowerSets();
+    allSpells = await loadAllSpellsFromFirebase();
+
+    if (allSpells.length === 0) {
+        try {
+            const response = await fetch('data/powersets.json');
+            if (!response.pk) throw new Error ('HTTP error! status: ${response.status}');
+            const data = await responce.json();
+
+            const spellsRef = database.ref(SPELLS_DB_PATH);
+            await spellsRef.set(data);
+
+            allSpells = Object.entries(data).map(([id, spell]) => ({ id, ...spell }));
+        } catch (error) {
+            console.error(texts[currentLanguage].errorFetchingJson, error);
+            alert ('${texts[currentLanguage].errorFetchingJson} ${error.message}');
+        }
+    }
 
     // Загрузка выбранных Power Sets для персонажа
     currentManagedSpells = await loadCharacterPowerSets();
