@@ -556,42 +556,43 @@ function updateSpellList() {
 }
 
 function updateAutocomplete() {
-  const input = getElement('filter-name');
-  if (!input) return;
+    const input = document.getElementById('filter-name');
+    if (!input) return;
 
-  const autocompleteList = getElement('autocomplete-list');
-  if (!autocompleteList) return;
+    const autocompleteList = document.getElementById('autocomplete-list'); // <-- Убедитесь, что объявлена один раз
+    if (!autocompleteList) return;
 
-  const value = input.value.toLowerCase();
-    const autocompleteList = document.getElementById('autocomplete-list');
-    const searchTerm = filterNameInput.value.toLowerCase();
+    const value = input.value.toLowerCase();
     autocompleteList.innerHTML = '';
 
-    if (searchTerm.length === 0) {
+    if (value.length === 0) {
         autocompleteList.style.display = 'none';
         return;
     }
 
     const suggestions = allSpells
-        .filter(spell => spell.Name && spell.Name[currentLanguage] && spell.Name[currentLanguage].toLowerCase().includes(searchTerm))
+        .filter(spell => spell.Name && spell.Name[currentLanguage] && 
+               spell.Name[currentLanguage].toLowerCase().includes(value))
         .map(spell => spell.Name[currentLanguage]);
 
-    const uniqueSuggestions = [...new Set(suggestions)]; // Ensure unique suggestions
+    const uniqueSuggestions = [...new Set(suggestions)].slice(0, 10);
 
-    uniqueSuggestions.slice(0, 10).forEach(suggestion => { // Limit to 10 suggestions
-        const div = document.createElement('div');
-        div.textContent = suggestion;
-        div.addEventListener('click', () => {
-            filterNameInput.value = suggestion;
-            autocompleteList.style.display = 'none';
-            updateSpellList();
+    if (uniqueSuggestions.length > 0) {
+        uniqueSuggestions.forEach(suggestion => {
+            const div = document.createElement('div');
+            div.textContent = suggestion;
+            div.addEventListener('click', () => {
+                input.value = suggestion;
+                autocompleteList.style.display = 'none';
+                updateSpellList();
+            });
+            autocompleteList.appendChild(div);
         });
-        autocompleteList.appendChild(div);
-    });
-
-    autocompleteList.style.display = uniqueSuggestions.length > 0 ? 'block' : 'none';
+        autocompleteList.style.display = 'block';
+    } else {
+        autocompleteList.style.display = 'none';
+    }
 }
-
 
 function attachAddSpellListeners() {
     document.querySelectorAll('.add-spell-button').forEach(button => {
