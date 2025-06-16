@@ -1,7 +1,3 @@
-// scripts/character.js
-
-// Получаем глобально доступный экземпляр базы данных, который был установлен в firebase-init.js
-// ЭТА СТРОКА ДОЛЖНА БЫТЬ В НАЧАЛЕ ФАЙЛА
 const database = window.database; 
 
 document.addEventListener('DOMContentLoaded', () => {
