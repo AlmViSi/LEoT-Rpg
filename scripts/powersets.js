@@ -1,62 +1,9 @@
 const database = window.database;
-const SPELLS_DB_PATH = 'spells';
-
-//@param{Object} spellData
-//@param {string} [spellId]
-//@returns {Promise<string>}
-
-async function saveSpellToFirebase(spellData, spellId = null) {
-    try {
-        const spellsRef =database.ref(SPELLS_DB_PATH);
-        let spellRef;
-
-        if (spellId) {
-            spellRef = spellsRef.child(spellId);
-            await spellRef.update(spellData);
-            console.log(texts[currentLanguage].powersetsSaved);
-            return spellId;
-        } else {
-            spellRef =spellsRef.push();
-            await spellRef.set(spellData);
-            console.log(texts[currentLanguage].spellAdded);
-            return spellRef.key;
-        }
-    } catch (error) {
-        console.error(text[currentLanguage].errorSaving, error);
-        throw error;
-    }
-}
-
-//@returns {Promise<Array>}
-
-async function loadAllSpellsFromFirebase() {
-  try {
-    const snapshot = await database.ref(SPELLS_DB_PATH).once('value');
-    return snapshot.val() || [];
-  } catch (error) {
-    console.error("Ошибка загрузки из Firebase:", error);
-    return [];
-  }
-}
-
-
-//@param {string} spellId
-//@returns {Promise<void>}
-
-async function deleteSpellFromFirebase(spellId){
-    try {
-        await database.ref('${SPELLS_DB_PATH}/${spellId}}').remove();
-        console.log (texts[currentLanguage].spellRemoved);
-    } catch (error) {
-        console.error(texts[currentLanguage].errorSaving, error);
-        throw error;
-    }
-}
 
 let allSpells = []; // Все заклинания из JSON
 let currentCharacterId = 'testCharacter1'; // TODO: Замените на реальный ID персонажа (например, из localStorage или URL)
 let currentManagedSpells = {}; // Объект для управления выбранными заклинаниями
-// let currentLanguage = localStorage.getItem('language') || 'en'; // Язык по умолчанию
+let currentLanguage = localStorage.getItem('language') || 'en'; // Язык по умолчанию
 
 // --- Тексты для локализации ---
 const texts = {
@@ -114,40 +61,34 @@ function switchLanguage(lang) {
 }
 
 function applyTexts() {
-    const elements = {
-        'title': texts[currentLanguage].title,
-        'powersets-title': texts[currentLanguage].powersetsTitle,
-        'managed-spells-title': texts[currentLanguage].managedSpellsTitle,
-        'add-to-character-button': texts[currentLanguage].addToCharacterButton,
-        'save-character-powersets': texts[currentLanguage].saveCharacterPowersetsButton
-    };
-
-    for (const [id, text] of Object.entries(elements)) {
-        const element = document.getElementById(id);
-        if (element) {
-            element.textContent = text;
-        }
+    document.getElementById('title').textContent = texts[currentLanguage].title;
+    document.getElementById('powersets-title').textContent = texts[currentLanguage].powersetsTitle;
+    document.getElementById('managed-spells-title').textContent = texts[currentLanguage].managedSpellsTitle;
+    document.getElementById('filter-name').placeholder = texts[currentLanguage].filterNamePlaceholder;
+    document.getElementById('add-to-character-button').textContent = texts[currentLanguage].addToCharacterButton;
+    document.getElementById('save-character-powersets').textContent = texts[currentLanguage].saveCharacterPowersetsButton;
+    
+    // Обновить тексты в выпадающих списках, если они уже заполнены
+    const filterPowerSet = document.getElementById('filter-power-set');
+    if (filterPowerSet.options[0]) {
+        filterPowerSet.options[0].textContent = texts[currentLanguage].filterPowerSetDefault;
     }
-
-    const filterName = document.getElementById('filter-name');
-    if (filterName) {
-        filterName.placeholder = texts[currentLanguage].filterNamePlaceholder;
+    const filterPowerSetTree = document.getElementById('filter-power-set-tree');
+    if (filterPowerSetTree.options[0]) {
+        filterPowerSetTree.options[0].textContent = texts[currentLanguage].filterPowerSetTreeDefault;
     }
-
-    // Update dropdown default texts if they exist
-    const updateDropdownText = (id, text) => {
-        const dropdown = document.getElementById(id);
-        if (dropdown && dropdown.options[0]) {
-            dropdown.options[0].textContent = text;
-        }
-    };
-
-    updateDropdownText('filter-power-set', texts[currentLanguage].filterPowerSetDefault);
-    updateDropdownText('filter-power-set-tree', texts[currentLanguage].filterPowerSetTreeDefault);
-    updateDropdownText('filter-type', texts[currentLanguage].filterTypeDefault);
+    const filterType = document.getElementById('filter-type');
+    if (filterType.options[0]) {
+        filterType.options[0].textContent = texts[currentLanguage].filterTypeDefault;
+    }
 }
 
+// --- Функции Firebase ---
 
+/**
+ * Сохраняет выбранные Power Sets для текущего персонажа в Firebase.
+ * @param {Object} managedSpells Объект с выбранными заклинаниями.
+ */
 async function saveCharacterPowerSets(managedSpells) {
     if (!currentCharacterId) {
         console.warn("Character ID not set. Cannot save Power Sets.");
@@ -186,314 +127,85 @@ async function loadCharacterPowerSets() {
  * @returns {Promise<Array>} Promise, который разрешается массивом всех заклинаний.
  */
 async function loadAndSyncAllPowerSets() {
-  try {
-    // Сначала пробуем загрузить из Firebase
-    const snapshot = await database.ref('powersets').once('value');
-    const firebasePowerSets = snapshot.val();
+    try {
+        // Попытка загрузить из Firebase сначала
+        const snapshot = await database.ref('powersets').once('value');
+        const firebasePowerSets = snapshot.val();
 
-    if (firebasePowerSets) {
-      console.log("Данные загружены из Firebase");
-      return Object.values(firebasePowerSets);
+        if (firebasePowerSets) {
+            console.log("Loaded Power Sets from Firebase.");
+            // Преобразуем объект в массив, если он объект
+            return Object.values(firebasePowerSets);
+        } else {
+            // Если в Firebase пусто, загружаем из JSON
+            console.log("No Power Sets in Firebase. Loading from powersets.json...");
+            const response = await fetch('data/powersets.json');
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const data = await response.json();
+            // Сохраняем в Firebase
+            await database.ref('powersets').set(data);
+            console.log("Power Sets synced to Firebase from JSON.");
+            return data;
+        }
+    } catch (error) {
+        console.error(texts[currentLanguage].errorLoading, error);
+        // Если что-то пошло не так, попробуйте загрузить только из JSON
+        try {
+            const response = await fetch('data/powersets.json');
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const data = await response.json();
+            console.warn("Falling back to loading from powersets.json due to Firebase error.");
+            return data;
+        } catch (jsonError) {
+            console.error(texts[currentLanguage].errorFetchingJson, jsonError);
+            alert(`${texts[currentLanguage].errorFetchingJson} ${jsonError.message}`);
+            return [];
+        }
     }
-
-    // Если в Firebase нет данных, пробуем загрузить из JSON
-    console.log("Загрузка из powersets.json...");
-    const response = await fetch('data/powersets.json');
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    const data = await response.json();
-    
-    // Сохраняем в Firebase для будущих использований
-    await database.ref('powersets').set(data);
-    return data;
-    
-  } catch (error) {
-    console.error("Ошибка загрузки:", error);
-    return []; // Возвращаем пустой массив при ошибке
-  }
 }
+
 // --- Функции UI и фильтрации ---
 
 function populateDropdowns() {
-  try {
-    // 1. Получаем элементы с проверкой их существования
     const powerSetDropdown = document.getElementById('filter-power-set');
     const typeDropdown = document.getElementById('filter-type');
-    const spellTypeContainer = document.getElementById('spell-type-container');
-    const powerSetContainer = document.getElementById('power-set-container');
-    const powerSetTreeContainer = document.getElementById('power-set-tree-container');
 
-    // Проверяем существование всех необходимых элементов
-    if (!powerSetDropdown || !typeDropdown || !spellTypeContainer || 
-        !powerSetContainer || !powerSetTreeContainer) {
-      throw new Error('Один или несколько необходимых DOM-элементов не найдены');
-    }
+    // Очистить текущие опции
+    powerSetDropdown.innerHTML = `<option value="">${texts[currentLanguage].filterPowerSetDefault}</option>`;
+    typeDropdown.innerHTML = `<option value="">${texts[currentLanguage].filterTypeDefault}</option>`;
 
-    // 2. Очищаем dropdowns
-    powerSetDropdown.innerHTML = '';
-    typeDropdown.innerHTML = '';
-
-    // 3. Добавляем дефолтные опции
-    const addDefaultOption = (select, text) => {
-      const option = document.createElement('option');
-      option.value = '';
-      option.textContent = text;
-      select.appendChild(option);
-    };
-
-    addDefaultOption(powerSetDropdown, texts[currentLanguage].filterPowerSetDefault);
-    addDefaultOption(typeDropdown, texts[currentLanguage].filterTypeDefault);
-
-    // 4. Собираем уникальные значения для dropdowns
     const powerSets = new Set();
     const types = new Set();
 
     allSpells.forEach(spell => {
-      if (spell["Power Set"] && spell["Power Set"][currentLanguage]) {
-        powerSets.add(spell["Power Set"][currentLanguage]);
-      }
-      if (spell.Type && spell.Type[currentLanguage]) {
-        types.add(spell.Type[currentLanguage]);
-      }
+        if (spell["Power Set"] && spell["Power Set"][currentLanguage]) {
+            powerSets.add(spell["Power Set"][currentLanguage]);
+        }
+        if (spell.Type && spell.Type[currentLanguage]) {
+            types.add(spell.Type[currentLanguage]);
+        }
     });
 
-    // 5. Заполняем dropdown для Power Sets
     Array.from(powerSets).sort().forEach(ps => {
-      const option = document.createElement('option');
-      option.value = ps;
-      option.textContent = ps;
-      powerSetDropdown.appendChild(option);
+        const option = document.createElement('option');
+        option.value = ps;
+        option.textContent = ps;
+        powerSetDropdown.appendChild(option);
     });
 
-    // 6. Заполняем dropdown для Types
     Array.from(types).sort().forEach(type => {
-      const option = document.createElement('option');
-      option.value = type;
-      option.textContent = type;
-      typeDropdown.appendChild(option);
+        const option = document.createElement('option');
+        option.value = type;
+        option.textContent = type;
+        typeDropdown.appendChild(option);
     });
 
-    // 7. Заполняем контейнеры для формы создания
-    fillDynamicContainer(spellTypeContainer, 'type', lists.type || []);
-    fillDynamicContainer(powerSetContainer, 'power-set', Object.keys(lists.powerSets || {}));
-    
-    // Получаем первый power set для заполнения power set tree
-    const firstPowerSet = Object.keys(lists.powerSets || {})[0] || '';
-    const powerSetTreeList = lists.powerSets?.[firstPowerSet] || [];
-    fillDynamicContainer(powerSetTreeContainer, 'power-set-tree', powerSetTreeList);
-
-    // 8. Обновляем зависимые dropdowns
+    // После заполнения, обновим дерево Power Set Tree
     updateFilterPowerSetTree();
-
-  } catch (error) {
-    console.error('Ошибка в populateDropdowns:', error);
-    // Можно добавить отображение ошибки пользователю
-    if (typeof showError === 'function') {
-      showError(texts[currentLanguage].errorLoading);
-    }
-  }
-}
-
-function fillDynamicContainer(container, fieldName, options) {
-  if (!container) return;
-  
-  container.innerHTML = '';
-  
-  const div = document.createElement('div');
-  div.className = 'dynamic-input-group';
-  
-  const select = document.createElement('select');
-  select.id = `${fieldName}-0`;
-  
-  // Добавляем дефолтную опцию
-  const defaultOption = document.createElement('option');
-  defaultOption.value = '';
-  defaultOption.textContent = '-- Select --';
-  select.appendChild(defaultOption);
-  
-  // Добавляем остальные опции
-  options.forEach(option => {
-    const optElement = document.createElement('option');
-    optElement.value = option;
-    optElement.textContent = option;
-    select.appendChild(optElement);
-  });
-  
-  // Добавляем кнопку добавления
-  const addButton = document.createElement('button');
-  addButton.type = 'button';
-  addButton.textContent = '+';
-  addButton.onclick = () => addDynamicInput(container, fieldName);
-  
-  div.appendChild(select);
-  div.appendChild(addButton);
-  container.appendChild(div);
-}
-
-function addDynamicInput(container, fieldName) {
-    try {
-        // 1. Проверяем входные параметры
-        if (!container || !fieldName) {
-            throw new Error('Не указан контейнер или имя поля');
-        }
-
-        // 2. Определяем текущий индекс (количество существующих инпутов + 1)
-        const currentIndex = container.querySelectorAll('.dynamic-input-group').length;
-        const newId = `${fieldName}-${currentIndex}`;
-
-        // 3. Создаем новую группу элементов
-        const groupDiv = document.createElement('div');
-        groupDiv.className = 'dynamic-input-group';
-
-        // 4. Создаем элемент ввода (select или input)
-        let inputElement;
-        const isSelectField = [
-            'spell-type', 'power-set', 'power-set-tree', 
-            'action', 'target', 'range', 'duration',
-            'cooldown', 'cost', 'defense', 'attack'
-        ].includes(fieldName);
-
-        if (isSelectField) {
-            inputElement = document.createElement('select');
-            inputElement.id = newId;
-
-            // Добавляем дефолтную пустую опцию
-            const defaultOption = document.createElement('option');
-            defaultOption.value = '';
-            defaultOption.textContent = '-- Select --';
-            inputElement.appendChild(defaultOption);
-
-            // Заполняем опции в зависимости от типа поля
-            let options = [];
-            if (fieldName === 'power-set') {
-                options = Object.keys(lists.powerSets || {});
-            } else if (fieldName === 'power-set-tree') {
-                // Получаем выбранный power-set для определения доступных деревьев
-                const powerSetSelect = container.previousElementSibling?.querySelector('select');
-                const selectedPowerSet = powerSetSelect?.value || Object.keys(lists.powerSets || {})[0] || '';
-                options = lists.powerSets?.[selectedPowerSet] || [];
-            } else {
-                options = lists[fieldName] || [];
-            }
-
-            // Добавляем опции
-            options.forEach(option => {
-                const optionElement = document.createElement('option');
-                optionElement.value = option;
-                optionElement.textContent = option;
-                inputElement.appendChild(optionElement);
-            });
-
-            // Особый обработчик для power-set
-            if (fieldName === 'power-set') {
-                inputElement.addEventListener('change', function() {
-                    // Находим соответствующий контейнер power-set-tree
-                    const treeContainer = container.closest('.tab-content')
-                        .querySelector('#power-set-tree-container');
-                    
-                    if (treeContainer) {
-                        const selectedPowerSet = this.value;
-                        const treeOptions = lists.powerSets?.[selectedPowerSet] || [];
-                        
-                        // Очищаем и перезаполняем контейнер
-                        treeContainer.innerHTML = '';
-                        fillDynamicContainer(treeContainer, 'power-set-tree', treeOptions);
-                    }
-                });
-            }
-        } else {
-            inputElement = document.createElement('input');
-            inputElement.type = 'text';
-            inputElement.id = newId;
-            inputElement.placeholder = texts[currentLanguage][`placeholder_${fieldName}`] || '';
-        }
-
-        // 5. Создаем кнопку удаления
-        const removeButton = document.createElement('button');
-        removeButton.type = 'button';
-        removeButton.textContent = '-';
-        removeButton.className = 'remove-btn';
-        removeButton.onclick = function() {
-            // Анимация удаления
-            groupDiv.style.transform = 'translateX(-100%)';
-            groupDiv.style.opacity = '0';
-            
-            setTimeout(() => {
-                container.removeChild(groupDiv);
-                
-                // Обновляем индексы оставшихся элементов
-                const remainingGroups = container.querySelectorAll('.dynamic-input-group');
-                remainingGroups.forEach((group, index) => {
-                    const input = group.querySelector('select, input');
-                    if (input) {
-                        input.id = `${fieldName}-${index}`;
-                    }
-                });
-                
-                // Если удалили последний элемент, делаем кнопку добавления у предыдущего
-                if (remainingGroups.length > 0) {
-                    const lastGroup = remainingGroups[remainingGroups.length - 1];
-                    const lastButton = lastGroup.querySelector('button');
-                    if (lastButton) {
-                        lastButton.textContent = '+';
-                        lastButton.onclick = function() {
-                            addDynamicInput(container, fieldName);
-                        };
-                        lastButton.className = 'add-btn';
-                    }
-                }
-            }, 300);
-        };
-
-        // 6. Собираем группу
-        groupDiv.appendChild(inputElement);
-        groupDiv.appendChild(removeButton);
-
-        // 7. Модифицируем предыдущую кнопку (меняем "+" на "-")
-        const prevGroups = container.querySelectorAll('.dynamic-input-group');
-        if (prevGroups.length > 0) {
-            const lastGroup = prevGroups[prevGroups.length - 1];
-            const prevButton = lastGroup.querySelector('button');
-            if (prevButton) {
-                prevButton.textContent = '-';
-                prevButton.onclick = function() {
-                    container.removeChild(lastGroup);
-                    
-                    // Обновляем индексы
-                    const remainingGroups = container.querySelectorAll('.dynamic-input-group');
-                    remainingGroups.forEach((group, index) => {
-                        const input = group.querySelector('select, input');
-                        if (input) {
-                            input.id = `${fieldName}-${index}`;
-                        }
-                    });
-                };
-                prevButton.className = 'remove-btn';
-            }
-        }
-
-        // 8. Добавляем новую группу в контейнер
-        container.appendChild(groupDiv);
-
-        // 9. Прокручиваем к новому элементу
-        groupDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-
-    } catch (error) {
-        console.error(`Ошибка при добавлении динамического поля ${fieldName}:`, error);
-        // Можно добавить уведомление для пользователя
-        if (typeof showError === 'function') {
-            showError(texts[currentLanguage].errorAddingField);
-        }
-    }
-}
-
-
-
-function getElement(id) {
-  const el = document.getElementById(id);
-  if (!el) console.error(`Элемент ${id} не найден`);
-  return el;
 }
 
 function updateFilterPowerSetTree() {
@@ -556,43 +268,36 @@ function updateSpellList() {
 }
 
 function updateAutocomplete() {
-    const input = document.getElementById('filter-name');
-    if (!input) return;
-
-    const autocompleteList = document.getElementById('autocomplete-list'); // <-- Убедитесь, что объявлена один раз
-    if (!autocompleteList) return;
-
-    const value = input.value.toLowerCase();
+    const filterNameInput = document.getElementById('filter-name');
+    const autocompleteList = document.getElementById('autocomplete-list');
+    const searchTerm = filterNameInput.value.toLowerCase();
     autocompleteList.innerHTML = '';
 
-    if (value.length === 0) {
+    if (searchTerm.length === 0) {
         autocompleteList.style.display = 'none';
         return;
     }
 
     const suggestions = allSpells
-        .filter(spell => spell.Name && spell.Name[currentLanguage] && 
-               spell.Name[currentLanguage].toLowerCase().includes(value))
+        .filter(spell => spell.Name && spell.Name[currentLanguage] && spell.Name[currentLanguage].toLowerCase().includes(searchTerm))
         .map(spell => spell.Name[currentLanguage]);
 
-    const uniqueSuggestions = [...new Set(suggestions)].slice(0, 10);
+    const uniqueSuggestions = [...new Set(suggestions)]; // Ensure unique suggestions
 
-    if (uniqueSuggestions.length > 0) {
-        uniqueSuggestions.forEach(suggestion => {
-            const div = document.createElement('div');
-            div.textContent = suggestion;
-            div.addEventListener('click', () => {
-                input.value = suggestion;
-                autocompleteList.style.display = 'none';
-                updateSpellList();
-            });
-            autocompleteList.appendChild(div);
+    uniqueSuggestions.slice(0, 10).forEach(suggestion => { // Limit to 10 suggestions
+        const div = document.createElement('div');
+        div.textContent = suggestion;
+        div.addEventListener('click', () => {
+            filterNameInput.value = suggestion;
+            autocompleteList.style.display = 'none';
+            updateSpellList();
         });
-        autocompleteList.style.display = 'block';
-    } else {
-        autocompleteList.style.display = 'none';
-    }
+        autocompleteList.appendChild(div);
+    });
+
+    autocompleteList.style.display = uniqueSuggestions.length > 0 ? 'block' : 'none';
 }
+
 
 function attachAddSpellListeners() {
     document.querySelectorAll('.add-spell-button').forEach(button => {
@@ -681,28 +386,10 @@ function showTab(tabId) {
 
 // --- Инициализация при загрузке DOM ---
 document.addEventListener('DOMContentLoaded', async () => {
-      if (document.getElementById('powersets-title')) {
-        applyTexts();
-    }
+    applyTexts(); // Применяем тексты сразу
 
     // Загрузка всех Power Sets (из Firebase или JSON)
-    allSpells = await loadAllSpellsFromFirebase();
-
-    if (allSpells.length === 0) {
-        try {
-            const response = await fetch('powersets.json');
-            if (!response.ok) throw new Error ('HTTP error! status: ${response.status}');
-            const data = await response.json();
-
-            const spellsRef = database.ref(SPELLS_DB_PATH);
-            await spellsRef.set(data);
-
-            allSpells = Object.entries(data).map(([id, spell]) => ({ id, ...spell }));
-        } catch (error) {
-            console.error(texts[currentLanguage].errorFetchingJson, error);
-            alert ('${texts[currentLanguage].errorFetchingJson} ${error.message}');
-        }
-    }
+    allSpells = await loadAndSyncAllPowerSets();
 
     // Загрузка выбранных Power Sets для персонажа
     currentManagedSpells = await loadCharacterPowerSets();
