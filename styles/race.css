@@ -33,3 +33,15 @@
 .tab:hover:not(.active) {
     background: rgba(0, 163, 224, 0.3);
 }
+@media (max-width: 480px) {
+    .tab {
+        padding: 0.5rem;
+        font-size: 0.9rem;
+        min-width: 80px;
+    }
+    
+    .traits-container {
+        font-size: 1.2rem;
+        padding: 0 0.5rem;
+    }
+}
