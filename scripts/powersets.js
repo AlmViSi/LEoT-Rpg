@@ -117,26 +117,37 @@ function switchLanguage(lang) {
 }
 
 function applyTexts() {
-    document.getElementById('title').textContent = texts[currentLanguage].title;
-    document.getElementById('powersets-title').textContent = texts[currentLanguage].powersetsTitle;
-    document.getElementById('managed-spells-title').textContent = texts[currentLanguage].managedSpellsTitle;
-    document.getElementById('filter-name').placeholder = texts[currentLanguage].filterNamePlaceholder;
-    document.getElementById('add-to-character-button').textContent = texts[currentLanguage].addToCharacterButton;
-    document.getElementById('save-character-powersets').textContent = texts[currentLanguage].saveCharacterPowersetsButton;
-    
-    // Обновить тексты в выпадающих списках, если они уже заполнены
-    const filterPowerSet = document.getElementById('filter-power-set');
-    if (filterPowerSet.options[0]) {
-        filterPowerSet.options[0].textContent = texts[currentLanguage].filterPowerSetDefault;
+    const elements = {
+        'title': texts[currentLanguage].title,
+        'powersets-title': texts[currentLanguage].powersetsTitle,
+        'managed-spells-title': texts[currentLanguage].managedSpellsTitle,
+        'add-to-character-button': texts[currentLanguage].addToCharacterButton,
+        'save-character-powersets': texts[currentLanguage].saveCharacterPowersetsButton
+    };
+
+    for (const [id, text] of Object.entries(elements)) {
+        const element = document.getElementById(id);
+        if (element) {
+            element.textContent = text;
+        }
     }
-    const filterPowerSetTree = document.getElementById('filter-power-set-tree');
-    if (filterPowerSetTree.options[0]) {
-        filterPowerSetTree.options[0].textContent = texts[currentLanguage].filterPowerSetTreeDefault;
+
+    const filterName = document.getElementById('filter-name');
+    if (filterName) {
+        filterName.placeholder = texts[currentLanguage].filterNamePlaceholder;
     }
-    const filterType = document.getElementById('filter-type');
-    if (filterType.options[0]) {
-        filterType.options[0].textContent = texts[currentLanguage].filterTypeDefault;
-    }
+
+    // Update dropdown default texts if they exist
+    const updateDropdownText = (id, text) => {
+        const dropdown = document.getElementById(id);
+        if (dropdown && dropdown.options[0]) {
+            dropdown.options[0].textContent = text;
+        }
+    };
+
+    updateDropdownText('filter-power-set', texts[currentLanguage].filterPowerSetDefault);
+    updateDropdownText('filter-power-set-tree', texts[currentLanguage].filterPowerSetTreeDefault);
+    updateDropdownText('filter-type', texts[currentLanguage].filterTypeDefault);
 }
 
 
