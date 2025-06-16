@@ -5,10 +5,10 @@ function initParticles() {
     let trails = []; // Массив для хранения следов
     const settings = {
         starCount: 5000,
-        maxSpeed: 0.3,
+        maxSpeed: 1.3,
         starSizeRange: [0.1, 2.5],
         fov: 800,
-        trailLength: 5, // Количество точек в следе
+        trailLength: 50, // Количество точек в следе
         trailDecay: 0.85 // Скорость исчезновения следа
     };
 
