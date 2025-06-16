@@ -5,8 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://fonts.googleapis.com/css2?family=Roboto&family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles/common.css">
-<script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database-compat.js"></script>
     <title>Grimoire: Spell Constructor</title>
 </head>
 <style>
@@ -453,7 +451,7 @@
 <body>
     <canvas id="particle-canvas"></canvas>
     <header>
-        <h1>Lost Edge of Time - Power Sets</h1>
+        <h1>Lost Edge of Time - Traits Selection</h1>
     </header>
     
     <div class="tab-container">
@@ -2283,7 +2281,7 @@ function positionTooltip(event, tooltip) {
         });
 
         // Initialize when DOM is fully loaded
-        document.addEventListener('DOMContentLoaded', async () => {
+        document.addEventListener('DOMContentLoaded', () => {
             initializeTabs();
             // IMPORTANT: Initialize dynamic inputs before populating dropdowns to ensure elements exist
             initializeDynamicInputs();
@@ -2294,69 +2292,6 @@ function positionTooltip(event, tooltip) {
 
 
             // Filter input event and blur to hide autocomplete
-	    document.getElementById('save-spell').addEventListener('click', async () => {
-		const spellData = {
-			name: document.getElementById('spell-name').value,
-			type: getAllInputValues('spell-type-container'),
-			powerSet: getAllInputValues('power-set-container'),
-			powerSetTree: getAllInputValues('power-set-tree-container'),
-			level: getAllInputValues('level-container'),
-			description: document.getElementById('description').value,
-			action: getAllInputValues('action-container'),
-			target: getAllInputValues('target-container'),
-			range: getAllInputValues('range-container'),
-			duration: getAllInputValues('duration-container'),
-			effect: document.getElementById('effect').value,
-			cooldown: getAllInputValues('cooldown-container'),
-			cost: getAllInputValues('cost-container'),
-			defense: getAllInputValues('defense-container'),
-			attack: getAllInputValues('attack-container'),
-			restrictions: getAllInputValues('restrictions-container'),
-			upgrades: getAllInputValues('upgrades-container'),
-			createdAt: firebase.database.ServerValue.TIMESTAMP,
-			updatedAt: firebase.database.ServerValue.TIMESTAMP
-		};
-
-		try {
-			const spellId = await saveSpellToFirebase(spellData);
-			alert(texts[currentLanguage].powersetsSaved);
-			updateSpellList();
-	        } catch (error) {
-			alert('${texts[currentLanguage].errorSaving} ${error.mesage}');
-		}
-	    });
-
-function confirmDeleteSpell(index) {
-    const spell = savedSpells[index];
-    if (!spell || !spell.id) return;
-
-    const modal = document.getElementById('spell-modal');
-    const modalContent = document.getElementById('modal-content');
-    const t = translations[currentLanguage];
-
-    modalContent.innerHTML = `
-        <h3>${t.confirm_delete_title}</h3>
-        <p class="confirm-modal">${t.confirm_delete}</p>
-        <div class="modal-buttons">
-            <button onclick="deleteSpellConfirmed('${spell.id}', ${index})">${t.confirm}</button>
-            <button onclick="closeModal()">${t.cancel}</button>
-        </div>
-    `;
-    modal.style.display = 'flex';              
-}
-
-	     window.deleteSpellConfirmed = async (spellId, index) => {
-      		try {
-			await deleteSpellFromFirebase(spellId);
-   			savedSpells.splice(index, 1);
-       			locacStorage.setItem('savedSpells', JSON.stringify(savedSpells));
-	  		updateSpellList();
-     			closeModal();
-		} catch (error) {
-  			alert('${texts[currnetLanguage].errorSaveing} ${error.message}');
-		}
-  	    };
-    		    
             document.getElementById('filter-name').addEventListener('input', updateSpellList);
             document.getElementById('filter-name').addEventListener('blur', () => {
                 // Delay hiding to allow click on autocomplete item
