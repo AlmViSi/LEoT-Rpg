@@ -113,3 +113,39 @@
         justify-content: center;
     }
 }
+@media (max-width: 480px) {
+    .selected-view {
+        gap: 1rem;
+        margin-top: 0.5rem;
+    }
+    
+    .selected-card {
+        height: 250px;
+    }
+    
+    .description h2 {
+        font-size: 1.2rem;
+    }
+    
+    .scroll-container {
+        gap: 0.5rem;
+        padding: 0.5rem 0;
+    }
+    
+    .scroll-card {
+        width: 80px;
+        height: 120px;
+    }
+    
+    .scroll-card .overlay {
+        font-size: 0.7rem;
+        padding: 0.2rem;
+    }
+    
+    .reset-button {
+        bottom: 1rem;
+        right: 1rem;
+        padding: 0.6rem 1rem;
+        font-size: 0.9rem;
+    }
+}
