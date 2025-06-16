@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://fonts.googleapis.com/css2?family=Roboto&family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles/common.css">
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <script src="scripts/firebase-config.js"></script>
+    <script src="scripts/powersets.js"></script>
     <title>Grimoire: Spell Constructor</title>
 </head>
 <style>
@@ -1762,50 +1766,47 @@
 
 
         // Save spell
-        function saveSpell() {
-            const spell = {
-                name: document.getElementById('spell-name').value,
-                type: getAllInputValues('spell-type-container'),
-                powerSet: getAllInputValues('power-set-container'),
-                powerSetTree: getAllInputValues('power-set-tree-container'),
-                level: getAllInputValues('level-container'),
-                description: document.getElementById('description').value,
-                action: getAllInputValues('action-container'),
-                target: getAllInputValues('target-container'),
-                range: getAllInputValues('range-container'),
-                duration: getAllInputValues('duration-container'),
-                effect: document.getElementById('effect').value,
-                cooldown: getAllInputValues('cooldown-container'),
-                cost: getAllInputValues('cost-container'), // Get multiple costs
-                defense: getAllInputValues('defense-container'),
-                attack: getAllInputValues('attack-container'),
-                restrictions: getAllInputValues('restrictions-container'),
-                upgrades: getAllInputValues('upgrades-container')
-            };
+  function saveSpell() {
+        const spell = {
+            name: document.getElementById('spell-name').value,
+            type: getAllInputValues('spell-type-container'),
+            powerSet: getAllInputValues('power-set-container'),
+            powerSetTree: getAllInputValues('power-set-tree-container'),
+            level: getAllInputValues('level-container'),
+            description: document.getElementById('description').value,
+            action: getAllInputValues('action-container'),
+            target: getAllInputValues('target-container'),
+            range: getAllInputValues('range-container'),
+            duration: getAllInputValues('duration-container'),
+            effect: document.getElementById('effect').value,
+            cooldown: getAllInputValues('cooldown-container'),
+            cost: getAllInputValues('cost-container'),
+            defense: getAllInputValues('defense-container'),
+            attack: getAllInputValues('attack-container'),
+            restrictions: getAllInputValues('restrictions-container'),
+            upgrades: getAllInputValues('upgrades-container')
+        };
 
-            // Convert single-item arrays back to string if desired for display purposes
-            for (const key in spell) {
-                // Keep cooldown, cost, restrictions, upgrades as arrays even if single item
-                if (Array.isArray(spell[key]) && spell[key].length === 1 && !['cooldown', 'cost', 'restrictions', 'upgrades'].includes(key)) {
-                    spell[key] = spell[key][0];
-                } else if (Array.isArray(spell[key]) && spell[key].length === 0 && !['cooldown', 'cost', 'restrictions', 'upgrades'].includes(key)) {
-                    spell[key] = ''; // Store as empty string if empty array for single fields
-                }
-            }
-
-
-            const existingIndex = savedSpells.findIndex(s => s.name === spell.name);
-            if (existingIndex >= 0) {
-                savedSpells[existingIndex] = spell;
-            } else {
-                savedSpells.push(spell);
-            }
-            localStorage.setItem('savedSpells', JSON.stringify(savedSpells));
-            updateSpellList();
-            const form = document.getElementById('spell-form');
-            form.classList.add('glow');
-            setTimeout(() => form.classList.remove('glow'), 1000);
+        const existingIndex = savedSpells.findIndex(s => s.name === spell.name);
+        if (existingIndex >= 0) {
+            savedSpells[existingIndex] = spell;
+        } else {
+            savedSpells.push(spell);
         }
+        
+        // Сохраняем в localStorage
+        localStorage.setItem('savedSpells', JSON.stringify(savedSpells));
+        
+        // Сохраняем в Firebase
+        if (typeof saveSpellToFirebase === 'function') {
+            saveSpellToFirebase(spell);
+        }
+        
+        updateSpellList();
+        const form = document.getElementById('spell-form');
+        form.classList.add('glow');
+        setTimeout(() => form.classList.remove('glow'), 1000);
+    }
 
         // Load spell
         function loadSpell(spell = null) {
@@ -1953,18 +1954,25 @@
 		});
 
         // Delete spell
-        function deleteSpell(index) {
-            const row = document.querySelector(`#spell-table-body tr:nth-child(${index + 1})`);
-            if (row) {
-                row.classList.add('removing');
-                setTimeout(() => {
-                    savedSpells.splice(index, 1);
-                    localStorage.setItem('savedSpells', JSON.stringify(savedSpells));
-                    updateSpellList();
-                    closeModal();
-                }, 300);
-            }
+   function deleteSpell(index) {
+        const spellName = savedSpells[index].name;
+        const row = document.querySelector(`#spell-table-body tr:nth-child(${index + 1})`);
+        if (row) {
+            row.classList.add('removing');
+            setTimeout(() => {
+                savedSpells.splice(index, 1);
+                localStorage.setItem('savedSpells', JSON.stringify(savedSpells));
+                
+                // Удаляем из Firebase
+                if (typeof deleteSpellFromFirebase === 'function') {
+                    deleteSpellFromFirebase(spellName);
+                }
+                
+                updateSpellList();
+                closeModal();
+            }, 300);
         }
+    }
 
         // Close modal
         function closeModal() {
@@ -2281,35 +2289,45 @@ function positionTooltip(event, tooltip) {
         });
 
         // Initialize when DOM is fully loaded
-        document.addEventListener('DOMContentLoaded', () => {
-            initializeTabs();
-            // IMPORTANT: Initialize dynamic inputs before populating dropdowns to ensure elements exist
-            initializeDynamicInputs();
-            updateLanguage(); // Update language and button texts
-            populateDropdowns(); // Populate dropdowns with data
-            showTab(localStorage.getItem('activeTab') || 'spell-creator');
-            showManagedList(); // Initialize the list manager's display state
-
-
-            // Filter input event and blur to hide autocomplete
-            document.getElementById('filter-name').addEventListener('input', updateSpellList);
-            document.getElementById('filter-name').addEventListener('blur', () => {
-                // Delay hiding to allow click on autocomplete item
-                setTimeout(() => {
-                    document.getElementById('autocomplete-list').style.display = 'none';
-                }, 200);
-            });
-            document.getElementById('filter-name').addEventListener('focus', () => {
-                // Show autocomplete list on focus if there's already text
-                if (document.getElementById('filter-name').value.length > 0) {
-                    updateAutocomplete();
+    document.addEventListener('DOMContentLoaded', () => {
+        initializeTabs();
+        initializeDynamicInputs();
+        updateLanguage();
+        populateDropdowns();
+        
+        // Пытаемся загрузить из Firebase
+        if (typeof loadSpellsFromFirebase === 'function') {
+            loadSpellsFromFirebase().then(spells => {
+                if (spells.length > 0) {
+                    savedSpells = spells;
+                    localStorage.setItem('savedSpells', JSON.stringify(savedSpells));
                 }
+                updateSpellList();
             });
+        } else {
+            // Если Firebase не загружен, используем localStorage
+            updateSpellList();
+        }
+        
+        showTab(localStorage.getItem('activeTab') || 'spell-creator');
+        showManagedList();
 
-            // Attach event listeners for filter dropdowns to update the spell list
-            document.getElementById('filter-power-set').addEventListener('change', updateFilterPowerSetTree);
-            document.getElementById('filter-power-set-tree').addEventListener('change', updateSpellList);
-            document.getElementById('filter-type').addEventListener('change', updateSpellList);
+        // Filter input event and blur to hide autocomplete
+        document.getElementById('filter-name').addEventListener('input', updateSpellList);
+        document.getElementById('filter-name').addEventListener('blur', () => {
+            setTimeout(() => {
+                document.getElementById('autocomplete-list').style.display = 'none';
+            }, 200);
+        });
+        document.getElementById('filter-name').addEventListener('focus', () => {
+            if (document.getElementById('filter-name').value.length > 0) {
+                updateAutocomplete();
+            }
+        });
+
+        document.getElementById('filter-power-set').addEventListener('change', updateFilterPowerSetTree);
+        document.getElementById('filter-power-set-tree').addEventListener('change', updateSpellList);
+        document.getElementById('filter-type').addEventListener('change', updateSpellList);
 
         });
     </script>
