@@ -2345,7 +2345,7 @@ function confirmDeleteSpell(index) {
     modal.style.display = 'flex';              
 }
 
-	     windows.deleteSpellConfirmed = async (spellId, index) => {
+	     window.deleteSpellConfirmed = async (spellId, index) => {
       		try {
 			await deleteSpellFromFirebase(spellId);
    			savedSpells.splice(index, 1);
