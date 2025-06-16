@@ -450,6 +450,158 @@
             .filter-container {
                 flex-direction: column;
             }
+	@media (max-width: 480px) {
+    /* Общие стили */
+    header {
+        padding: 0.5rem;
+    }
+    
+    header h1 {
+        font-size: 1.5rem;
+    }
+    
+    .container {
+        padding: 0.5rem;
+    }
+    
+    /* Вкладки */
+    .tabs {
+        flex-wrap: wrap;
+    }
+    
+    .tab {
+        padding: 0.5rem;
+        font-size: 0.9rem;
+        min-width: 80px;
+        margin-bottom: 5px;
+        border-radius: 5px !important;
+    }
+    
+    /* Форма создания заклинаний */
+    #spell-form input, 
+    #spell-form select, 
+    #spell-form textarea {
+        padding: 0.6rem;
+        font-size: 0.9rem;
+    }
+    
+    #spell-form button {
+        padding: 0.8rem;
+        font-size: 1rem;
+    }
+    
+    .dynamic-input-group {
+        flex-direction: column;
+        gap: 5px;
+    }
+    
+    .dynamic-input-group button {
+        width: 100%;
+    }
+    
+    /* Список заклинаний */
+    .filter-container {
+        flex-direction: column;
+        gap: 5px;
+    }
+    
+    .spell-table {
+        font-size: 0.8rem;
+    }
+    
+    .spell-table th, 
+    .spell-table td {
+        padding: 4px;
+    }
+    
+    .spell-table td:last-child {
+        white-space: nowrap;
+    }
+    
+    /* Менеджер списков */
+    .list-manager .input-group {
+        flex-direction: column;
+    }
+    
+    .list-manager .input-group button {
+        width: 100%;
+    }
+    
+    /* Модальные окна */
+    .modal-content {
+        width: 95%;
+        padding: 10px;
+    }
+    
+    .modal-content table {
+        font-size: 0.9rem;
+    }
+    
+    .modal-buttons {
+        flex-direction: column;
+    }
+    
+    .modal-buttons button {
+        width: 100%;
+        margin-bottom: 5px;
+    }
+    
+    /* Тултипы */
+    .tooltip-spell {
+        width: 300px;
+        max-height: 80vh;
+        grid-template-columns: 1fr;
+        padding: 10px;
+    }
+    
+    .tooltip-spell h4 {
+        font-size: 1rem;
+        margin-bottom: 10px;
+    }
+    
+    .tooltip-description,
+    .tooltip-attributes {
+        grid-column: 1;
+        padding: 10px;
+    }
+    
+    .tooltip-attributes {
+        grid-template-columns: 1fr;
+    }
+    
+    .tooltip-section h5 {
+        font-size: 0.85rem;
+    }
+    
+    .tooltip-section p {
+        font-size: 0.85rem;
+    }
+    
+    .tooltip-attribute {
+        font-size: 0.85rem;
+    }
+    
+    /* Переключатель языка */
+    .language-switcher {
+        position: static;
+        display: flex;
+        justify-content: center;
+        margin: 0.5rem 0;
+    }
+    
+    .language-switcher button {
+        padding: 0.5rem;
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 768px) {
+    /* Дополнительные стили для планшетов */
+    .tooltip-spell {
+        width: 400px;
+    }
+}
+		
 }
 </style>
 <body>
