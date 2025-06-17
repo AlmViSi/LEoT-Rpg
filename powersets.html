@@ -1902,7 +1902,7 @@ function showSpellTooltip(event, spell) {
     
     tooltip.innerHTML = `
         <h4>${spell.name || '-'}</h4>
-        <div class="tooltip-description">
+        <div class="tooltip-column">
             <div class="tooltip-section">
                 <h5>${t.label_description}</h5>
                 <p>${spell.description || '-'}</p>
@@ -1912,88 +1912,89 @@ function showSpellTooltip(event, spell) {
                 <p>${spell.effect || '-'}</p>
             </div>
         </div>
-        <div class="tooltip-attributes">
-            <div class="tooltip-attribute">
-                <span class="tooltip-label">${t.label_spell_type}:</span>
-                <span class="tooltip-value">${formatValue(spell.type)}</span>
+        <div class="tooltip-column">
+            <div class="tooltip-section">
+                <h5>Power Set</h5>
+                <p>${formatValue(spell.powerSet)}</p>
             </div>
-            <div class="tooltip-attribute">
-                <span class="tooltip-label">${t.label_power_set}:</span>
-                <span class="tooltip-value">${formatValue(spell.powerSet)}</span>
+            <div class="tooltip-section">
+                <h5>Power Set Tree</h5>
+                <p>${formatValue(spell.powerSetTree)}</p>
             </div>
-            <div class="tooltip-attribute">
-                <span class="tooltip-label">${t.label_power_set_tree}:</span>
-                <span class="tooltip-value">${formatValue(spell.powerSetTree)}</span>
+            <div class="tooltip-section">
+                <h5>Level/Rank/Requirements</h5>
+                <p>${formatValue(spell.level)}</p>
             </div>
-            <div class="tooltip-attribute">
-                <span class="tooltip-label">${t.label_level}:</span>
-                <span class="tooltip-value">${formatValue(spell.level)}</span>
+            <div class="tooltip-section">
+                <h5>Type</h5>
+                <p>${formatValue(spell.type)}</p>
             </div>
-            <div class="tooltip-attribute">
-                <span class="tooltip-label">${t.label_action}:</span>
-                <span class="tooltip-value">${formatPairedValuesForDisplay(spell.action)}</span>
-            </div>
-            <div class="tooltip-attribute">
-                <span class="tooltip-label">${t.label_target}:</span>
-                <span class="tooltip-value">${formatPairedValuesForDisplay(spell.target)}</span>
-            </div>
-            <div class="tooltip-attribute">
-                <span class="tooltip-label">${t.label_range}:</span>
-                <span class="tooltip-value">${formatPairedValuesForDisplay(spell.range)}</span>
-            </div>
-            <div class="tooltip-attribute">
-                <span class="tooltip-label">${t.label_duration}:</span>
-                <span class="tooltip-value">${formatPairedValuesForDisplay(spell.duration)}</span>
-            </div>
-            <div class="tooltip-attribute">
-                <span class="tooltip-label">${t.label_cooldown}:</span>
-                <span class="tooltip-value">${formatPairedValuesForDisplay(spell.cooldown)}</span>
-            </div>
-            <div class="tooltip-attribute">
-                <span class="tooltip-label">${t.label_cost}:</span>
-                <span class="tooltip-value">${formatPairedValuesForDisplay(spell.cost)}</span>
-            </div>
-            ${spell.restrictions && spell.restrictions.length > 0 ? `
-            <div class="tooltip-attribute">
-                <span class="tooltip-label">${t.label_restrictions}:</span>
-                <span class="tooltip-value">${formatValue(spell.restrictions)}</span>
+            ${spell.defense ? `
+            <div class="tooltip-section">
+                <h5>Defense</h5>
+                <p>${formatValue(spell.defense)}</p>
             </div>` : ''}
-            ${spell.upgrades && spell.upgrades.length > 0 ? `
-            <div class="tooltip-attribute">
-                <span class="tooltip-label">${t.label_upgrades}:</span>
-                <span class="tooltip-value">${formatValue(spell.upgrades)}</span>
+            ${spell.attack ? `
+            <div class="tooltip-section">
+                <h5>Attack</h5>
+                <p>${formatValue(spell.attack)}</p>
+            </div>` : ''}
+            ${spell.restrictions ? `
+            <div class="tooltip-section">
+                <h5>Restrictions/Conditions</h5>
+                <p>${formatValue(spell.restrictions)}</p>
+            </div>` : ''}
+        </div>
+        <div class="tooltip-column">
+            <div class="tooltip-section">
+                <h5>Action</h5>
+                <p>${formatPairedValuesForDisplay(spell.action)}</p>
+            </div>
+            <div class="tooltip-section">
+                <h5>Range/Radius</h5>
+                <p>${formatPairedValuesForDisplay(spell.range)}</p>
+            </div>
+            <div class="tooltip-section">
+                <h5>Target</h5>
+                <p>${formatPairedValuesForDisplay(spell.target)}</p>
+            </div>
+            <div class="tooltip-section">
+                <h5>Duration</h5>
+                <p>${formatPairedValuesForDisplay(spell.duration)}</p>
+            </div>
+            <div class="tooltip-section">
+                <h5>Cooldown</h5>
+                <p>${formatPairedValuesForDisplay(spell.cooldown)}</p>
+            </div>
+            <div class="tooltip-section">
+                <h5>Cost</h5>
+                <p>${formatPairedValuesForDisplay(spell.cost)}</p>
+            </div>
+            ${spell.upgrades ? `
+            <div class="tooltip-section">
+                <h5>Variants/Upgrades</h5>
+                <p>${formatValue(spell.upgrades)}</p>
             </div>` : ''}
         </div>
     `;
     
-    // Сначала делаем тултип невидимым, но уже с контентом, чтобы измерить его размеры
-    tooltip.style.opacity = '0';
-    tooltip.style.display = 'block';
-    
-    // Получаем размеры тултипа после добавления контента
-    const tooltipWidth = tooltip.offsetWidth;
-    const tooltipHeight = tooltip.offsetHeight;
+    // Позиционирование тултипа
     const offset = 15;
-    
-    // Рассчитываем позицию
     let x = event.clientX + offset;
     let y = event.clientY + offset;
     
-    // Проверяем правую границу
+    // Проверка границ экрана
+    const tooltipWidth = tooltip.offsetWidth;
+    const tooltipHeight = tooltip.offsetHeight;
+    
     if (x + tooltipWidth > window.innerWidth) {
-        x = event.clientX - tooltipWidth - offset;
-        // Если и так не помещается, прижимаем к правому краю
-        if (x < 0) x = window.innerWidth - tooltipWidth - offset;
+        x = window.innerWidth - tooltipWidth - offset;
     }
     
-    // Проверяем нижнюю границу
     if (y + tooltipHeight > window.innerHeight) {
-        y = event.clientY - tooltipHeight - offset;
-        // Если и так не помещается, прижимаем к нижнему краю
-        if (y < 0) y = window.innerHeight - tooltipHeight - offset;
+        y = window.innerHeight - tooltipHeight - offset;
     }
     
-    // Устанавливаем позицию и делаем видимым
     tooltip.style.left = `${Math.max(0, x)}px`;
     tooltip.style.top = `${Math.max(0, y)}px`;
     tooltip.style.opacity = '1';
