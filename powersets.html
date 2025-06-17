@@ -2292,46 +2292,44 @@ function addPairedRow(field) {
 
 
         // Show spell details in modal
-        function showSpellDetails(spell, index) {
-            const modal = document.getElementById('spell-modal');
-            const modalContent = document.getElementById('modal-content');
-            const t = translations[currentLanguage];
+function showSpellDetails(spell, index) {
+    const modal = document.getElementById('spell-modal');
+    const modalContent = document.getElementById('modal-content');
+    const t = translations[currentLanguage];
 
-            const formatArray = (arr) => arr && arr.length > 0 ? arr.join(', ') : '-';
-            const formatSingleOrArray = (val) => {
-                if (Array.isArray(val)) return formatArray(val);
-                return val || '-';
-            };
+    const formatValue = (val) => {
+        if (Array.isArray(val)) return val.join(', ');
+        return val || '-';
+    };
 
-
-            modalContent.innerHTML = `
-                <h3>${t.modal_title}</h3>
-                <table>
-                    <tr><th>${t.label_spell_name}</th><td>${spell.name || '-'}</td></tr>
-                    <tr><th>${t.label_spell_type}</th><td>${formatSingleOrArray(spell.type)}</td></tr>
-                    <tr><th>${t.label_power_set}</th><td>${formatSingleOrArray(spell.powerSet)}</td></tr>
-                    <tr><th>${t.label_power_set_tree}</th><td>${formatSingleOrArray(spell.powerSetTree)}</td></tr>
-                    <tr><th>${t.label_level}</th><td>${formatSingleOrArray(spell.level)}</td></tr>
-                    <tr><th>${t.label_description}</th><td>${spell.description || '-'}</td></tr>
-                    <tr><th>${t.label_action}</th><td>${formatSingleOrArray(spell.action)}</td></tr>
-                    <tr><th>${t.label_target}</th><td>${formatSingleOrArray(spell.target)}</td></tr>
-                    <tr><th>${t.label_range}</th><td>${formatSingleOrArray(spell.range)}</td></tr>
-                    <tr><th>${t.label_duration}</th><td>${formatSingleOrArray(spell.duration)}</td></tr>
-                    <tr><th>${t.label_effect}</th><td>${spell.effect || '-'}</td></tr>
-                    <tr><th>${t.label_cooldown}</th><td>${formatArray(spell.cooldown)}</td></tr>
-                    <tr><th>${t.label_cost}</th><td>${formatArray(spell.cost)}</td></tr>
-                    <tr><th>${t.label_defense}</th><td>${formatSingleOrArray(spell.defense)}</td></tr>
-                    <tr><th>${t.label_attack}</th><td>${formatSingleOrArray(spell.attack)}</td></tr>
-                    <tr><th>${t.label_restrictions}</th><td>${formatArray(spell.restrictions)}</td></tr>
-                    <tr><th>${t.label_upgrades}</th><td>${formatArray(spell.upgrades)}</td></tr>
-                </table>
-                <div class="modal-buttons">
-                    <button onclick="loadSpell(savedSpells[${index}])">${t.edit_spell}</button>
-                    <button onclick="closeModal()">${t.close_modal}</button>
-                </div>
-            `;
-            modal.style.display = 'flex';
-        }
+    modalContent.innerHTML = `
+        <h3>${t.modal_title}</h3>
+        <table>
+            <tr><th>${t.label_spell_name}</th><td>${spell.name || '-'}</td></tr>
+            <tr><th>${t.label_spell_type}</th><td>${formatValue(spell.type)}</td></tr>
+            <tr><th>${t.label_power_set}</th><td>${formatValue(spell.powerSet)}</td></tr>
+            <tr><th>${t.label_power_set_tree}</th><td>${formatValue(spell.powerSetTree)}</td></tr>
+            <tr><th>${t.label_level}</th><td>${formatValue(spell.level)}</td></tr>
+            <tr><th>${t.label_description}</th><td>${spell.description || '-'}</td></tr>
+            <tr><th>${t.label_action}</th><td>${formatPairedValuesForDisplay(spell.action)}</td></tr>
+            <tr><th>${t.label_target}</th><td>${formatPairedValuesForDisplay(spell.target)}</td></tr>
+            <tr><th>${t.label_range}</th><td>${formatPairedValuesForDisplay(spell.range)}</td></tr>
+            <tr><th>${t.label_duration}</th><td>${formatPairedValuesForDisplay(spell.duration)}</td></tr>
+            <tr><th>${t.label_effect}</th><td>${spell.effect || '-'}</td></tr>
+            <tr><th>${t.label_cooldown}</th><td>${formatPairedValuesForDisplay(spell.cooldown)}</td></tr>
+            <tr><th>${t.label_cost}</th><td>${formatPairedValuesForDisplay(spell.cost)}</td></tr>
+            <tr><th>${t.label_defense}</th><td>${formatValue(spell.defense)}</td></tr>
+            <tr><th>${t.label_attack}</th><td>${formatValue(spell.attack)}</td></tr>
+            <tr><th>${t.label_restrictions}</th><td>${formatValue(spell.restrictions)}</td></tr>
+            <tr><th>${t.label_upgrades}</th><td>${formatValue(spell.upgrades)}</td></tr>
+        </table>
+        <div class="modal-buttons">
+            <button onclick="loadSpell(savedSpells[${index}])">${t.edit_spell}</button>
+            <button onclick="closeModal()">${t.close_modal}</button>
+        </div>
+    `;
+    modal.style.display = 'flex';
+}
 
         // Confirm delete spell in modal
         function confirmDeleteSpell(index) {
@@ -2488,25 +2486,6 @@ function showSpellTooltip(event, spell) {
     const tooltip = document.getElementById('spell-tooltip');
     const t = translations[currentLanguage];
     
-    // Функция форматирования значений
-    const formatValue = (val) => {
-        if (Array.isArray(val)) {
-            return val.filter(v => v).join(', ');
-        }
-        return val || '-';
-    };
-
-    // Функция для объединения числового значения и категории
-    const formatCombinedValue = (numberVal, categoryVal) => {
-        const num = formatValue(numberVal);
-        const cat = formatValue(categoryVal);
-        
-        if (num === '-' && cat === '-') return '-';
-        if (num === '-') return cat;
-        if (cat === '-') return num;
-        return `${num} ${cat}`;
-    };
-
     tooltip.innerHTML = `
         <h4>${spell.name || '-'}</h4>
         <div class="tooltip-description">
@@ -2538,35 +2517,27 @@ function showSpellTooltip(event, spell) {
             </div>
             <div class="tooltip-attribute">
                 <span class="tooltip-label">${t.label_action}:</span>
-                <span class="tooltip-value">${formatValue(spell.action)}</span>
+                <span class="tooltip-value">${formatPairedValuesForDisplay(spell.action)}</span>
             </div>
             <div class="tooltip-attribute">
                 <span class="tooltip-label">${t.label_target}:</span>
-                <span class="tooltip-value">${formatCombinedValue(spell.targetValue, spell.target)}</span>
+                <span class="tooltip-value">${formatPairedValuesForDisplay(spell.target)}</span>
             </div>
             <div class="tooltip-attribute">
                 <span class="tooltip-label">${t.label_range}:</span>
-                <span class="tooltip-value">${formatCombinedValue(spell.rangeValue, spell.range)}</span>
+                <span class="tooltip-value">${formatPairedValuesForDisplay(spell.range)}</span>
             </div>
             <div class="tooltip-attribute">
                 <span class="tooltip-label">${t.label_duration}:</span>
-                <span class="tooltip-value">${formatCombinedValue(spell.durationValue, spell.duration)}</span>
+                <span class="tooltip-value">${formatPairedValuesForDisplay(spell.duration)}</span>
             </div>
             <div class="tooltip-attribute">
                 <span class="tooltip-label">${t.label_cooldown}:</span>
-                <span class="tooltip-value">${formatCombinedValue(spell.cooldownValue, spell.cooldown)}</span>
+                <span class="tooltip-value">${formatPairedValuesForDisplay(spell.cooldown)}</span>
             </div>
             <div class="tooltip-attribute">
                 <span class="tooltip-label">${t.label_cost}:</span>
-                <span class="tooltip-value">${formatCombinedValue(spell.costValue, spell.cost)}</span>
-            </div>
-            <div class="tooltip-attribute">
-                <span class="tooltip-label">${t.label_defense}:</span>
-                <span class="tooltip-value">${formatValue(spell.defense)}</span>
-            </div>
-            <div class="tooltip-attribute">
-                <span class="tooltip-label">${t.label_attack}:</span>
-                <span class="tooltip-value">${formatValue(spell.attack)}</span>
+                <span class="tooltip-value">${formatPairedValuesForDisplay(spell.cost)}</span>
             </div>
             ${spell.restrictions && spell.restrictions.length > 0 ? `
             <div class="tooltip-attribute">
@@ -2601,6 +2572,21 @@ function showSpellTooltip(event, spell) {
     tooltip.style.top = `${adjustedY}px`;
     tooltip.style.opacity = '1';
 }
+	    
+function formatPairedValuesForDisplay(pairedArray) {
+    if (!pairedArray || !pairedArray.length) return '-';
+    
+    return pairedArray
+        .filter(item => item.type || item.value)
+        .map(item => {
+            if (item.type && item.value) {
+                return `${item.type}: ${item.value}`;
+            }
+            return item.type || item.value;
+        })
+        .join(', ');
+}
+	    
 
 function positionTooltip(event, tooltip) {
     const offset = 10; 
