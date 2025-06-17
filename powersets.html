@@ -1306,57 +1306,54 @@
         }
 
         // Export data to JSON file
-window.exportData = function() {
-    const data = {
-        dropdownData: lists,
-        savedSpells: savedSpells,
-        tabOrder: tabOrder
-    };
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'grimoire_data.json';
-    a.click();
-    URL.revokeObjectURL(url);
-};
+        function exportData() {
+            const data = {
+                dropdownData: lists,
+                savedSpells: savedSpells,
+                tabOrder: tabOrder
+            };
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'grimoire_data.json';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
 
         // Import data from JSON file
- window.importData = function(event) {
-    const file = event.target.files[0];
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            try {
-                const data = JSON.parse(e.target.result);
-                if (data.dropdownData && data.savedSpells) {
-                    lists = data.dropdownData;
-                    savedSpells = data.savedSpells;
-                    tabOrder = data.tabOrder || tabOrder;
-                    localStorage.setItem('dropdownData', JSON.stringify(lists));
-                    localStorage.setItem('savedSpells', JSON.stringify(savedSpells));
-                    localStorage.setItem('tabOrder', JSON.stringify(tabOrder));
-                    
-                    // Сохраняем в Firebase
-                    saveListsToFirebase(lists);
-                    savedSpells.forEach(spell => saveSpellToFirebase(spell));
-                    
-                    initializeTabs();
-                    initializeDynamicInputs();
-                    populateDropdowns();
-                    showManagedList();
-                    updateSpellList();
-                    showTab(localStorage.getItem('activeTab') || 'spell-creator');
-                } else {
-                    console.error('Invalid file format');
-                }
-            } catch (error) {
-                console.error('Error reading file:', error.message);
+        function importData(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        const data = JSON.parse(e.target.result);
+                        if (data.dropdownData && data.savedSpells) {
+                            lists = data.dropdownData;
+                            savedSpells = data.savedSpells;
+                            tabOrder = data.tabOrder || tabOrder;
+                            localStorage.setItem('dropdownData', JSON.stringify(lists));
+                            localStorage.setItem('savedSpells', JSON.stringify(savedSpells));
+                            localStorage.setItem('tabOrder', JSON.stringify(tabOrder));
+                            initializeTabs();
+                            // Re-initialize the first set of dynamic inputs before populating dropdowns
+                            initializeDynamicInputs();
+                            populateDropdowns();
+                            showManagedList(); // Re-initialize based on selected manager list
+                            updateSpellList();
+                            showTab(localStorage.getItem('activeTab') || 'spell-creator');
+                        } else {
+                            console.error('Invalid file format');
+                        }
+                    } catch (error) {
+                        console.error('Error reading file:', error.message);
+                    }
+                };
+                reader.readAsText(file);
             }
-        };
-        reader.readAsText(file);
-    }
-};
+        }
+
         // Populate all dropdowns
         function populateDropdowns() {
             // Spell Creator Dropdowns
@@ -1524,75 +1521,71 @@ window.exportData = function() {
         }
 
         // Add new Power Set
-window.addPowerSet = function() {
-    const newPowerSet = document.getElementById('new-power-set').value.trim();
-    if (newPowerSet && !lists.powerSets[newPowerSet]) {
-        lists.powerSets[newPowerSet] = [];
-        localStorage.setItem('dropdownData', JSON.stringify(lists));
-        saveListsToFirebase(lists); // Сохраняем в Firebase
-        populateDropdowns();
-        updatePowerSetList();
-        document.getElementById('new-power-set').value = '';
-    }
-};
+        function addPowerSet() {
+            const newPowerSet = document.getElementById('new-power-set').value.trim();
+            if (newPowerSet && !lists.powerSets[newPowerSet]) {
+                lists.powerSets[newPowerSet] = [];
+                localStorage.setItem('dropdownData', JSON.stringify(lists));
+                populateDropdowns(); // Re-populate dropdowns including power-set-0
+                updatePowerSetList();
+                document.getElementById('new-power-set').value = '';
+            }
+        }
 
-window.addPowerSetTree = function() {
-    const powerSet = document.getElementById('power-set-select').value;
-    const newTree = document.getElementById('new-power-set-tree').value.trim();
-    if (newTree && lists.powerSets[powerSet] && !lists.powerSets[powerSet].includes(newTree)) {
-        lists.powerSets[powerSet].push(newTree);
-        localStorage.setItem('dropdownData', JSON.stringify(lists));
-        saveListsToFirebase(lists); // Сохраняем в Firebase
-        populateDropdowns();
-        loadPowerSetTreeForEdit();
-        updateFilterPowerSetTree();
-        document.getElementById('new-power-set-tree').value = '';
-    }
-};
+        // Add new Power Set Tree
+        function addPowerSetTree() {
+            const powerSet = document.getElementById('power-set-select').value;
+            const newTree = document.getElementById('new-power-set-tree').value.trim();
+            if (newTree && lists.powerSets[powerSet] && !lists.powerSets[powerSet].includes(newTree)) {
+                lists.powerSets[powerSet].push(newTree);
+                localStorage.setItem('dropdownData', JSON.stringify(lists));
+                populateDropdowns(); // Re-populate to update power-set-tree-0
+                loadPowerSetTreeForEdit();
+                updateFilterPowerSetTree();
+                document.getElementById('new-power-set-tree').value = '';
+            }
+        }
 
         // Remove Power Set Tree
-window.removePowerSetTree = function(powerSet, tree) {
-    const listItem = Array.from(document.querySelectorAll('#power-set-tree-list .list-item')).find(item => item.textContent.includes(tree));
-    if (listItem) {
-        listItem.classList.add('shake', 'removing');
-        setTimeout(() => {
-            lists.powerSets[powerSet] = lists.powerSets[powerSet].filter(t => t !== tree);
-            localStorage.setItem('dropdownData', JSON.stringify(lists));
-            saveListsToFirebase(lists); // Сохраняем в Firebase
-            populateDropdowns();
-            loadPowerSetTreeForEdit();
-            updateFilterPowerSetTree();
-        }, 500);
-    }
-};
+        function removePowerSetTree(powerSet, tree) {
+            const listItem = Array.from(document.querySelectorAll('#power-set-tree-list .list-item')).find(item => item.textContent.includes(tree));
+            if (listItem) {
+                listItem.classList.add('shake', 'removing');
+                setTimeout(() => {
+                    lists.powerSets[powerSet] = lists.powerSets[powerSet].filter(t => t !== tree);
+                    localStorage.setItem('dropdownData', JSON.stringify(lists));
+                    populateDropdowns(); // Re-populate to update power-set-tree-0
+                    loadPowerSetTreeForEdit();
+                    updateFilterPowerSetTree();
+                }, 500);
+            }
+        }
 
         // Add new item to dropdown lists
-window.addListItem = function(listName, inputId) {
-    const newItem = document.getElementById(inputId).value.trim();
-    if (newItem && !lists[listName].includes(newItem)) {
-        lists[listName].push(newItem);
-        localStorage.setItem('dropdownData', JSON.stringify(lists));
-        saveListsToFirebase(lists); // Сохраняем в Firebase
-        populateDropdowns();
-        updateList(listName);
-        document.getElementById(inputId).value = '';
-    }
-};
+        function addListItem(listName, inputId) {
+            const newItem = document.getElementById(inputId).value.trim();
+            if (newItem && !lists[listName].includes(newItem)) {
+                lists[listName].push(newItem);
+                localStorage.setItem('dropdownData', JSON.stringify(lists));
+                populateDropdowns();
+                updateList(listName);
+                document.getElementById(inputId).value = '';
+            }
+        }
 
         // Remove item from dropdown lists
-window.removeListItem = function(listName, item) {
-    const listItem = Array.from(document.querySelectorAll(`#${listName}-list .list-item`)).find(el => el.textContent.includes(item));
-    if (listItem) {
-        listItem.classList.add('shake', 'removing');
-        setTimeout(() => {
-            lists[listName] = lists[listName].filter(i => i !== item);
-            localStorage.setItem('dropdownData', JSON.stringify(lists));
-            saveListsToFirebase(lists); // Сохраняем в Firebase
-            populateDropdowns();
-            updateList(listName);
-        }, 500);
-    }
-};
+        function removeListItem(listName, item) {
+            const listItem = Array.from(document.querySelectorAll(`#${listName}-list .list-item`)).find(el => el.textContent.includes(item));
+            if (listItem) {
+                listItem.classList.add('shake', 'removing');
+                setTimeout(() => {
+                    lists[listName] = lists[listName].filter(i => i !== item);
+                    localStorage.setItem('dropdownData', JSON.stringify(lists));
+                    populateDropdowns();
+                    updateList(listName);
+                }, 500);
+            }
+        }
 
         // Update dropdown list in manager
         function updateList(listName) {
@@ -1625,20 +1618,19 @@ window.removeListItem = function(listName, item) {
         }
 
         // Remove Power Set
-window.removePowerSet = function(powerSet) {
-    const listItem = Array.from(document.querySelectorAll('#power-set-list .list-item')).find(item => item.textContent.includes(powerSet));
-    if (listItem) {
-        listItem.classList.add('shake', 'removing');
-        setTimeout(() => {
-            delete lists.powerSets[powerSet];
-            localStorage.setItem('dropdownData', JSON.stringify(lists));
-            saveListsToFirebase(lists); // Сохраняем в Firebase
-            populateDropdowns();
-            updatePowerSetList();
-            updateSpellList();
-        }, 500);
-    }
-};
+        function removePowerSet(powerSet) {
+            const listItem = Array.from(document.querySelectorAll('#power-set-list .list-item')).find(item => item.textContent.includes(powerSet));
+            if (listItem) {
+                listItem.classList.add('shake', 'removing');
+                setTimeout(() => {
+                    delete lists.powerSets[powerSet];
+                    localStorage.setItem('dropdownData', JSON.stringify(lists));
+                    populateDropdowns();
+                    updatePowerSetList();
+                    updateSpellList();
+                }, 500);
+            }
+        }
 
         // Add a new row (input/select) for dynamic fields
         function addRowToForm(field) {
@@ -2451,41 +2443,28 @@ function positionTooltip(event, tooltip) {
         });
 
         // Initialize when DOM is fully loaded
-document.addEventListener('DOMContentLoaded', async () => {
-    // Инициализация Firebase
-    if (typeof firebaseConfig === 'undefined') {
-        console.error("firebaseConfig is not defined");
-        return;
-    }
-
-    if (!firebase.apps.length) {
-        firebase.initializeApp(firebaseConfig);
-    }
-    
-    const database = firebase.database();
-    let savedSpells = JSON.parse(localStorage.getItem('savedSpells')) || [];
-    
-    // Загружаем списки из Firebase
-    const loadedLists = await loadListsFromFirebase();
-    lists = loadedLists;
-    localStorage.setItem('dropdownData', JSON.stringify(lists));
-    
-    // Загружаем заклинания из Firebase
-    const loadedSpells = await loadSpellsFromFirebase();
-    if (loadedSpells.length > 0) {
-        savedSpells = loadedSpells;
-        localStorage.setItem('savedSpells', JSON.stringify(savedSpells));
-    }
-    
-    // Инициализация интерфейса
-    initializeTabs();
-    initializeDynamicInputs();
-    updateLanguage();
-    populateDropdowns();
-    updateSpellList();
-    showTab(localStorage.getItem('activeTab') || 'spell-creator');
-    showManagedList();
-});
+    document.addEventListener('DOMContentLoaded', () => {
+        initializeTabs();
+        initializeDynamicInputs();
+        updateLanguage();
+        populateDropdowns();
+        
+        // Пытаемся загрузить из Firebase
+        if (typeof loadSpellsFromFirebase === 'function') {
+            loadSpellsFromFirebase().then(spells => {
+                if (spells.length > 0) {
+                    savedSpells = spells;
+                    localStorage.setItem('savedSpells', JSON.stringify(savedSpells));
+                }
+                updateSpellList();
+            });
+        } else {
+            // Если Firebase не загружен, используем localStorage
+            updateSpellList();
+        }
+        
+        showTab(localStorage.getItem('activeTab') || 'spell-creator');
+        showManagedList();
 
         // Filter input event and blur to hide autocomplete
         document.getElementById('filter-name').addEventListener('input', updateSpellList);
