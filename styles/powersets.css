@@ -374,37 +374,52 @@ button:hover {
 
 /* Tooltip Styles */
 #spell-tooltip {
-    background: rgba(20, 20, 30, 0.95);
-    border: 1px solid #4a4a6a;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-    padding: 15px;
-    max-width: 600px;
-    color: #e0e0e0;
+    position: fixed;
+    display: none;
+    opacity: 0;
+    z-index: 1000;      
+    width: 700px;
+    max-width: 90vw;
+    max-height: 80vh;
+    border-radius: 0;     
+    background-color: #1a202c;
+    color: #f7fafc;
+    border: 2px solid #00A3E0;
+    box-shadow: 0 0 20px rgba(0, 163, 224, 0.5);    
     font-family: 'Roboto', sans-serif;
-    pointer-events: none;
-    z-index: 1000;
+    font-size: 14px;
+    line-height: 1.4;
+    overflow-y: auto;
+    transition: opacity 0.2s ease;
+    pointer-events: none;    
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 15px;
+    padding: 15px;
 }
 
 #spell-tooltip h4 {
-    color: #ffd700;
+    grid-column: 1 / span 3;
+    text-align: center;
+    margin: 0 0 15px 0;
+    padding: 8px 0;
     font-family: 'Cinzel', serif;
-    font-size: 1.4em;
-    margin-bottom: 10px;
-    border-bottom: 1px solid #4a4a6a;
-    padding-bottom: 5px;
+    font-size: 18px;
+    color: #00A3E0;
+    border-bottom: 1px solid #2d3748;
+    background-color: rgba(0, 163, 224, 0.1);
 }
 
 #spell-tooltip h5 {
-    color: #a0c4ff;
-    font-size: 1.1em;
-    margin: 8px 0 4px 0;
-    font-weight: bold;
+    margin: 16px 0 8px 0;
+    color: var(--tooltip-secondary);
+    font-size: 15px;
+    font-weight: 500;
 }
 
 #spell-tooltip p {
     margin: 0 0 10px 0;
-    line-height: 1.4;
+    color: var(--tooltip-secondary);
 }
 
 .tooltip-description {
@@ -500,26 +515,6 @@ button:hover {
 #spell-tooltip::-webkit-scrollbar-thumb {
     background: var(--tooltip-border);
     border-radius: 4px;
-}
-
-#spell-tooltip .tooltip-column {
-    display: inline-block;
-    vertical-align: top;
-    width: 48%;
-    margin-right: 2%;
-}
-
-#spell-tooltip .tooltip-section {
-    margin-bottom: 12px;
-    background: rgba(30, 30, 45, 0.7);
-    padding: 8px 12px;
-    border-radius: 5px;
-    border-left: 3px solid #4a4a6a;
-}
-
-#spell-tooltip .tooltip-section:hover {
-    background: rgba(40, 40, 60, 0.8);
-    border-left-color: #a0c4ff;
 }
 
 #spell-tooltip::-webkit-scrollbar-thumb:hover {
