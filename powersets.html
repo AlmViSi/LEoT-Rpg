@@ -326,6 +326,24 @@
             flex-grow: 1;
             margin-bottom: 0;
         }
+	 .paired-input-group {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 10px;
+        align-items: center;
+    }
+    
+    .paired-input-group input, 
+    .paired-input-group select {
+        flex: 1;
+        color: white;
+        font-size: 1.2em;
+    }
+    
+    .paired-input-group .value-input {
+        flex: 0.5; /* Уменьшаем ширину поля Value */
+        min-width: 100px;
+    }
         
         .removing {
             animation: fadeOut 0.3s ease forwards;
@@ -632,95 +650,106 @@
             <div class="tab" data-tab="list-manager" draggable="true" onclick="showTab('list-manager')" id="tab-manager"></div>
         </div>
 
-        <div id="spell-creator" class="tab-content active">
-            <h2 id="creator-title"></h2>
-            <form id="spell-form">
-                <label for="spell-name" class="tooltip" id="label-spell-name"></label>
-                <input type="text" id="spell-name" placeholder="">
+<div id="spell-creator" class="tab-content active">
+        <h2 id="creator-title"></h2>
+        <form id="spell-form">
+            <!-- Одиночные поля остаются без изменений -->
+            <label for="spell-name" class="tooltip" id="label-spell-name"></label>
+            <input type="text" id="spell-name" placeholder="">
 
-                <label for="spell-type-container" class="tooltip" id="label-spell-type"></label>
-                <div id="spell-type-container">
-                    </div>
+            <label for="spell-type-container" class="tooltip" id="label-spell-type"></label>
+            <div id="spell-type-container"></div>
 
-                <label for="power-set-container" class="tooltip" id="label-power-set"></label>
-                <div id="power-set-container">
-                    </div>
+            <label for="power-set-container" class="tooltip" id="label-power-set"></label>
+            <div id="power-set-container"></div>
 
-                <label for="power-set-tree-container" class="tooltip" id="label-power-set-tree"></label>
-                <div id="power-set-tree-container">
-                    </div>
+            <label for="power-set-tree-container" class="tooltip" id="label-power-set-tree"></label>
+            <div id="power-set-tree-container"></div>
 
-                <label for="level-container" class="tooltip" id="label-level"></label>
-                <div id="level-container">
-                    </div>
+            <label for="level-container" class="tooltip" id="label-level"></label>
+            <div id="level-container"></div>
 
-                <label for="description" class="tooltip" id="label-description"></label>
-                <textarea id="description" rows="4" placeholder=""></textarea>
+            <label for="description" class="tooltip" id="label-description"></label>
+            <textarea id="description" rows="4" placeholder=""></textarea>
 
-                <label for="action-container" class="tooltip" id="label-action"></label>
-                <div id="action-container">
-                    </div>
-
-                <label for="target-container" class="tooltip" id="label-target"></label>
-                <div id="target-container">
-                    </div>
-
-                <label for="range-container" class="tooltip" id="label-range"></label>
-                <div id="range-container">
-                    </div>
-
-                <label for="duration-container" class="tooltip" id="label-duration"></label>
-                <div id="duration-container">
-                    </div>
-
-                <label for="effect" class="tooltip" id="label-effect"></label>
-                <textarea id="effect" rows="4" placeholder=""></textarea>
-
-                <label for="cooldown-container" class="tooltip" id="label-cooldown"></label>
-                <div id="cooldown-container">
-                    </div>
-
-                <label for="cost-container" class="tooltip" id="label-cost"></label>
-                <div id="cost-container">
-                    </div>
-
-                <label for="defense-container" class="tooltip" id="label-defense"></label>
-                <div id="defense-container">
-                    </div>
-
-                <label for="attack-container" class="tooltip" id="label-attack"></label>
-                <div id="attack-container">
-                    </div>
-
-                <label for="restrictions-container" class="tooltip" id="label-restrictions"></label>
-                <div id="restrictions-container">
-                    </div>
-
-                <label for="upgrades-container" class="tooltip" id="label-upgrades"></label>
-                <div id="upgrades-container">
-                    </div>
-		<label for="target-value-container" class="tooltip" id="label-target-value"></label>
-		<div id="target-value-container"></div>
-
-		<label for="range-value-container" class="tooltip" id="label-range-value"></label>
-		<div id="range-value-container"></div>
-
-		<label for="duration-value-container" class="tooltip" id="label-duration-value"></label>
-		<div id="duration-value-container"></div>
-
-		<label for="cooldown-value-container" class="tooltip" id="label-cooldown-value"></label>
-		<div id="cooldown-value-container"></div>
-
-		<label for="cost-value-container" class="tooltip" id="label-cost-value"></label>
-		<div id="cost-value-container"></div>
-
-                <div class="button-group">
-                    <button type="button" onclick="saveSpell()" id="save-spell" class="tooltip" data-tooltip="Ctrl+S"></button>
-                    <button type="button" onclick="loadSpell()" id="load-spell" class="tooltip" data-tooltip="Ctrl+L"></button>
-                    <button type="button" onclick="clearForm()" id="clear-form" class="tooltip" data-tooltip="Ctrl+R"></button>
+            <!-- Модифицируем парные поля -->
+            <label for="action-container" class="tooltip" id="label-action"></label>
+            <div id="action-container">
+                <div class="paired-input-group">
+                    <select id="action-0" class="main-input"></select>
+                    <input type="text" id="action-value-0" class="value-input" placeholder="Value">
+                    <button type="button" onclick="addPairedRow('action')">+</button>
                 </div>
-            </form>
-        </div>
+            </div>
+
+            <label for="target-container" class="tooltip" id="label-target"></label>
+            <div id="target-container">
+                <div class="paired-input-group">
+                    <select id="target-0" class="main-input"></select>
+                    <input type="text" id="target-value-0" class="value-input" placeholder="Value">
+                    <button type="button" onclick="addPairedRow('target')">+</button>
+                </div>
+            </div>
+
+            <label for="range-container" class="tooltip" id="label-range"></label>
+            <div id="range-container">
+                <div class="paired-input-group">
+                    <select id="range-0" class="main-input"></select>
+                    <input type="text" id="range-value-0" class="value-input" placeholder="Value">
+                    <button type="button" onclick="addPairedRow('range')">+</button>
+                </div>
+            </div>
+
+            <label for="duration-container" class="tooltip" id="label-duration"></label>
+            <div id="duration-container">
+                <div class="paired-input-group">
+                    <select id="duration-0" class="main-input"></select>
+                    <input type="text" id="duration-value-0" class="value-input" placeholder="Value">
+                    <button type="button" onclick="addPairedRow('duration')">+</button>
+                </div>
+            </div>
+
+            <label for="effect" class="tooltip" id="label-effect"></label>
+            <textarea id="effect" rows="4" placeholder=""></textarea>
+
+            <label for="cooldown-container" class="tooltip" id="label-cooldown"></label>
+            <div id="cooldown-container">
+                <div class="paired-input-group">
+                    <select id="cooldown-0" class="main-input"></select>
+                    <input type="text" id="cooldown-value-0" class="value-input" placeholder="Value">
+                    <button type="button" onclick="addPairedRow('cooldown')">+</button>
+                </div>
+            </div>
+
+            <label for="cost-container" class="tooltip" id="label-cost"></label>
+            <div id="cost-container">
+                <div class="paired-input-group">
+                    <select id="cost-0" class="main-input"></select>
+                    <input type="text" id="cost-value-0" class="value-input" placeholder="Value">
+                    <button type="button" onclick="addPairedRow('cost')">+</button>
+                </div>
+            </div>
+
+            <!-- Остальные поля остаются без изменений -->
+            <label for="defense-container" class="tooltip" id="label-defense"></label>
+            <div id="defense-container"></div>
+
+            <label for="attack-container" class="tooltip" id="label-attack"></label>
+            <div id="attack-container"></div>
+
+            <label for="restrictions-container" class="tooltip" id="label-restrictions"></label>
+            <div id="restrictions-container"></div>
+
+            <label for="upgrades-container" class="tooltip" id="label-upgrades"></label>
+            <div id="upgrades-container"></div>
+
+            <div class="button-group">
+                <button type="button" onclick="saveSpell()" id="save-spell" class="tooltip" data-tooltip="Ctrl+S"></button>
+                <button type="button" onclick="loadSpell()" id="load-spell" class="tooltip" data-tooltip="Ctrl+L"></button>
+                <button type="button" onclick="clearForm()" id="clear-form" class="tooltip" data-tooltip="Ctrl+R"></button>
+            </div>
+        </form>
+    </div>
 		
 		<div id="spell-tooltip" class="tooltip-spell"></div>
 
@@ -1772,129 +1801,220 @@
         function getAllInputValues(containerId) {
             const container = document.getElementById(containerId);
             if (!container) return [];
-            const inputs = container.querySelectorAll('input[type="text"], select');
-            return Array.from(inputs).map(input => input.value).filter(value => value.trim() !== '');
+            
+            const result = [];
+            const groups = container.querySelectorAll('.paired-input-group');
+            
+            groups.forEach(group => {
+                const mainInput = group.querySelector('.main-input');
+                const valueInput = group.querySelector('.value-input');
+                
+                if (mainInput && valueInput) {
+                    result.push({
+                        type: mainInput.value,
+                        value: valueInput.value
+                    });
+                }
+            });
+            
+            return result;
         }
 
         // Clear existing dynamic inputs and populate with new values
-        function clearAndPopulateDynamicInputs(containerId, values, isSelect = false, dropdownList = [], fieldNameOverride = null) {
-            const container = document.getElementById(containerId);
-            container.innerHTML = ''; // Clear all existing dynamic inputs
+function clearAndPopulateDynamicInputs(containerId, values, isSelect = false, dropdownList = [], fieldNameOverride = null) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
 
-            const fieldName = fieldNameOverride || containerId.replace('-container', '');
+    container.innerHTML = ''; // Очищаем контейнер
 
-            if (values.length === 0) {
-                // If no values, add one empty row with an "add" button
-                const div = document.createElement('div');
-                div.className = 'dynamic-input-group';
-                let inputElement;
-                if (isSelect) {
-                    inputElement = document.createElement('select');
-                    // Add a default empty option for select elements
-                    const defaultOption = document.createElement('option');
-                    defaultOption.value = "";
-                    defaultOption.text = "-- Select --"; // or localized text
-                    inputElement.appendChild(defaultOption);
+    const fieldName = fieldNameOverride || containerId.replace('-container', '');
+    
+    // Определяем, является ли это парное поле (тип + значение)
+    const isPairedField = ['action', 'target', 'range', 'duration', 'cooldown', 'cost'].includes(fieldName);
+    
+    // Для парных полей (тип + значение)
+    if (isPairedField) {
+        // Если нет значений, добавляем одну пустую строку
+        if (values.length === 0) {
+            addPairedRow(fieldName);
+            return;
+        }
 
-                    // Determine dropdown list based on containerId
-                    let currentDropdownList = dropdownList; // Use passed dropdownList by default
-                    if (containerId === 'spell-type-container') {
-                        currentDropdownList = lists.type; // Explicitly use lists.type
-                    } else if (containerId === 'power-set-container') {
-                        currentDropdownList = Object.keys(lists.powerSets);
-                    } else if (containerId === 'power-set-tree-container') {
-                        const selectedPowerSet = document.getElementById('power-set-0')?.value || '';
-                        currentDropdownList = lists.powerSets[selectedPowerSet] || [];
-                    } else if (lists[fieldName]) { // Fallback if not a special case
-                        currentDropdownList = lists[fieldName];
-                    }
+        // Восстанавливаем сохраненные значения для парных полей
+        values.forEach((value, index) => {
+            const div = document.createElement('div');
+            div.className = 'paired-input-group';
 
+            // Создаем select для типа
+            const select = document.createElement('select');
+            select.id = `${fieldName}-${index}`;
+            select.className = 'main-input';
 
-                    currentDropdownList.forEach(item => {
-                        const option = document.createElement('option');
-                        option.value = item;
-                        option.text = item;
-                        inputElement.appendChild(option);
-                    });
-                } else {
-                    inputElement = document.createElement('input');
-                    inputElement.type = 'text';
-                    inputElement.placeholder = translations[currentLanguage][`placeholder_${fieldName}`] || '';
-                }
-                inputElement.id = `${fieldName}-0`; // Give it an ID
+            // Добавляем опции в select
+            const defaultOption = document.createElement('option');
+            defaultOption.value = "";
+            defaultOption.text = "-- Select --";
+            select.appendChild(defaultOption);
 
-                // Attach onchange for power-set-0 specifically if it's a new element
-                if (fieldName === 'power-set') {
-                    inputElement.onchange = updatePowerSetTree;
-                }
-
-                const addButton = document.createElement('button');
-                addButton.type = 'button';
-                addButton.textContent = translations[currentLanguage].add_button; // Localized add button
-                addButton.onclick = () => addRowToForm(fieldName);
-
-                div.appendChild(inputElement);
-                div.appendChild(addButton);
-                container.appendChild(div);
-                return;
+            if (lists[fieldName]) {
+                lists[fieldName].forEach(item => {
+                    const option = document.createElement('option');
+                    option.value = item;
+                    option.text = item;
+                    select.appendChild(option);
+                });
             }
 
-            values.forEach((value, index) => {
-                const div = document.createElement('div');
-                div.className = 'dynamic-input-group';
+            // Устанавливаем сохраненное значение
+            select.value = value.type || '';
 
-                let inputElement;
-                if (isSelect) {
-                    inputElement = document.createElement('select');
-                    const defaultOption = document.createElement('option');
-                    defaultOption.value = "";
-                    defaultOption.text = "-- Select --";
-                    inputElement.appendChild(defaultOption);
+            // Создаем input для значения
+            const valueInput = document.createElement('input');
+            valueInput.type = 'text';
+            valueInput.id = `${fieldName}-value-${index}`;
+            valueInput.className = 'value-input';
+            valueInput.placeholder = 'Value';
+            valueInput.value = value.value || '';
 
-                    // Determine dropdown list based on containerId for existing values
-                    let currentDropdownList = dropdownList; // Use passed dropdownList by default
-                    if (containerId === 'spell-type-container') {
-                        currentDropdownList = lists.type; // Explicitly use lists.type
-                    } else if (containerId === 'power-set-container') {
-                        currentDropdownList = Object.keys(lists.powerSets);
-                    } else if (containerId === 'power-set-tree-container') {
-                        // For existing power-set-tree elements, try to derive from existing power-set values
-                        const currentPowerSet = getAllInputValues('power-set-container')[0] || Object.keys(lists.powerSets)[0] || '';
-                        currentDropdownList = lists.powerSets[currentPowerSet] || [];
-                    } else if (lists[fieldName]) { // Fallback if not a special case
-                        currentDropdownList = lists[fieldName];
-                    }
+            // Создаем кнопку (удаления или добавления)
+            const button = document.createElement('button');
+            button.type = 'button';
+            
+            // Для последней строки делаем кнопку добавления, для остальных - удаления
+            if (index === values.length - 1) {
+                button.textContent = '+';
+                button.onclick = function() {
+                    addPairedRow(fieldName);
+                };
+            } else {
+                button.textContent = '-';
+                button.onclick = function() {
+                    div.remove();
+                };
+            }
 
-                    currentDropdownList.forEach(item => {
-                        const option = document.createElement('option');
-                        option.value = item;
-                        option.text = item;
-                        inputElement.appendChild(option);
-                    });
-                    inputElement.value = value; // Set selected value
-                } else {
-                    inputElement = document.createElement('input');
-                    inputElement.type = 'text';
-                    inputElement.value = value;
-                    inputElement.placeholder = translations[currentLanguage][`placeholder_${fieldName}`] || '';
-                }
-                inputElement.id = `${fieldName}-${index}`; // Assign an ID
+            div.appendChild(select);
+            div.appendChild(valueInput);
+            div.appendChild(button);
+            container.appendChild(div);
+        });
+    } 
+    // Для обычных динамических полей (не парных)
+    else {
+        // Если нет значений, добавляем одну пустую строку с кнопкой "+"
+        if (values.length === 0) {
+            const div = document.createElement('div');
+            div.className = 'dynamic-input-group';
 
-                // Attach onchange for power-set elements if they are created
+            let inputElement;
+            if (isSelect) {
+                inputElement = document.createElement('select');
+                inputElement.id = `${fieldName}-0`;
+
+                // Добавляем опции для select
+                const defaultOption = document.createElement('option');
+                defaultOption.value = "";
+                defaultOption.text = "-- Select --";
+                inputElement.appendChild(defaultOption);
+
+                dropdownList.forEach(item => {
+                    const option = document.createElement('option');
+                    option.value = item;
+                    option.text = item;
+                    inputElement.appendChild(option);
+                });
+
+                // Особый обработчик для power-set
                 if (fieldName === 'power-set') {
                     inputElement.onchange = updatePowerSetTree;
                 }
+            } else {
+                inputElement = document.createElement('input');
+                inputElement.type = 'text';
+                inputElement.id = `${fieldName}-0`;
+                inputElement.placeholder = translations[currentLanguage][`placeholder_${fieldName}`] || '';
+            }
 
-                const button = document.createElement('button');
-                button.type = 'button';
-                button.textContent = (index === values.length - 1) ? translations[currentLanguage].add_button : translations[currentLanguage].remove_button; // Localized buttons
-                button.onclick = (index === values.length - 1) ? () => addRowToForm(fieldName) : (e) => removeRowFromForm(e.target, fieldName);
+            const addButton = document.createElement('button');
+            addButton.type = 'button';
+            addButton.textContent = '+';
+            addButton.onclick = () => addRowToForm(fieldName);
 
-                div.appendChild(inputElement);
-                div.appendChild(button);
-                container.appendChild(div);
-            });
+            div.appendChild(inputElement);
+            div.appendChild(addButton);
+            container.appendChild(div);
+            return;
         }
+
+        // Восстанавливаем сохраненные значения для обычных полей
+        values.forEach((value, index) => {
+            const div = document.createElement('div');
+            div.className = 'dynamic-input-group';
+
+            let inputElement;
+            if (isSelect) {
+                inputElement = document.createElement('select');
+                inputElement.id = `${fieldName}-${index}`;
+
+                // Добавляем опции для select
+                const defaultOption = document.createElement('option');
+                defaultOption.value = "";
+                defaultOption.text = "-- Select --";
+                inputElement.appendChild(defaultOption);
+
+                // Определяем список для dropdown
+                let currentDropdownList = dropdownList;
+                if (fieldName === 'spell-type') {
+                    currentDropdownList = lists.type;
+                } else if (fieldName === 'power-set') {
+                    currentDropdownList = Object.keys(lists.powerSets);
+                } else if (fieldName === 'power-set-tree') {
+                    const selectedPowerSet = getAllInputValues('power-set-container')[0] || '';
+                    currentDropdownList = lists.powerSets[selectedPowerSet] || [];
+                } else if (lists[fieldName]) {
+                    currentDropdownList = lists[fieldName];
+                }
+
+                currentDropdownList.forEach(item => {
+                    const option = document.createElement('option');
+                    option.value = item;
+                    option.text = item;
+                    inputElement.appendChild(option);
+                });
+
+                inputElement.value = value;
+
+                // Особый обработчик для power-set
+                if (fieldName === 'power-set') {
+                    inputElement.onchange = updatePowerSetTree;
+                }
+            } else {
+                inputElement = document.createElement('input');
+                inputElement.type = 'text';
+                inputElement.id = `${fieldName}-${index}`;
+                inputElement.value = value;
+                inputElement.placeholder = translations[currentLanguage][`placeholder_${fieldName}`] || '';
+            }
+
+            // Создаем кнопку (удаления или добавления)
+            const button = document.createElement('button');
+            button.type = 'button';
+            
+            // Для последней строки делаем кнопку добавления, для остальных - удаления
+            if (index === values.length - 1) {
+                button.textContent = '+';
+                button.onclick = () => addRowToForm(fieldName);
+            } else {
+                button.textContent = '-';
+                button.onclick = (e) => removeRowFromForm(e.target, fieldName);
+            }
+
+            div.appendChild(inputElement);
+            div.appendChild(button);
+            container.appendChild(div);
+        });
+    }
+}
 
         // Initialize all dynamic input containers with one default row
         function initializeDynamicInputs() {
@@ -1940,30 +2060,25 @@
 
         // Save spell
   function saveSpell() {
-        const spell = {
-            name: document.getElementById('spell-name').value,
-            type: getAllInputValues('spell-type-container'),
-            powerSet: getAllInputValues('power-set-container'),
-            powerSetTree: getAllInputValues('power-set-tree-container'),
-            level: getAllInputValues('level-container'),
-            description: document.getElementById('description').value,
-            action: getAllInputValues('action-container'),
-            target: getAllInputValues('target-container'),
-            range: getAllInputValues('range-container'),
-            duration: getAllInputValues('duration-container'),
-            effect: document.getElementById('effect').value,
-            cooldown: getAllInputValues('cooldown-container'),
-            cost: getAllInputValues('cost-container'),
-            defense: getAllInputValues('defense-container'),
-            attack: getAllInputValues('attack-container'),
-            restrictions: getAllInputValues('restrictions-container'),
-            upgrades: getAllInputValues('upgrades-container'),
-	    targetValue: getAllInputValues('target-value-container'),
-	    rangeValue: getAllInputValues('range-value-container'),
-       	    durationValue: getAllInputValues('duration-value-container'),
-            cooldownValue: getAllInputValues('cooldown-value-container'),
-            costValue: getAllInputValues('cost-value-container')
-        };
+            const spell = {
+                name: document.getElementById('spell-name').value,
+                type: getAllInputValues('spell-type-container'),
+                powerSet: getAllInputValues('power-set-container'),
+                powerSetTree: getAllInputValues('power-set-tree-container'),
+                level: getAllInputValues('level-container'),
+                description: document.getElementById('description').value,
+                action: getAllInputValues('action-container'),
+                target: getAllInputValues('target-container'),
+                range: getAllInputValues('range-container'),
+                duration: getAllInputValues('duration-container'),
+                effect: document.getElementById('effect').value,
+                cooldown: getAllInputValues('cooldown-container'),
+                cost: getAllInputValues('cost-container'),
+                defense: getAllInputValues('defense-container'),
+                attack: getAllInputValues('attack-container'),
+                restrictions: getAllInputValues('restrictions-container'),
+                upgrades: getAllInputValues('upgrades-container')
+            };
 
         const existingIndex = savedSpells.findIndex(s => s.name === spell.name);
         if (existingIndex >= 0) {
@@ -1985,7 +2100,55 @@
         form.classList.add('glow');
         setTimeout(() => form.classList.remove('glow'), 1000);
     }
-
+	    
+  function addPairedRow(field) {
+            const container = document.getElementById(`${field}-container`);
+            const currentIndex = container.children.length;
+            
+            const div = document.createElement('div');
+            div.className = 'paired-input-group';
+            
+            // Создаем select для основного поля
+            const select = document.createElement('select');
+            select.id = `${field}-${currentIndex}`;
+            select.className = 'main-input';
+            
+            // Заполняем опции из списка
+            const defaultOption = document.createElement('option');
+            defaultOption.value = "";
+            defaultOption.text = "-- Select --";
+            select.appendChild(defaultOption);
+            
+            if (lists[field]) {
+                lists[field].forEach(item => {
+                    const option = document.createElement('option');
+                    option.value = item;
+                    option.text = item;
+                    select.appendChild(option);
+                });
+            }
+            
+            // Создаем input для значения
+            const valueInput = document.createElement('input');
+            valueInput.type = 'text';
+            valueInput.id = `${field}-value-${currentIndex}`;
+            valueInput.className = 'value-input';
+            valueInput.placeholder = 'Value';
+            
+            // Создаем кнопку удаления
+            const removeButton = document.createElement('button');
+            removeButton.type = 'button';
+            removeButton.textContent = '-';
+            removeButton.onclick = function() {
+                div.remove();
+            };
+            
+            div.appendChild(select);
+            div.appendChild(valueInput);
+            div.appendChild(removeButton);
+            
+            container.appendChild(div);
+        }
         // Load spell
         function loadSpell(spell = null) {
             if (spell || savedSpells.length > 0) {
