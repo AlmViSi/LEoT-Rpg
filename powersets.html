@@ -1215,20 +1215,16 @@
 function getAllInputValues(containerId) {
     const container = document.getElementById(containerId);
     if (!container) return [];
-    
+
     const result = [];
-    
-    // Проверяем, является ли это парное поле (имеет группы с main-input и value-input)
     const isPairedField = container.querySelector('.paired-input-group') !== null;
-    
+
     if (isPairedField) {
-        // Обработка парных полей
+        // Обработка парных полей (action, target, range и т. д.)
         const groups = container.querySelectorAll('.paired-input-group');
-        
         groups.forEach(group => {
             const mainInput = group.querySelector('.main-input');
             const valueInput = group.querySelector('.value-input');
-            
             if (mainInput && valueInput) {
                 result.push({
                     type: mainInput.value,
@@ -1237,16 +1233,15 @@ function getAllInputValues(containerId) {
             }
         });
     } else {
-        // Обработка обычных полей (select или input)
-        const inputs = container.querySelectorAll('select, input');
-        
+        // Обработка обычных полей (power-set, power-set-tree, level и т. д.)
+        const inputs = container.querySelectorAll('select, input[type="text"]');
         inputs.forEach(input => {
-            if (input.type !== 'button' && !input.classList.contains('value-input')) {
+            if (input.value && input.value.trim() !== "") {
                 result.push(input.value);
             }
         });
     }
-    
+
     return result;
 }
 
