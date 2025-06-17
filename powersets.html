@@ -2576,24 +2576,36 @@ function showSpellTooltip(event, spell) {
         </div>
     `;
     
-    // Позиционирование тултипа
-    const offset = 20;
-    const x = event.clientX + offset;
-    const y = event.clientY + offset;
+    // Сначала делаем тултип невидимым, но уже с контентом, чтобы измерить его размеры
+    tooltip.style.opacity = '0';
+    tooltip.style.display = 'block';
+    
+    // Получаем размеры тултипа после добавления контента
     const tooltipWidth = tooltip.offsetWidth;
     const tooltipHeight = tooltip.offsetHeight;
+    const offset = 15;
     
-    // Проверка на выход за границы экрана
-    const adjustedX = x + tooltipWidth > window.innerWidth 
-        ? window.innerWidth - tooltipWidth - offset 
-        : x;
+    // Рассчитываем позицию
+    let x = event.clientX + offset;
+    let y = event.clientY + offset;
     
-    const adjustedY = y + tooltipHeight > window.innerHeight 
-        ? window.innerHeight - tooltipHeight - offset 
-        : y;
+    // Проверяем правую границу
+    if (x + tooltipWidth > window.innerWidth) {
+        x = event.clientX - tooltipWidth - offset;
+        // Если и так не помещается, прижимаем к правому краю
+        if (x < 0) x = window.innerWidth - tooltipWidth - offset;
+    }
     
-    tooltip.style.left = `${adjustedX}px`;
-    tooltip.style.top = `${adjustedY}px`;
+    // Проверяем нижнюю границу
+    if (y + tooltipHeight > window.innerHeight) {
+        y = event.clientY - tooltipHeight - offset;
+        // Если и так не помещается, прижимаем к нижнему краю
+        if (y < 0) y = window.innerHeight - tooltipHeight - offset;
+    }
+    
+    // Устанавливаем позицию и делаем видимым
+    tooltip.style.left = `${Math.max(0, x)}px`;
+    tooltip.style.top = `${Math.max(0, y)}px`;
     tooltip.style.opacity = '1';
 }
 	    
