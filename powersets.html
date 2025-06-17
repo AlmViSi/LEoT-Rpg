@@ -1922,70 +1922,70 @@ function showSpellTooltip(event, spell) {
                 <h5>${t.label_effect}</h5>
                 <p>${spell.effect || '-'}</p>
             </div>
+            ${spell.restrictions && spell.restrictions.length > 0 ? `
+            <div class="tooltip-section">
+                <h5>${t.label_restrictions}</h5>
+                <p>${formatValue(spell.restrictions)}</p>
+            </div>` : ''}
+            ${spell.upgrades && spell.upgrades.length > 0 ? `
+            <div class="tooltip-section">
+                <h5>${t.label_upgrades}</h5>
+                <p>${formatValue(spell.upgrades)}</p>
+            </div>` : ''}
         </div>
         <div class="tooltip-column">
             <div class="tooltip-section">
-                <h5>Power Set</h5>
+                <h5>${t.label_power_set}</h5>
                 <p>${formatValue(spell.powerSet)}</p>
             </div>
             <div class="tooltip-section">
-                <h5>Power Set Tree</h5>
+                <h5>${t.label_power_set_tree}</h5>
                 <p>${formatValue(spell.powerSetTree)}</p>
             </div>
             <div class="tooltip-section">
-                <h5>Level/Rank/Requirements</h5>
+                <h5>${t.label_level}</h5>
                 <p>${formatValue(spell.level)}</p>
             </div>
             <div class="tooltip-section">
-                <h5>Type</h5>
+                <h5>${t.label_spell_type}</h5>
                 <p>${formatValue(spell.type)}</p>
             </div>
-            ${spell.defense ? `
+            ${spell.defense && spell.defense.length > 0 ? `
             <div class="tooltip-section">
-                <h5>Defense</h5>
+                <h5>${t.label_defense}</h5>
                 <p>${formatValue(spell.defense)}</p>
             </div>` : ''}
-            ${spell.attack ? `
+            ${spell.attack && spell.attack.length > 0 ? `
             <div class="tooltip-section">
-                <h5>Attack</h5>
+                <h5>${t.label_attack}</h5>
                 <p>${formatValue(spell.attack)}</p>
-            </div>` : ''}
-            ${spell.restrictions ? `
-            <div class="tooltip-section">
-                <h5>Restrictions/Conditions</h5>
-                <p>${formatValue(spell.restrictions)}</p>
             </div>` : ''}
         </div>
         <div class="tooltip-column">
             <div class="tooltip-section">
-                <h5>Action</h5>
+                <h5>${t.label_action}</h5>
                 <p>${formatPairedValuesForDisplay(spell.action)}</p>
             </div>
             <div class="tooltip-section">
-                <h5>Range/Radius</h5>
+                <h5>${t.label_range}</h5>
                 <p>${formatPairedValuesForDisplay(spell.range)}</p>
             </div>
             <div class="tooltip-section">
-                <h5>Target</h5>
+                <h5>${t.label_target}</h5>
                 <p>${formatPairedValuesForDisplay(spell.target)}</p>
             </div>
             <div class="tooltip-section">
-                <h5>Duration</h5>
+                <h5>${t.label_duration}</h5>
                 <p>${formatPairedValuesForDisplay(spell.duration)}</p>
             </div>
             <div class="tooltip-section">
-                <h5>Cooldown</h5>
+                <h5>${t.label_cooldown}</h5>
                 <p>${formatPairedValuesForDisplay(spell.cooldown)}</p>
             </div>
             <div class="tooltip-section">
-                <h5>Cost</h5>
+                <h5>${t.label_cost}</h5>
                 <p>${formatPairedValuesForDisplay(spell.cost)}</p>
             </div>
-            ${spell.upgrades ? `
-            <div class="tooltip-section">
-                <h5>Variants/Upgrades</h5>
-                <p>${formatValue(spell.upgrades)}</p>
-            </div>` : ''}
         </div>
     `;
     
