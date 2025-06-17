@@ -1,4 +1,3 @@
-// powersets.js
 document.addEventListener('DOMContentLoaded', () => {
     // Инициализация Firebase
     if (typeof firebaseConfig === 'undefined') {
@@ -46,6 +45,29 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
     
+    // Функция для получения значений из парных полей
+    function getPairedInputValues(containerId) {
+        const container = document.getElementById(containerId);
+        if (!container) return [];
+        
+        const result = [];
+        const groups = container.querySelectorAll('.paired-input-group');
+        
+        groups.forEach(group => {
+            const mainInput = group.querySelector('.main-input');
+            const valueInput = group.querySelector('.value-input');
+            
+            if (mainInput && valueInput) {
+                result.push({
+                    type: mainInput.value,
+                    value: valueInput.value
+                });
+            }
+        });
+        
+        return result;
+    }
+    
     // Функция для сохранения заклинания (локально и в Firebase)
     window.saveSpell = function() {
         const spell = {
@@ -55,13 +77,13 @@ document.addEventListener('DOMContentLoaded', () => {
             powerSetTree: getAllInputValues('power-set-tree-container'),
             level: getAllInputValues('level-container'),
             description: document.getElementById('description').value,
-            action: getAllInputValues('action-container'),
-            target: getAllInputValues('target-container'),
-            range: getAllInputValues('range-container'),
-            duration: getAllInputValues('duration-container'),
+            action: getPairedInputValues('action-container'),
+            target: getPairedInputValues('target-container'),
+            range: getPairedInputValues('range-container'),
+            duration: getPairedInputValues('duration-container'),
             effect: document.getElementById('effect').value,
-            cooldown: getAllInputValues('cooldown-container'),
-            cost: getAllInputValues('cost-container'),
+            cooldown: getPairedInputValues('cooldown-container'),
+            cost: getPairedInputValues('cost-container'),
             defense: getAllInputValues('defense-container'),
             attack: getAllInputValues('attack-container'),
             restrictions: getAllInputValues('restrictions-container'),
@@ -99,6 +121,21 @@ document.addEventListener('DOMContentLoaded', () => {
             }, 300);
         }
     };
+    
+    // Функция для форматирования парных значений для отображения
+    function formatPairedValues(pairedArray) {
+        if (!pairedArray || !pairedArray.length) return '-';
+        
+        return pairedArray
+            .filter(item => item.type || item.value)
+            .map(item => {
+                if (item.type && item.value) {
+                    return `${item.type}: ${item.value}`;
+                }
+                return item.type || item.value;
+            })
+            .join(', ');
+    }
     
     // Функция для обновления списка заклинаний
     window.updateSpellList = function() {
@@ -141,7 +178,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const spellTypeDisplay = Array.isArray(spell.type) ? spell.type.join(', ') : (spell.type || '-');
             const spellPowerSetDisplay = Array.isArray(spell.powerSet) ? spell.powerSet.join(', ') : (spell.powerSet || '-');
             const spellPowerSetTreeDisplay = Array.isArray(spell.powerSetTree) ? spell.powerSetTree.join(', ') : (spell.powerSetTree || '-');
-            const spellActionDisplay = Array.isArray(spell.action) ? spell.action.join(', ') : (spell.action || '-');
+            const spellActionDisplay = formatPairedValues(spell.action);
 
             tr.innerHTML = `
                 <td>${spell.name || '-'}</td>
