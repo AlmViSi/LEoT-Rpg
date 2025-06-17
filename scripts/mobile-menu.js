@@ -4,7 +4,6 @@ const mobileMenuBtn = document.createElement('button');
 mobileMenuBtn.className = 'mobile-menu-btn';
 mobileMenuBtn.textContent = 'Меню';
 
-text
 const mobileMenuContainer = document.createElement('div');
 mobileMenuContainer.className = 'mobile-menu-container';
 
