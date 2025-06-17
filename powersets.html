@@ -1834,9 +1834,50 @@ function clearAndPopulateDynamicInputs(containerId, values, isSelect = false, dr
     
     // Для парных полей (тип + значение)
     if (isPairedField) {
-        // Если нет значений, добавляем одну пустую строку
+        // Если нет значений, добавляем одну пустую строку с кнопкой "+"
         if (values.length === 0) {
-            addPairedRow(fieldName);
+            const div = document.createElement('div');
+            div.className = 'paired-input-group';
+
+            // Создаем select для типа
+            const select = document.createElement('select');
+            select.id = `${fieldName}-0`;
+            select.className = 'main-input';
+
+            // Добавляем опции в select
+            const defaultOption = document.createElement('option');
+            defaultOption.value = "";
+            defaultOption.text = "-- Select --";
+            select.appendChild(defaultOption);
+
+            if (lists[fieldName]) {
+                lists[fieldName].forEach(item => {
+                    const option = document.createElement('option');
+                    option.value = item;
+                    option.text = item;
+                    select.appendChild(option);
+                });
+            }
+
+            // Создаем input для значения
+            const valueInput = document.createElement('input');
+            valueInput.type = 'text';
+            valueInput.id = `${fieldName}-value-0`;
+            valueInput.className = 'value-input';
+            valueInput.placeholder = 'Value';
+
+            // Создаем кнопку добавления
+            const addButton = document.createElement('button');
+            addButton.type = 'button';
+            addButton.textContent = '+';
+            addButton.onclick = function() {
+                addPairedRow(fieldName);
+            };
+
+            div.appendChild(select);
+            div.appendChild(valueInput);
+            div.appendChild(addButton);
+            container.appendChild(div);
             return;
         }
 
@@ -1979,10 +2020,9 @@ function clearAndPopulateDynamicInputs(containerId, values, isSelect = false, dr
                     const option = document.createElement('option');
                     option.value = item;
                     option.text = item;
+                    option.selected = (item === value);
                     inputElement.appendChild(option);
                 });
-
-                inputElement.value = value;
 
                 // Особый обработчик для power-set
                 if (fieldName === 'power-set') {
