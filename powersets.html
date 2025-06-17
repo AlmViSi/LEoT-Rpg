@@ -1212,27 +1212,43 @@
         }
 
         // Get all values from dynamic input groups
-        function getAllInputValues(containerId) {
-            const container = document.getElementById(containerId);
-            if (!container) return [];
+function getAllInputValues(containerId) {
+    const container = document.getElementById(containerId);
+    if (!container) return [];
+    
+    const result = [];
+    
+    // Проверяем, является ли это парное поле (имеет группы с main-input и value-input)
+    const isPairedField = container.querySelector('.paired-input-group') !== null;
+    
+    if (isPairedField) {
+        // Обработка парных полей
+        const groups = container.querySelectorAll('.paired-input-group');
+        
+        groups.forEach(group => {
+            const mainInput = group.querySelector('.main-input');
+            const valueInput = group.querySelector('.value-input');
             
-            const result = [];
-            const groups = container.querySelectorAll('.paired-input-group');
-            
-            groups.forEach(group => {
-                const mainInput = group.querySelector('.main-input');
-                const valueInput = group.querySelector('.value-input');
-                
-                if (mainInput && valueInput) {
-                    result.push({
-                        type: mainInput.value,
-                        value: valueInput.value
-                    });
-                }
-            });
-            
-            return result;
-        }
+            if (mainInput && valueInput) {
+                result.push({
+                    type: mainInput.value,
+                    value: valueInput.value
+                });
+            }
+        });
+    } else {
+        // Обработка обычных полей (select или input)
+        const inputs = container.querySelectorAll('select, input');
+        
+        inputs.forEach(input => {
+            if (input.type !== 'button' && !input.classList.contains('value-input')) {
+                result.push(input.value);
+            }
+        });
+    }
+    
+    return result;
+}
 
         // Clear existing dynamic inputs and populate with new values
 function clearAndPopulateDynamicInputs(containerId, values, isSelect = false, dropdownList = [], fieldNameOverride = null) {
