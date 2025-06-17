@@ -193,6 +193,30 @@ document.addEventListener('DOMContentLoaded', () => {
 
         updateAutocomplete();
     };
+    function formatValue(val) {
+    if (!val) return '-';
+    
+    // Если это массив объектов (парные значения)
+    if (Array.isArray(val) && val.length > 0 && typeof val[0] === 'object' && val[0] !== null) {
+        return val
+            .filter(item => item.type || item.value)
+            .map(item => {
+                if (item.type && item.value) {
+                    return `${item.type}: ${item.value}`;
+                }
+                return item.type || item.value;
+            })
+            .join(', ');
+    }
+    
+    // Если это обычный массив
+    if (Array.isArray(val)) {
+        return val.join(', ');
+    }
+    
+    // Если это одиночное значение
+    return val;
+}
     
     // Инициализация при загрузке
     loadSpellsFromFirebase().then(spells => {
