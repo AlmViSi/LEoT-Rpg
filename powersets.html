@@ -2141,54 +2141,67 @@ function clearAndPopulateDynamicInputs(containerId, values, isSelect = false, dr
         setTimeout(() => form.classList.remove('glow'), 1000);
     }
 	    
-  function addPairedRow(field) {
-            const container = document.getElementById(`${field}-container`);
-            const currentIndex = container.children.length;
-            
-            const div = document.createElement('div');
-            div.className = 'paired-input-group';
-            
-            // Создаем select для основного поля
-            const select = document.createElement('select');
-            select.id = `${field}-${currentIndex}`;
-            select.className = 'main-input';
-            
-            // Заполняем опции из списка
-            const defaultOption = document.createElement('option');
-            defaultOption.value = "";
-            defaultOption.text = "-- Select --";
-            select.appendChild(defaultOption);
-            
-            if (lists[field]) {
-                lists[field].forEach(item => {
-                    const option = document.createElement('option');
-                    option.value = item;
-                    option.text = item;
-                    select.appendChild(option);
-                });
-            }
-            
-            // Создаем input для значения
-            const valueInput = document.createElement('input');
-            valueInput.type = 'text';
-            valueInput.id = `${field}-value-${currentIndex}`;
-            valueInput.className = 'value-input';
-            valueInput.placeholder = 'Value';
-            
-            // Создаем кнопку удаления
-            const removeButton = document.createElement('button');
-            removeButton.type = 'button';
-            removeButton.textContent = '-';
-            removeButton.onclick = function() {
-                div.remove();
+function addPairedRow(field) {
+    const container = document.getElementById(`${field}-container`);
+    const currentIndex = container.children.length;
+    
+    // Преобразуем последнюю кнопку "+" в кнопку "-"
+    const lastGroup = container.lastElementChild;
+    if (lastGroup) {
+        const lastButton = lastGroup.querySelector('button');
+        if (lastButton && lastButton.textContent === '+') {
+            lastButton.textContent = '-';
+            lastButton.onclick = function() {
+                lastGroup.remove();
             };
-            
-            div.appendChild(select);
-            div.appendChild(valueInput);
-            div.appendChild(removeButton);
-            
-            container.appendChild(div);
         }
+    }
+    
+    // Создаем новую группу полей
+    const div = document.createElement('div');
+    div.className = 'paired-input-group';
+    
+    // Создаем select для типа
+    const select = document.createElement('select');
+    select.id = `${field}-${currentIndex}`;
+    select.className = 'main-input';
+    
+    // Заполняем опции из списка
+    const defaultOption = document.createElement('option');
+    defaultOption.value = "";
+    defaultOption.text = "-- Select --";
+    select.appendChild(defaultOption);
+    
+    if (lists[field]) {
+        lists[field].forEach(item => {
+            const option = document.createElement('option');
+            option.value = item;
+            option.text = item;
+            select.appendChild(option);
+        });
+    }
+    
+    // Создаем input для значения
+    const valueInput = document.createElement('input');
+    valueInput.type = 'text';
+    valueInput.id = `${field}-value-${currentIndex}`;
+    valueInput.className = 'value-input';
+    valueInput.placeholder = 'Value';
+    
+    // Создаем кнопку добавления
+    const addButton = document.createElement('button');
+    addButton.type = 'button';
+    addButton.textContent = '+';
+    addButton.onclick = function() {
+        addPairedRow(field);
+    };
+    
+    div.appendChild(select);
+    div.appendChild(valueInput);
+    div.appendChild(addButton);
+    
+    container.appendChild(div);
+}
         // Load spell
         function loadSpell(spell = null) {
             if (spell || savedSpells.length > 0) {
