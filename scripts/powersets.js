@@ -165,4 +165,21 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         updateSpellList();
     });
+    window.saveListsToFirebase = async function(lists) {
+    try {
+        await database.ref('public_lists').set(lists);
+        console.log("Lists saved to Firebase");
+    } catch (error) {
+        console.error("Error saving lists to Firebase:", error);
+    }
+};
+    window.loadListsFromFirebase = async function() {
+    try {
+        const snapshot = await database.ref('public_lists').once('value');
+        return snapshot.val() || dropdownData; // Используем dropdownData как fallback
+    } catch (error) {
+        console.error("Error loading lists from Firebase:", error);
+        return dropdownData; // Возвращаем дефолтные данные при ошибке
+    }
+};
 });
