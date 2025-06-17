@@ -699,6 +699,20 @@
                 <label for="upgrades-container" class="tooltip" id="label-upgrades"></label>
                 <div id="upgrades-container">
                     </div>
+		<label for="target-value-container" class="tooltip" id="label-target-value"></label>
+		<div id="target-value-container"></div>
+
+		<label for="range-value-container" class="tooltip" id="label-range-value"></label>
+		<div id="range-value-container"></div>
+
+		<label for="duration-value-container" class="tooltip" id="label-duration-value"></label>
+		<div id="duration-value-container"></div>
+
+		<label for="cooldown-value-container" class="tooltip" id="label-cooldown-value"></label>
+		<div id="cooldown-value-container"></div>
+
+		<label for="cost-value-container" class="tooltip" id="label-cost-value"></label>
+		<div id="cost-value-container"></div>
 
                 <div class="button-group">
                     <button type="button" onclick="saveSpell()" id="save-spell" class="tooltip" data-tooltip="Ctrl+S"></button>
@@ -1898,6 +1912,11 @@
                 { id: 'defense-container', isSelect: true, listKey: 'defense' },
                 { id: 'attack-container', isSelect: true, listKey: 'attack' },
                 { id: 'restrictions-container', isSelect: false, listKey: null },
+		{ id: 'target-value-container', isSelect: false, listKey: null },
+        	{ id: 'range-value-container', isSelect: false, listKey: null },
+      		{ id: 'duration-value-container', isSelect: false, listKey: null },
+        	{ id: 'cooldown-value-container', isSelect: false, listKey: null },
+       		{ id: 'cost-value-container', isSelect: false, listKey: null },
                 { id: 'upgrades-container', isSelect: false, listKey: null }
             ];
 
@@ -1938,7 +1957,12 @@
             defense: getAllInputValues('defense-container'),
             attack: getAllInputValues('attack-container'),
             restrictions: getAllInputValues('restrictions-container'),
-            upgrades: getAllInputValues('upgrades-container')
+            upgrades: getAllInputValues('upgrades-container'),
+	    targetValue: getAllInputValues('target-value-container'),
+	    rangeValue: getAllInputValues('range-value-container'),
+       	    durationValue: getAllInputValues('duration-value-container'),
+            cooldownValue: getAllInputValues('cooldown-value-container'),
+            costValue: getAllInputValues('cost-value-container')
         };
 
         const existingIndex = savedSpells.findIndex(s => s.name === spell.name);
@@ -1989,6 +2013,11 @@
                 clearAndPopulateDynamicInputs('attack-container', Array.isArray(selectedSpell.attack) ? selectedSpell.attack : [selectedSpell.attack || ''], true, lists.attack, 'attack');
                 clearAndPopulateDynamicInputs('restrictions-container', selectedSpell.restrictions || [], false, [], 'restrictions');
                 clearAndPopulateDynamicInputs('upgrades-container', selectedSpell.upgrades || [], false, [], 'upgrades');
+		clearAndPopulateDynamicInputs('target-value-container', selectedSpell.targetValue || [], false, [], 'target-value');
+        	clearAndPopulateDynamicInputs('range-value-container', selectedSpell.rangeValue || [], false, [], 'range-value');
+       		clearAndPopulateDynamicInputs('duration-value-container', selectedSpell.durationValue || [], false, [], 'duration-value');
+        	clearAndPopulateDynamicInputs('cooldown-value-container', selectedSpell.cooldownValue || [], false, [], 'cooldown-value');
+        	clearAndPopulateDynamicInputs('cost-value-container', selectedSpell.costValue || [], false, [], 'cost-value');
 
                 showTab('spell-creator');
             }
@@ -2016,7 +2045,12 @@
                     { id: 'defense-container', isSelect: true, listKey: 'defense' },
                     { id: 'attack-container', isSelect: true, listKey: 'attack' },
                     { id: 'restrictions-container', isSelect: false, listKey: null },
-                    { id: 'upgrades-container', isSelect: false, listKey: null }
+                    { id: 'upgrades-container', isSelect: false, listKey: null },
+		    { id: 'target-value-container', isSelect: false, listKey: null },
+        	    { id: 'range-value-container', isSelect: false, listKey: null },
+                    { id: 'duration-value-container', isSelect: false, listKey: null },
+        	    { id: 'cooldown-value-container', isSelect: false, listKey: null },
+       		    { id: 'cost-value-container', isSelect: false, listKey: null }
                 ];
 
                 dynamicConfigs.forEach(config => {
@@ -2238,12 +2272,23 @@ function showSpellTooltip(event, spell) {
     const tooltip = document.getElementById('spell-tooltip');
     const t = translations[currentLanguage];
     
-    // Новая функция форматирования - убираем двоеточия из значений
+    // Функция форматирования значений
     const formatValue = (val) => {
         if (Array.isArray(val)) {
             return val.filter(v => v).join(', ');
         }
         return val || '-';
+    };
+
+    // Функция для объединения числового значения и категории
+    const formatCombinedValue = (numberVal, categoryVal) => {
+        const num = formatValue(numberVal);
+        const cat = formatValue(categoryVal);
+        
+        if (num === '-' && cat === '-') return '-';
+        if (num === '-') return cat;
+        if (cat === '-') return num;
+        return `${num} ${cat}`;
     };
 
     tooltip.innerHTML = `
@@ -2281,23 +2326,23 @@ function showSpellTooltip(event, spell) {
             </div>
             <div class="tooltip-attribute">
                 <span class="tooltip-label">${t.label_target}:</span>
-                <span class="tooltip-value">${formatValue(spell.target)}</span>
+                <span class="tooltip-value">${formatCombinedValue(spell.targetValue, spell.target)}</span>
             </div>
             <div class="tooltip-attribute">
                 <span class="tooltip-label">${t.label_range}:</span>
-                <span class="tooltip-value">${formatValue(spell.range)}</span>
+                <span class="tooltip-value">${formatCombinedValue(spell.rangeValue, spell.range)}</span>
             </div>
             <div class="tooltip-attribute">
                 <span class="tooltip-label">${t.label_duration}:</span>
-                <span class="tooltip-value">${formatValue(spell.duration)}</span>
+                <span class="tooltip-value">${formatCombinedValue(spell.durationValue, spell.duration)}</span>
             </div>
             <div class="tooltip-attribute">
                 <span class="tooltip-label">${t.label_cooldown}:</span>
-                <span class="tooltip-value">${formatValue(spell.cooldown)}</span>
+                <span class="tooltip-value">${formatCombinedValue(spell.cooldownValue, spell.cooldown)}</span>
             </div>
             <div class="tooltip-attribute">
                 <span class="tooltip-label">${t.label_cost}:</span>
-                <span class="tooltip-value">${formatValue(spell.cost)}</span>
+                <span class="tooltip-value">${formatCombinedValue(spell.costValue, spell.cost)}</span>
             </div>
             <div class="tooltip-attribute">
                 <span class="tooltip-label">${t.label_defense}:</span>
@@ -2320,7 +2365,24 @@ function showSpellTooltip(event, spell) {
         </div>
     `;
     
-    positionTooltip(event, tooltip);
+    // Позиционирование тултипа
+    const offset = 20;
+    const x = event.clientX + offset;
+    const y = event.clientY + offset;
+    const tooltipWidth = tooltip.offsetWidth;
+    const tooltipHeight = tooltip.offsetHeight;
+    
+    // Проверка на выход за границы экрана
+    const adjustedX = x + tooltipWidth > window.innerWidth 
+        ? window.innerWidth - tooltipWidth - offset 
+        : x;
+    
+    const adjustedY = y + tooltipHeight > window.innerHeight 
+        ? window.innerHeight - tooltipHeight - offset 
+        : y;
+    
+    tooltip.style.left = `${adjustedX}px`;
+    tooltip.style.top = `${adjustedY}px`;
     tooltip.style.opacity = '1';
 }
 
