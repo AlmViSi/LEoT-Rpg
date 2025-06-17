@@ -377,46 +377,37 @@ button:hover {
     position: fixed;
     display: none;
     opacity: 0;
-    z-index: 1000;
-    
-    /* Размеры и форма */
+    z-index: 1000;      
     width: 700px;
     max-width: 90vw;
     max-height: 80vh;
-    border-radius: 0; /* Прямоугольная форма */
-    
-    /* Внешний вид (оригинальные цвета) */
-    background-color: #2d3748;
+    border-radius: 0;     
+    background-color: #1a202c;
     color: #f7fafc;
-    border: 1px solid #4a5568;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    
-    /* Типография */
-    font-family: 'Segoe UI', Roboto, -apple-system, sans-serif;
+    border: 2px solid #00A3E0;
+    box-shadow: 0 0 20px rgba(0, 163, 224, 0.5);    
+    font-family: 'Roboto', sans-serif;
     font-size: 14px;
     line-height: 1.4;
-    
-    /* Поведение */
     overflow-y: auto;
-    transition: opacity 0.15s ease;
-    pointer-events: none;
-    
-    /* Трехколоночная сетка */
+    transition: opacity 0.2s ease;
+    pointer-events: none;    
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
     gap: 15px;
-    padding: 12px;
+    padding: 15px;
 }
 
 #spell-tooltip h4 {
     grid-column: 1 / span 3;
     text-align: center;
-    margin: 0 0 10px 0;
-    padding-bottom: 6px;
-    font-size: 16px;
-    font-weight: 600;
-    color: #f7fafc;
-    border-bottom: 1px solid #4a5568;
+    margin: 0 0 15px 0;
+    padding: 8px 0;
+    font-family: 'Cinzel', serif;
+    font-size: 18px;
+    color: #00A3E0;
+    border-bottom: 1px solid #2d3748;
+    background-color: rgba(0, 163, 224, 0.1);
 }
 
 #spell-tooltip h5 {
@@ -465,7 +456,7 @@ button:hover {
 }
 
 .tooltip-value {
-    color: #e2e8f0;
+    color: #f7fafc;
     text-align: right;
     font-weight: 400;
 }
@@ -502,10 +493,12 @@ button:hover {
 }
 
 .tooltip-section h5 {
-    margin: 12px 0 6px 0;
-    color: #e2e8f0;
+    margin: 0 0 8px 0;
+    color: #00A3E0;
     font-size: 14px;
-    font-weight: 500;
+    font-weight: 600;
+    border-bottom: 1px solid #2d3748;
+    padding-bottom: 4px;
 }
 
 /* Scrollbar */
@@ -530,34 +523,18 @@ button:hover {
 
 /* Tooltip Animation */
 @keyframes tooltip-fade-in {
-    from { opacity: 0; transform: translateY(5px); }
+    from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
 }
 
 #spell-tooltip.show {
     display: grid;
     opacity: 1;
-    animation: tooltip-fade-in 0.15s ease-out forwards;
+    animation: tooltip-fade-in 0.2s ease-out forwards;
 }
 
 /* Responsive Design */
 @media (max-width: 768px) {
-    #spell-tooltip {
-        grid-template-columns: 1fr;
-        width: 320px;
-    }
-    .tooltip-column:nth-child(1),
-    .tooltip-column:nth-child(2) {
-        padding-right: 0;
-        border-right: none;
-        border-bottom: 1px solid #4a5568;
-        padding-bottom: 12px;
-        margin-bottom: 12px;
-        }
-    }
-     #spell-tooltip h4 {
-        grid-column: 1;
-    }
     .container {
         padding: 0.5rem;
     }
@@ -694,28 +671,24 @@ button:hover {
     .tooltip-section h5 {
         font-size: 0.85rem;
     }
-    
     .tooltip-column:nth-child(1) {
         padding-right: 10px;
-        border-right: 1px solid #4a5568;
+        border-right: 1px solid #2d3748;
     }
 
     .tooltip-column:nth-child(2) {
         padding-right: 10px;
-        border-right: 1px solid #4a5568;
+        border-right: 1px solid #2d3748;
     }
     
     .tooltip-section p {
-        margin: 0 0 8px 0;
-        color: #cbd5e0;
+        margin: 0;
+        color: #e2e8f0;
         font-size: 13px;
     }
     
     .tooltip-attribute {
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: 6px;
-        font-size: 13px;
+        font-size: 0.85rem;
     }
     
     .language-switcher {
