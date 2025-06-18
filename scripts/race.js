@@ -1,98 +1,167 @@
-document.addEventListener('DOMContentLoaded', () => {
-    const raceGrid = document.getElementById('race-grid');
-    const errorMessage = document.getElementById('error-message');
-    const selectedView = document.getElementById('selected-view');
-    const selectedCard = document.getElementById('selected-card');
-    const raceTitle = document.getElementById('race-title');
-    const raceDescription = document.getElementById('race-description');
-    const scrollContainer = document.getElementById('scroll-container');
-    const resetButton = document.getElementById('reset-button');
-    let racesData = [];
+.selected-view {
+    display: none;
+    flex-direction: row;
+    gap: 2rem;
+    margin-top: 1rem;
+}
 
-    // Загрузка races.json
-    fetch('races.json')
-        .then(response => {
-            if (!response.ok) throw new Error('Ошибка загрузки races.json');
-            return response.json();
-        })
-        .then(data => {
-            racesData = data;
-            renderRaces();
-        })
-        .catch(() => {
-            errorMessage.style.display = 'block';
-        });
+.selected-card {
+    width: 300px;
+    height: 450px;
+    flex-shrink: 0;
+    border-radius: 5px;
+    overflow: hidden;
+    box-shadow: 0 0 15px rgba(0, 163, 224, 0.5);
+}
 
-    // Рендеринг карточек рас
-    function renderRaces() {
-        raceGrid.innerHTML = '';
-        
-        const firstRowRaces = racesData.slice(0, 7);
-        const secondRowRaces = racesData.slice(7, 14);
+.selected-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
 
-        const firstRowContainer = document.createElement('div');
-        firstRowContainer.classList.add('origin-row');
-        firstRowRaces.forEach(race => {
-            const card = document.createElement('div');
-            card.classList.add('origin-card');
-            card.innerHTML = `
-                <img src="images/races/${race.src}" alt="${race.name}">
-                <div class="overlay">${race.name}</div>
-            `;
-            card.addEventListener('click', () => selectRace(race));
-            firstRowContainer.appendChild(card);
-        });
+.description {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
 
-        const secondRowContainer = document.createElement('div');
-        secondRowContainer.classList.add('origin-row');
-        secondRowRaces.forEach(race => {
-            const card = document.createElement('div');
-            card.classList.add('origin-card');
-            card.innerHTML = `
-                <img src=""images/races/${race.src}" alt="${race.name}">
-                <div class="overlay">${race.name}</div>
-            `;
-            card.addEventListener('click', () => selectRace(race));
-            secondRowContainer.appendChild(card);
-        });
+.description h2 {
+    font-family: 'Cinzel', serif;
+    color: #d9bd0b;
+    margin-top: 0;
+}
 
-        raceGrid.appendChild(firstRowContainer);
-        raceGrid.appendChild(secondRowContainer);
+.scroll-container {
+    display: flex;
+    gap: 1rem;
+    overflow-x: auto;
+    padding: 1rem 0;
+    margin-top: auto;
+}
+
+.scroll-card {
+    width: 100px;
+    height: 150px;
+    flex-shrink: 0;
+    position: relative;
+    cursor: pointer;
+    border-radius: 5px;
+    overflow: hidden;
+    opacity: 0.7;
+    transition: all 0.3s ease;
+}
+
+.scroll-card.selected {
+    opacity: 1;
+    box-shadow: 0 0 10px rgba(0, 163, 224, 0.8);
+}
+
+.scroll-card:hover {
+    opacity: 1;
+}
+
+.scroll-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.scroll-card .overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.7);
+    padding: 0.3rem;
+    text-align: center;
+    font-size: 0.8rem;
+    font-family: 'Cinzel', serif;
+}
+
+.reset-button {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    padding: 0.8rem 1.5rem;
+    background: #00A3E0;
+    color: #0A0A0A;
+    border: none;
+    border-radius: 5px;
+    font-family: 'Cinzel', serif;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    display: none;
+    z-index: 100;
+}
+
+.reset-button:hover {
+    background: #D9E4DD;
+}
+
+.origin-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin: 1rem 0;
+}
+
+.origin-card {
+    position: relative;
+    height: 300px;
+    border-radius: 5px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.origin-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 163, 224, 0.3);
+}
+
+.origin-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.origin-card .overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.7);
+    padding: 0.5rem;
+    text-align: center;
+    font-family: 'Cinzel', serif;
+}
+
+@media (max-width: 900px) {
+    .selected-view {
+        flex-direction: column;
     }
-
-    // Выбор расы
-    function selectRace(race) {
-        raceGrid.style.display = 'none';
-        selectedView.style.display = 'flex';
-        resetButton.style.display = 'block';
-
-        selectedCard.innerHTML = `<img src=""images/races/${race.src}" alt="${race.name}">`;
-        raceTitle.textContent = race.name;
-        raceDescription.textContent = race.description;
-
-        renderScrollCards(race.id);
+    
+    .selected-card {
+        width: 100%;
+        height: 350px;
     }
-
-    // Рендеринг мини-карточек в прокрутке
-    function renderScrollCards(selectedId) {
-        scrollContainer.innerHTML = '';
-        racesData.forEach(race => {
-            const scrollCard = document.createElement('div');
-            scrollCard.classList.add('scroll-card');
-            if (race.id === selectedId) scrollCard.classList.add('selected');
-            scrollCard.innerHTML = `
-                <img src=""images/races/${race.src}" alt="${race.name}">
-                <div class="overlay">${race.name}</div>
-            `;
-            scrollCard.addEventListener('click', () => selectRace(race));
-            scrollContainer.appendChild(scrollCard);
-        });
+    
+    .scroll-container {
+        justify-content: center;
     }
+    
+    .origin-grid {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    }
+}
 
-    // Сброс к сетке
-    resetButton.addEventListener('click', () => {
-        raceGrid.style.display = 'flex';
-        selectedView.style.display = 'none';
-        resetButton.style.display = 'none';
-    });
-});
+@media (max-width: 480px) {
+    .origin-grid {
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    }
+    
+    .origin-card {
+        height: 200px;
+    }
+}
