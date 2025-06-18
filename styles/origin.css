@@ -9,13 +9,11 @@
 
 .selected-card {
     width: 390px;
-    height: auto;
-    aspect-ratio: 9/16;
+    height: 693px; /* 390 * (16/9) */
     flex-shrink: 0;
     border-radius: 5px;
     overflow: hidden;
     box-shadow: 0 0 15px rgba(0, 163, 224, 0.5);
-    max-height: 80vh;
 }
 
 .selected-card img {
@@ -29,7 +27,14 @@
     flex: 1;
     display: flex;
     flex-direction: column;
-    max-height: 80vh;
+    height: 693px; /* Такая же высота как у изображения */
+    position: relative;
+}
+
+.description-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
     overflow: hidden;
 }
 
@@ -38,14 +43,31 @@
     color: #d9bd0b;
     margin-top: 0;
     font-size: 1.3em;
+    padding-right: 15px;
 }
 
 .description p {
-    overflow-y: auto;
-    padding-right: 0.65rem;
-    margin-bottom: 1.3rem;
     flex-grow: 1;
+    overflow-y: auto;
+    padding-right: 15px;
+    margin-bottom: 1.3rem;
     font-size: 1.04em;
+    scrollbar-width: thin;
+    scrollbar-color: #00A3E0 #1A2639;
+}
+
+.description p::-webkit-scrollbar {
+    width: 8px;
+}
+
+.description p::-webkit-scrollbar-track {
+    background: #1A2639;
+    border-radius: 4px;
+}
+
+.description p::-webkit-scrollbar-thumb {
+    background-color: #00A3E0;
+    border-radius: 4px;
 }
 
 .scroll-container {
@@ -53,10 +75,8 @@
     gap: 1.3rem;
     overflow-x: auto;
     padding: 1.3rem 0;
-    margin-top: auto;
     scrollbar-width: thin;
     scrollbar-color: #00A3E0 #1A2639;
-    padding-bottom: 13px;
 }
 
 .scroll-container::-webkit-scrollbar {
@@ -75,7 +95,7 @@
 
 .scroll-card {
     width: 130px;
-    height: 231px;
+    height: 231px; /* 130 * (16/9) */
     flex-shrink: 0;
     position: relative;
     cursor: pointer;
@@ -83,7 +103,6 @@
     overflow: hidden;
     opacity: 0.7;
     transition: all 0.3s ease;
-    aspect-ratio: 9/16;
 }
 
 .scroll-card.selected {
@@ -136,15 +155,14 @@
 
 .origin-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
     gap: 1.95rem;
     margin: 1.3rem 0;
 }
 
 .origin-card {
     position: relative;
-    height: 320px;
-    aspect-ratio: 9/16;
+    height: 320px; /* 180 * (16/9) */
     border-radius: 5px;
     overflow: hidden;
     cursor: pointer;
@@ -175,6 +193,24 @@
 }
 
 /* Адаптивные стили */
+@media (min-width: 1200px) {
+    .origin-grid {
+        grid-template-columns: repeat(5, minmax(180px, 1fr));
+    }
+}
+
+@media (min-width: 900px) and (max-width: 1199px) {
+    .origin-grid {
+        grid-template-columns: repeat(4, minmax(180px, 1fr));
+    }
+}
+
+@media (min-width: 600px) and (max-width: 899px) {
+    .origin-grid {
+        grid-template-columns: repeat(3, minmax(180px, 1fr));
+    }
+}
+
 @media (max-width: 900px) {
     .selected-view {
         flex-direction: column;
@@ -182,41 +218,26 @@
     
     .selected-card {
         width: 100%;
-        max-height: 60vh;
+        height: calc(100vw * 16/9);
+        max-height: 70vh;
     }
     
     .description {
-        max-height: none;
-    }
-    
-    .scroll-container {
-        justify-content: center;
-    }
-    
-    .origin-grid {
-        grid-template-columns: repeat(auto-fill, minmax(135px, 1fr));
-    }
-    
-    .origin-card {
-        height: 240px;
+        height: auto;
     }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 600px) {
     .origin-grid {
-        grid-template-columns: repeat(auto-fill, minmax(108px, 1fr));
+        grid-template-columns: repeat(2, minmax(140px, 1fr));
     }
     
     .origin-card {
-        height: 192px;
-    }
-    
-    .selected-card {
-        max-height: 50vh;
+        height: 250px;
     }
     
     .scroll-card {
-        width: 90px;
-        height: 160px;
+        width: 100px;
+        height: 178px;
     }
 }
