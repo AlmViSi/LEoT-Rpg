@@ -2,30 +2,35 @@
 .selected-view {
     display: none;
     flex-direction: row;
-    gap: 2rem;
-    margin-top: 1rem;
+    gap: 2.6rem;
+    margin-top: 1.3rem;
+    align-items: flex-start;
 }
 
 .selected-card {
-    width: 390px; /* Увеличен на 30% (было 300px) */
-    height: 585px; /* Увеличен на 30% (было 450px) */
+    width: 390px;
+    height: auto;
+    aspect-ratio: 4/3;
     flex-shrink: 0;
     border-radius: 5px;
     overflow: hidden;
     box-shadow: 0 0 15px rgba(0, 163, 224, 0.5);
+    max-height: 70vh;
 }
 
 .selected-card img {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: contain;
+    object-position: center;
+    background: #1A2639;
 }
 
 .description {
     flex: 1;
     display: flex;
     flex-direction: column;
-    max-height: 585px; /* Увеличен на 30% (было 450px) */
+    max-height: 70vh;
     overflow: hidden;
 }
 
@@ -33,45 +38,45 @@
     font-family: 'Cinzel', serif;
     color: #d9bd0b;
     margin-top: 0;
-    font-size: 1.3em; /* Увеличен на 30% */
+    font-size: 1.3em;
 }
 
 .description p {
     overflow-y: auto;
-    padding-right: 0.5rem;
-    margin-bottom: 1rem;
+    padding-right: 0.65rem;
+    margin-bottom: 1.3rem;
     flex-grow: 1;
-    font-size: 1.04em; /* Увеличен на 30% (базовый 0.8em) */
+    font-size: 1.04em;
 }
 
 .scroll-container {
     display: flex;
-    gap: 1.3rem; /* Увеличен на 30% (было 1rem) */
+    gap: 1.3rem;
     overflow-x: auto;
-    padding: 1.3rem 0; /* Увеличен на 30% (было 1rem) */
+    padding: 1.3rem 0;
     margin-top: auto;
     scrollbar-width: thin;
     scrollbar-color: #00A3E0 #1A2639;
-    padding-bottom: 13px; /* Увеличен на 30% (было 10px) */
+    padding-bottom: 13px;
 }
 
 .scroll-container::-webkit-scrollbar {
-    height: 10.4px; /* Увеличен на 30% (было 8px) */
+    height: 10.4px;
 }
 
 .scroll-container::-webkit-scrollbar-track {
     background: #1A2639;
-    border-radius: 5.2px; /* Увеличен на 30% (было 4px) */
+    border-radius: 5.2px;
 }
 
 .scroll-container::-webkit-scrollbar-thumb {
     background-color: #00A3E0;
-    border-radius: 5.2px; /* Увеличен на 30% (было 4px) */
+    border-radius: 5.2px;
 }
 
 .scroll-card {
-    width: 130px; /* Увеличен на 30% (было 100px) */
-    height: 195px; /* Увеличен на 30% (было 150px) */
+    width: 130px;
+    height: 195px;
     flex-shrink: 0;
     position: relative;
     cursor: pointer;
@@ -102,17 +107,17 @@
     left: 0;
     right: 0;
     background: rgba(0, 0, 0, 0.7);
-    padding: 0.39rem; /* Увеличен на 30% (было 0.3rem) */
+    padding: 0.39rem;
     text-align: center;
-    font-size: 1.04rem; /* Увеличен на 30% (было 0.8rem) */
+    font-size: 1.04rem;
     font-family: 'Cinzel', serif;
 }
 
 .reset-button {
     position: fixed;
-    bottom: 2.6rem; /* Увеличен на 30% (было 2rem) */
-    right: 2.6rem; /* Увеличен на 30% (было 2rem) */
-    padding: 1.04rem 1.95rem; /* Увеличен на 30% (было 0.8rem 1.5rem) */
+    bottom: 2.6rem;
+    right: 2.6rem;
+    padding: 1.04rem 1.95rem;
     background: #00A3E0;
     color: #0A0A0A;
     border: none;
@@ -122,7 +127,7 @@
     transition: background 0.3s ease;
     display: none;
     z-index: 100;
-    font-size: 1.3em; /* Увеличен на 30% */
+    font-size: 1.3em;
 }
 
 .reset-button:hover {
@@ -131,14 +136,15 @@
 
 .origin-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); /* Увеличен на 30% (было 200px) */
-    gap: 1.95rem; /* Увеличен на 30% (было 1.5rem) */
-    margin: 1.3rem 0; /* Увеличен на 30% (было 1rem) */
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1.95rem;
+    margin: 1.3rem 0;
 }
 
 .origin-card {
     position: relative;
-    height: 390px; /* Увеличен на 30% (было 300px) */
+    height: 390px;
+    aspect-ratio: 4/3;
     border-radius: 5px;
     overflow: hidden;
     cursor: pointer;
@@ -146,14 +152,15 @@
 }
 
 .origin-card:hover {
-    transform: translateY(-6.5px); /* Увеличен на 30% (было -5px) */
-    box-shadow: 0 13px 26px rgba(0, 163, 224, 0.3); /* Увеличен на 30% */
+    transform: translateY(-6.5px);
+    box-shadow: 0 13px 26px rgba(0, 163, 224, 0.3);
 }
 
 .origin-card img {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: contain;
+    background: #1A2639;
 }
 
 .origin-card .overlay {
@@ -162,10 +169,10 @@
     left: 0;
     right: 0;
     background: rgba(0, 0, 0, 0.7);
-    padding: 0.65rem; /* Увеличен на 30% (было 0.5rem) */
+    padding: 0.65rem;
     text-align: center;
     font-family: 'Cinzel', serif;
-    font-size: 1.3em; /* Увеличен на 30% */
+    font-size: 1.3em;
 }
 
 /* Адаптивные стили */
@@ -176,7 +183,7 @@
     
     .selected-card {
         width: 100%;
-        height: 455px; /* Увеличен на 30% (было 350px) */
+        max-height: 50vh;
     }
     
     .description {
@@ -188,16 +195,24 @@
     }
     
     .origin-grid {
-        grid-template-columns: repeat(auto-fill, minmax(195px, 1fr)); /* Увеличен на 30% (было 150px) */
+        grid-template-columns: repeat(auto-fill, minmax(195px, 1fr));
+    }
+    
+    .origin-card {
+        height: 260px;
     }
 }
 
 @media (max-width: 480px) {
     .origin-grid {
-        grid-template-columns: repeat(auto-fill, minmax(156px, 1fr)); /* Увеличен на 30% (было 120px) */
+        grid-template-columns: repeat(auto-fill, minmax(156px, 1fr));
     }
     
     .origin-card {
-        height: 260px; /* Увеличен на 30% (было 200px) */
+        height: 200px;
+    }
+    
+    .selected-card {
+        max-height: 40vh;
     }
 }
