@@ -3,17 +3,15 @@
     display: none;
     flex-direction: row;
     gap: 2rem;
-    margin: 1rem auto;
-    max-width: 95vw;
-    overflow: hidden;
+    margin-top: 1rem;
     align-items: flex-start;
+    max-width: 100%;
+    overflow: hidden;
 }
 
 .selected-card {
-    width: 35vw;
-    height: calc(35vw * 16/9);
-    min-width: 300px;
-    max-height: 85vh;
+    width: 270px;
+    height: 480px; /* 9:16 соотношение */
     flex-shrink: 0;
     border-radius: 5px;
     overflow: hidden;
@@ -31,23 +29,23 @@
     flex: 1;
     display: flex;
     flex-direction: column;
-    height: calc(35vw * 16/9);
-    max-height: 85vh;
+    max-width: calc(100% - 270px - 2rem);
+    height: 480px;
     min-width: 300px;
-    padding: 0 1rem;
 }
 
 .description h2 {
     font-family: 'Cinzel', serif;
     color: #d9bd0b;
-    margin: 0 0 1rem 0;
-    font-size: 1.8em;
+    margin-top: 0;
+    margin-bottom: 1rem;
+    font-size: 1.5em;
 }
 
 .description p {
     flex-grow: 1;
     overflow-y: auto;
-    padding-right: 0.5rem;
+    padding-right: 1rem;
     margin-bottom: 1rem;
     font-size: 1.1em;
     line-height: 1.5;
@@ -93,8 +91,8 @@
 }
 
 .scroll-card {
-    width: 100px;
-    height: calc(100px * 16/9);
+    width: 90px;
+    height: 160px; /* 9:16 соотношение */
     flex-shrink: 0;
     position: relative;
     cursor: pointer;
@@ -153,15 +151,16 @@
 
 .origin-grid {
     display: grid;
-    grid-template-columns: repeat(5, minmax(180px, 1fr));
+    grid-template-columns: repeat(5, minmax(160px, 1fr));
     gap: 1.5rem;
-    margin: 1rem;
+    margin: 1rem 0;
     max-width: 100%;
+    overflow: hidden;
 }
 
 .origin-card {
     position: relative;
-    height: calc(180px * 16/9);
+    height: 285px; /* 160 * (16/9) */
     border-radius: 5px;
     overflow: hidden;
     cursor: pointer;
@@ -191,36 +190,31 @@
 }
 
 /* Адаптивные стили */
-@media (max-width: 1400px) {
+@media (max-width: 1200px) {
     .origin-grid {
-        grid-template-columns: repeat(4, minmax(180px, 1fr));
-    }
-}
-
-@media (max-width: 1100px) {
-    .origin-grid {
-        grid-template-columns: repeat(3, minmax(180px, 1fr));
+        grid-template-columns: repeat(4, minmax(160px, 1fr));
     }
 }
 
 @media (max-width: 900px) {
+    .origin-grid {
+        grid-template-columns: repeat(3, minmax(160px, 1fr));
+    }
+    
     .selected-view {
         flex-direction: column;
-        align-items: center;
     }
     
     .selected-card {
-        width: 80vw;
-        height: calc(80vw * 16/9);
+        width: 100%;
+        height: calc(100vw * 16/9);
+        max-height: 70vh;
     }
     
     .description {
-        width: 80vw;
+        max-width: 100%;
         height: auto;
-    }
-    
-    .origin-grid {
-        grid-template-columns: repeat(2, minmax(180px, 1fr));
+        min-width: unset;
     }
 }
 
@@ -230,11 +224,11 @@
     }
     
     .origin-card {
-        height: calc(140px * 16/9);
+        height: 250px;
     }
     
     .scroll-card {
         width: 80px;
-        height: calc(80px * 16/9);
+        height: 142px;
     }
 }
