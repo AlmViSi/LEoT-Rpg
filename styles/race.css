@@ -2,16 +2,16 @@
 .selected-view {
     display: none;
     flex-direction: row;
-    gap: 2.6rem;
-    margin-top: 1.3rem;
+    gap: 2rem;
+    margin-top: 1rem;
     align-items: flex-start;
     max-width: 100%;
     overflow: hidden;
 }
 
 .selected-card {
-    width: 360px; /* Фиксированная ширина */
-    height: 640px; /* 360 * (16/9) */
+    width: 270px; /* 9:16 соотношение */
+    height: 480px;
     flex-shrink: 0;
     border-radius: 5px;
     overflow: hidden;
@@ -29,23 +29,26 @@
     flex: 1;
     display: flex;
     flex-direction: column;
-    max-width: calc(100% - 360px - 2.6rem);
-    height: 640px; /* Такая же высота как у изображения */
+    max-width: calc(100% - 270px - 2rem);
+    height: 480px;
+    min-width: 300px;
 }
 
 .description h2 {
     font-family: 'Cinzel', serif;
     color: #d9bd0b;
     margin-top: 0;
-    font-size: 1.3em;
+    margin-bottom: 1rem;
+    font-size: 1.5em;
 }
 
 .description p {
     flex-grow: 1;
     overflow-y: auto;
     padding-right: 1rem;
-    margin-bottom: 1.3rem;
-    font-size: 1.04em;
+    margin-bottom: 1rem;
+    font-size: 1.1em;
+    line-height: 1.5;
     scrollbar-width: thin;
     scrollbar-color: #00A3E0 #1A2639;
 }
@@ -66,30 +69,30 @@
 
 .scroll-container {
     display: flex;
-    gap: 1.3rem;
+    gap: 1rem;
     overflow-x: auto;
-    padding: 1.3rem 0;
+    padding: 1rem 0;
     scrollbar-width: thin;
     scrollbar-color: #00A3E0 #1A2639;
 }
 
 .scroll-container::-webkit-scrollbar {
-    height: 10.4px;
+    height: 8px;
 }
 
 .scroll-container::-webkit-scrollbar-track {
     background: #1A2639;
-    border-radius: 5.2px;
+    border-radius: 4px;
 }
 
 .scroll-container::-webkit-scrollbar-thumb {
     background-color: #00A3E0;
-    border-radius: 5.2px;
+    border-radius: 4px;
 }
 
 .scroll-card {
-    width: 120px;
-    height: 213px; /* 120 * (16/9) */
+    width: 90px;
+    height: 160px; /* 9:16 соотношение */
     flex-shrink: 0;
     position: relative;
     cursor: pointer;
@@ -120,17 +123,17 @@
     left: 0;
     right: 0;
     background: rgba(0, 0, 0, 0.7);
-    padding: 0.39rem;
+    padding: 0.3rem;
     text-align: center;
-    font-size: 1.04rem;
+    font-size: 0.9rem;
     font-family: 'Cinzel', serif;
 }
 
 .reset-button {
     position: fixed;
-    bottom: 2.6rem;
-    right: 2.6rem;
-    padding: 1.04rem 1.95rem;
+    bottom: 2rem;
+    right: 2rem;
+    padding: 0.8rem 1.5rem;
     background: #00A3E0;
     color: #0A0A0A;
     border: none;
@@ -140,7 +143,6 @@
     transition: background 0.3s ease;
     display: none;
     z-index: 100;
-    font-size: 1.3em;
 }
 
 .reset-button:hover {
@@ -149,16 +151,16 @@
 
 .origin-grid {
     display: grid;
-    grid-template-columns: repeat(5, minmax(180px, 1fr));
-    gap: 1.95rem;
-    margin: 1.3rem 0;
+    grid-template-columns: repeat(5, minmax(160px, 1fr));
+    gap: 1.5rem;
+    margin: 1rem 0;
     max-width: 100%;
     overflow: hidden;
 }
 
 .origin-card {
     position: relative;
-    height: 320px; /* 180 * (16/9) */
+    height: 285px; /* 160 * (16/9) */
     border-radius: 5px;
     overflow: hidden;
     cursor: pointer;
@@ -166,8 +168,8 @@
 }
 
 .origin-card:hover {
-    transform: translateY(-6.5px);
-    box-shadow: 0 13px 26px rgba(0, 163, 224, 0.3);
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 163, 224, 0.3);
 }
 
 .origin-card img {
@@ -182,22 +184,21 @@
     left: 0;
     right: 0;
     background: rgba(0, 0, 0, 0.7);
-    padding: 0.65rem;
+    padding: 0.5rem;
     text-align: center;
     font-family: 'Cinzel', serif;
-    font-size: 1.3em;
 }
 
 /* Адаптивные стили */
 @media (max-width: 1200px) {
     .origin-grid {
-        grid-template-columns: repeat(4, minmax(180px, 1fr));
+        grid-template-columns: repeat(4, minmax(160px, 1fr));
     }
 }
 
 @media (max-width: 900px) {
     .origin-grid {
-        grid-template-columns: repeat(3, minmax(180px, 1fr));
+        grid-template-columns: repeat(3, minmax(160px, 1fr));
     }
     
     .selected-view {
@@ -213,6 +214,7 @@
     .description {
         max-width: 100%;
         height: auto;
+        min-width: unset;
     }
 }
 
@@ -226,7 +228,7 @@
     }
     
     .scroll-card {
-        width: 100px;
-        height: 178px;
+        width: 80px;
+        height: 142px;
     }
 }
