@@ -3,15 +3,17 @@
     display: none;
     flex-direction: row;
     gap: 2rem;
-    margin-top: 1rem;
-    align-items: flex-start;
-    max-width: 100%;
+    margin: 1rem auto;
+    max-width: 95vw;
     overflow: hidden;
+    align-items: flex-start;
 }
 
 .selected-card {
-    width: 270px;
-    height: 480px; /* 9:16 соотношение */
+    width: 35vw;
+    height: calc(35vw * 16/9);
+    min-width: 300px;
+    max-height: 85vh;
     flex-shrink: 0;
     border-radius: 5px;
     overflow: hidden;
@@ -29,23 +31,23 @@
     flex: 1;
     display: flex;
     flex-direction: column;
-    max-width: calc(100% - 270px - 2rem);
-    height: 480px;
+    height: calc(35vw * 16/9);
+    max-height: 85vh;
     min-width: 300px;
+    padding: 0 1rem;
 }
 
 .description h2 {
     font-family: 'Cinzel', serif;
     color: #d9bd0b;
-    margin-top: 0;
-    margin-bottom: 1rem;
-    font-size: 1.5em;
+    margin: 0 0 1rem 0;
+    font-size: 1.8em;
 }
 
 .description p {
     flex-grow: 1;
     overflow-y: auto;
-    padding-right: 1rem;
+    padding-right: 0.5rem;
     margin-bottom: 1rem;
     font-size: 1.1em;
     line-height: 1.5;
@@ -91,8 +93,8 @@
 }
 
 .scroll-card {
-    width: 90px;
-    height: 160px; /* 9:16 соотношение */
+    width: 100px;
+    height: calc(100px * 16/9);
     flex-shrink: 0;
     position: relative;
     cursor: pointer;
@@ -151,16 +153,15 @@
 
 .race-grid {
     display: grid;
-    grid-template-columns: repeat(5, minmax(160px, 1fr));
+    grid-template-columns: repeat(5, minmax(180px, 1fr));
     gap: 1.5rem;
-    margin: 1rem 0;
+    margin: 1rem;
     max-width: 100%;
-    overflow: hidden;
 }
 
 .race-card {
     position: relative;
-    height: 285px; /* 160 * (16/9) */
+    height: calc(180px * 16/9);
     border-radius: 5px;
     overflow: hidden;
     cursor: pointer;
@@ -190,31 +191,36 @@
 }
 
 /* Адаптивные стили */
-@media (max-width: 1200px) {
+@media (max-width: 1400px) {
     .race-grid {
-        grid-template-columns: repeat(4, minmax(160px, 1fr));
+        grid-template-columns: repeat(4, minmax(180px, 1fr));
+    }
+}
+
+@media (max-width: 1100px) {
+    .race-grid {
+        grid-template-columns: repeat(3, minmax(180px, 1fr));
     }
 }
 
 @media (max-width: 900px) {
-    .race-grid {
-        grid-template-columns: repeat(3, minmax(160px, 1fr));
-    }
-    
     .selected-view {
         flex-direction: column;
+        align-items: center;
     }
     
     .selected-card {
-        width: 100%;
-        height: calc(100vw * 16/9);
-        max-height: 70vh;
+        width: 80vw;
+        height: calc(80vw * 16/9);
     }
     
     .description {
-        max-width: 100%;
+        width: 80vw;
         height: auto;
-        min-width: unset;
+    }
+    
+    .race-grid {
+        grid-template-columns: repeat(2, minmax(180px, 1fr));
     }
 }
 
@@ -224,42 +230,11 @@
     }
     
     .race-card {
-        height: 250px;
+        height: calc(140px * 16/9);
     }
     
     .scroll-card {
         width: 80px;
-        height: 142px;
+        height: calc(80px * 16/9);
     }
-}
-
-.origin-card {
-    position: relative;
-    height: 285px; /* 160 * (16/9) */
-    border-radius: 5px;
-    overflow: hidden;
-    cursor: pointer;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.origin-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 20px rgba(0, 163, 224, 0.3);
-}
-
-.origin-card img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.origin-card .overlay {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: rgba(0, 0, 0, 0.7);
-    padding: 0.5rem;
-    text-align: center;
-    font-family: 'Cinzel', serif;
 }
