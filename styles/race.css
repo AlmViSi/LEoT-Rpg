@@ -2,16 +2,13 @@
 .selected-view {
     display: none;
     flex-direction: row;
-    gap: 2rem;
-    margin-top: 1rem;
-    align-items: flex-start;
-    max-width: 100%;
-    overflow: hidden;
+    gap: 2.6rem; /* Увеличен на 30% (было 2rem) */
+    margin-top: 1.3rem; /* Увеличен на 30% (было 1rem) */
 }
 
 .selected-card {
-    width: 270px;
-    height: 480px; /* 9:16 соотношение */
+    width: 390px; /* Увеличен на 30% (было 300px) */
+    height: 585px; /* Увеличен на 30% (было 450px) */
     flex-shrink: 0;
     border-radius: 5px;
     overflow: hidden;
@@ -22,77 +19,59 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
-    object-position: center;
 }
 
 .description {
     flex: 1;
     display: flex;
     flex-direction: column;
-    max-width: calc(100% - 270px - 2rem);
-    height: 480px;
-    min-width: 300px;
+    max-height: 585px; /* Увеличен на 30% (было 450px) */
+    overflow: hidden;
 }
 
 .description h2 {
     font-family: 'Cinzel', serif;
     color: #d9bd0b;
     margin-top: 0;
-    margin-bottom: 1rem;
-    font-size: 1.5em;
+    font-size: 1.3em; /* Увеличен на 30% */
 }
 
 .description p {
-    flex-grow: 1;
     overflow-y: auto;
-    padding-right: 1rem;
-    margin-bottom: 1rem;
-    font-size: 1.1em;
-    line-height: 1.5;
-    scrollbar-width: thin;
-    scrollbar-color: #00A3E0 #1A2639;
-}
-
-.description p::-webkit-scrollbar {
-    width: 8px;
-}
-
-.description p::-webkit-scrollbar-track {
-    background: #1A2639;
-    border-radius: 4px;
-}
-
-.description p::-webkit-scrollbar-thumb {
-    background-color: #00A3E0;
-    border-radius: 4px;
+    padding-right: 0.65rem; /* Увеличен на 30% (было 0.5rem) */
+    margin-bottom: 1.3rem; /* Увеличен на 30% (было 1rem) */
+    flex-grow: 1;
+    font-size: 1.04em; /* Увеличен на 30% (базовый 0.8em) */
 }
 
 .scroll-container {
     display: flex;
-    gap: 1rem;
+    gap: 1.3rem; /* Увеличен на 30% (было 1rem) */
     overflow-x: auto;
-    padding: 1rem 0;
+    padding: 1.3rem 0; /* Увеличен на 30% (было 1rem) */
+    margin-top: auto;
     scrollbar-width: thin;
     scrollbar-color: #00A3E0 #1A2639;
+    padding-bottom: 13px; /* Увеличен на 30% (было 10px) */
 }
 
 .scroll-container::-webkit-scrollbar {
-    height: 8px;
+    height: 10.4px; /* Увеличен на 30% (было 8px) */
 }
 
 .scroll-container::-webkit-scrollbar-track {
     background: #1A2639;
-    border-radius: 4px;
+    border-radius: 5.2px; /* Увеличен на 30% (было 4px) */
 }
 
 .scroll-container::-webkit-scrollbar-thumb {
     background-color: #00A3E0;
-    border-radius: 4px;
+    border-radius: 5.2px; /* Увеличен на 30% (было 4px) */
 }
 
 .scroll-card {
-    width: 90px;
-    height: 160px; /* 9:16 соотношение */
+    width: 130px; /* Увеличен на 30% (было 100px) */
+    height: 195px; /* Увеличен на 30% (было 150px) */
     flex-shrink: 0;
     position: relative;
     cursor: pointer;
@@ -123,17 +102,17 @@
     left: 0;
     right: 0;
     background: rgba(0, 0, 0, 0.7);
-    padding: 0.3rem;
+    padding: 0.39rem; /* Увеличен на 30% (было 0.3rem) */
     text-align: center;
-    font-size: 0.9rem;
+    font-size: 1.04rem; /* Увеличен на 30% (было 0.8rem) */
     font-family: 'Cinzel', serif;
 }
 
 .reset-button {
     position: fixed;
-    bottom: 2rem;
-    right: 2rem;
-    padding: 0.8rem 1.5rem;
+    bottom: 2.6rem; /* Увеличен на 30% (было 2rem) */
+    right: 2.6rem; /* Увеличен на 30% (было 2rem) */
+    padding: 1.04rem 1.95rem; /* Увеличен на 30% (было 0.8rem 1.5rem) */
     background: #00A3E0;
     color: #0A0A0A;
     border: none;
@@ -143,92 +122,82 @@
     transition: background 0.3s ease;
     display: none;
     z-index: 100;
+    font-size: 1.3em; /* Увеличен на 30% */
 }
 
 .reset-button:hover {
     background: #D9E4DD;
 }
 
-.race-grid {
+.origin-grid {
     display: grid;
-    grid-template-columns: repeat(5, minmax(160px, 1fr));
-    gap: 1.5rem;
-    margin: 1rem 0;
-    max-width: 100%;
-    overflow: hidden;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); /* Увеличен на 30% (было 200px) */
+    gap: 1.95rem; /* Увеличен на 30% (было 1.5rem) */
+    margin: 1.3rem 0; /* Увеличен на 30% (было 1rem) */
 }
 
-.race-card {
+.origin-card {
     position: relative;
-    height: 285px; /* 160 * (16/9) */
+    height: 390px; /* Увеличен на 30% (было 300px) */
     border-radius: 5px;
     overflow: hidden;
     cursor: pointer;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.race-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 20px rgba(0, 163, 224, 0.3);
+.origin-card:hover {
+    transform: translateY(-6.5px); /* Увеличен на 30% (было -5px) */
+    box-shadow: 0 13px 26px rgba(0, 163, 224, 0.3); /* Увеличен на 30% */
 }
 
-.race-card img {
+.origin-card img {
     width: 100%;
     height: 100%;
     object-fit: cover;
 }
 
-.race-card .overlay {
+.origin-card .overlay {
     position: absolute;
     bottom: 0;
     left: 0;
     right: 0;
     background: rgba(0, 0, 0, 0.7);
-    padding: 0.5rem;
+    padding: 0.65rem; /* Увеличен на 30% (было 0.5rem) */
     text-align: center;
     font-family: 'Cinzel', serif;
+    font-size: 1.3em; /* Увеличен на 30% */
 }
 
 /* Адаптивные стили */
-@media (max-width: 1200px) {
-    .race-grid {
-        grid-template-columns: repeat(4, minmax(160px, 1fr));
-    }
-}
-
 @media (max-width: 900px) {
-    .race-grid {
-        grid-template-columns: repeat(3, minmax(160px, 1fr));
-    }
-    
     .selected-view {
         flex-direction: column;
     }
     
     .selected-card {
         width: 100%;
-        height: calc(100vw * 16/9);
-        max-height: 70vh;
+        height: 455px; /* Увеличен на 30% (было 350px) */
     }
     
     .description {
-        max-width: 100%;
-        height: auto;
-        min-width: unset;
+        max-height: none;
+    }
+    
+    .scroll-container {
+        justify-content: center;
+    }
+    
+    .origin-grid {
+        grid-template-columns: repeat(auto-fill, minmax(195px, 1fr)); /* Увеличен на 30% (было 150px) */
     }
 }
 
-@media (max-width: 600px) {
-    .race-grid {
-        grid-template-columns: repeat(2, minmax(140px, 1fr));
+@media (max-width: 480px) {
+    .origin-grid {
+        grid-template-columns: repeat(auto-fill, minmax(156px, 1fr)); /* Увеличен на 30% (было 120px) */
     }
     
-    .race-card {
-        height: 250px;
-    }
-    
-    .scroll-card {
-        width: 80px;
-        height: 142px;
+    .origin-card {
+        height: 260px; /* Увеличен на 30% (было 200px) */
     }
 }
