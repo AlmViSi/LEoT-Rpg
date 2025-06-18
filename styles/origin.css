@@ -10,27 +10,26 @@
 .selected-card {
     width: 390px;
     height: auto;
-    aspect-ratio: 4/3;
+    aspect-ratio: 9/16;
     flex-shrink: 0;
     border-radius: 5px;
     overflow: hidden;
     box-shadow: 0 0 15px rgba(0, 163, 224, 0.5);
-    max-height: 70vh;
+    max-height: 80vh;
 }
 
 .selected-card img {
     width: 100%;
     height: 100%;
-    object-fit: contain;
+    object-fit: cover;
     object-position: center;
-    background: #1A2639;
 }
 
 .description {
     flex: 1;
     display: flex;
     flex-direction: column;
-    max-height: 70vh;
+    max-height: 80vh;
     overflow: hidden;
 }
 
@@ -76,7 +75,7 @@
 
 .scroll-card {
     width: 130px;
-    height: 195px;
+    height: 231px;
     flex-shrink: 0;
     position: relative;
     cursor: pointer;
@@ -84,6 +83,7 @@
     overflow: hidden;
     opacity: 0.7;
     transition: all 0.3s ease;
+    aspect-ratio: 9/16;
 }
 
 .scroll-card.selected {
@@ -136,15 +136,15 @@
 
 .origin-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
     gap: 1.95rem;
     margin: 1.3rem 0;
 }
 
 .origin-card {
     position: relative;
-    height: 390px;
-    aspect-ratio: 4/3;
+    height: 320px;
+    aspect-ratio: 9/16;
     border-radius: 5px;
     overflow: hidden;
     cursor: pointer;
@@ -159,8 +159,7 @@
 .origin-card img {
     width: 100%;
     height: 100%;
-    object-fit: contain;
-    background: #1A2639;
+    object-fit: cover;
 }
 
 .origin-card .overlay {
@@ -183,7 +182,7 @@
     
     .selected-card {
         width: 100%;
-        max-height: 50vh;
+        max-height: 60vh;
     }
     
     .description {
@@ -195,24 +194,29 @@
     }
     
     .origin-grid {
-        grid-template-columns: repeat(auto-fill, minmax(195px, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(135px, 1fr));
     }
     
     .origin-card {
-        height: 260px;
+        height: 240px;
     }
 }
 
 @media (max-width: 480px) {
     .origin-grid {
-        grid-template-columns: repeat(auto-fill, minmax(156px, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(108px, 1fr));
     }
     
     .origin-card {
-        height: 200px;
+        height: 192px;
     }
     
     .selected-card {
-        max-height: 40vh;
+        max-height: 50vh;
+    }
+    
+    .scroll-card {
+        width: 90px;
+        height: 160px;
     }
 }
