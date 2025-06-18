@@ -10,8 +10,8 @@
 }
 
 .selected-card {
-    width: 270px; /* 9:16 соотношение */
-    height: 480px;
+    width: 270px;
+    height: 480px; /* 9:16 соотношение */
     flex-shrink: 0;
     border-radius: 5px;
     overflow: hidden;
@@ -149,13 +149,88 @@
     background: #D9E4DD;
 }
 
-.origin-grid {
+.race-grid {
     display: grid;
     grid-template-columns: repeat(5, minmax(160px, 1fr));
     gap: 1.5rem;
     margin: 1rem 0;
     max-width: 100%;
     overflow: hidden;
+}
+
+.race-card {
+    position: relative;
+    height: 285px; /* 160 * (16/9) */
+    border-radius: 5px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.race-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 163, 224, 0.3);
+}
+
+.race-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.race-card .overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.7);
+    padding: 0.5rem;
+    text-align: center;
+    font-family: 'Cinzel', serif;
+}
+
+/* Адаптивные стили */
+@media (max-width: 1200px) {
+    .race-grid {
+        grid-template-columns: repeat(4, minmax(160px, 1fr));
+    }
+}
+
+@media (max-width: 900px) {
+    .race-grid {
+        grid-template-columns: repeat(3, minmax(160px, 1fr));
+    }
+    
+    .selected-view {
+        flex-direction: column;
+    }
+    
+    .selected-card {
+        width: 100%;
+        height: calc(100vw * 16/9);
+        max-height: 70vh;
+    }
+    
+    .description {
+        max-width: 100%;
+        height: auto;
+        min-width: unset;
+    }
+}
+
+@media (max-width: 600px) {
+    .race-grid {
+        grid-template-columns: repeat(2, minmax(140px, 1fr));
+    }
+    
+    .race-card {
+        height: 250px;
+    }
+    
+    .scroll-card {
+        width: 80px;
+        height: 142px;
+    }
 }
 
 .origin-card {
@@ -187,48 +262,4 @@
     padding: 0.5rem;
     text-align: center;
     font-family: 'Cinzel', serif;
-}
-
-/* Адаптивные стили */
-@media (max-width: 1200px) {
-    .origin-grid {
-        grid-template-columns: repeat(4, minmax(160px, 1fr));
-    }
-}
-
-@media (max-width: 900px) {
-    .origin-grid {
-        grid-template-columns: repeat(3, minmax(160px, 1fr));
-    }
-    
-    .selected-view {
-        flex-direction: column;
-    }
-    
-    .selected-card {
-        width: 100%;
-        height: calc(100vw * 16/9);
-        max-height: 70vh;
-    }
-    
-    .description {
-        max-width: 100%;
-        height: auto;
-        min-width: unset;
-    }
-}
-
-@media (max-width: 600px) {
-    .origin-grid {
-        grid-template-columns: repeat(2, minmax(140px, 1fr));
-    }
-    
-    .origin-card {
-        height: 250px;
-    }
-    
-    .scroll-card {
-        width: 80px;
-        height: 142px;
-    }
 }

@@ -11,7 +11,7 @@
 
 .selected-card {
     width: 270px;
-    height: 480px;
+    height: 480px; /* 9:16 соотношение */
     flex-shrink: 0;
     border-radius: 5px;
     overflow: hidden;
@@ -92,7 +92,7 @@
 
 .scroll-card {
     width: 90px;
-    height: 160px;
+    height: 160px; /* 9:16 соотношение */
     flex-shrink: 0;
     position: relative;
     cursor: pointer;
@@ -160,7 +160,7 @@
 
 .origin-card {
     position: relative;
-    height: 285px;
+    height: 285px; /* 160 * (16/9) */
     border-radius: 5px;
     overflow: hidden;
     cursor: pointer;
