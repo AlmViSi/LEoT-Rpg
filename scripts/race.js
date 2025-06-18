@@ -8,6 +8,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const resetButton = document.getElementById('reset-button');
     let racesData = [];
 
+    // Проверка элементов DOM
+    if (!raceGrid || !selectedView || !selectedCard || !raceTitle || 
+        !raceDescription || !scrollContainer || !resetButton) {
+        console.error('One or more required elements are missing in the DOM');
+        return;
+    }
+
     // Получаем ID из URL
     const urlParams = new URLSearchParams(window.location.search);
     const raceId = urlParams.get('id');
@@ -88,6 +95,11 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             scrollContainer.appendChild(scrollCard);
         });
+
+        // Добавляем стиль для полосы прокрутки
+        scrollContainer.style.overflowX = 'auto';
+        scrollContainer.style.scrollbarWidth = 'thin';
+        scrollContainer.style.paddingBottom = '10px';
     }
 
     // Кнопка возврата

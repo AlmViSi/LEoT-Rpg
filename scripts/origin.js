@@ -1,89 +1,75 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const raceGrid = document.getElementById('race-grid');
     const selectedView = document.getElementById('selected-view');
     const selectedCard = document.getElementById('selected-card');
-    const raceTitle = document.getElementById('race-title');
-    const raceDescription = document.getElementById('race-description');
+    const originTitle = document.getElementById('origin-title');
+    const originDescription = document.getElementById('origin-description');
     const scrollContainer = document.getElementById('scroll-container');
     const resetButton = document.getElementById('reset-button');
-    let racesData = [];
+    let originsData = [];
+
+    // Проверка существования элементов
+    if (!selectedView || !selectedCard || !originTitle || !originDescription || !scrollContainer || !resetButton) {
+        console.error('One or more required elements are missing in the DOM');
+        return;
+    }
 
     // Получаем ID из URL
     const urlParams = new URLSearchParams(window.location.search);
-    const raceId = urlParams.get('id');
+    const originId = urlParams.get('id');
 
     // Загрузка данных
-    fetch('races.json')
+    fetch('origins.json')
         .then(response => {
-            if (!response.ok) throw new Error('Ошибка загрузки races.json');
+            if (!response.ok) throw new Error('Ошибка загрузки origins.json');
             return response.json();
         })
         .then(data => {
-            racesData = data;
-            if (raceId) {
-                const race = data.find(r => r.id === raceId);
-                if (race) {
-                    showRace(race);
+            originsData = data;
+            if (originId) {
+                const origin = data.find(o => o.id === originId);
+                if (origin) {
+                    showOrigin(origin);
                 }
             }
-            renderRaceGrid();
             renderScrollCards();
         })
         .catch(error => {
             console.error('Error:', error);
         });
 
-    // Показать выбранную расу
-    function showRace(race) {
-        raceGrid.style.display = 'none';
+    // Показать выбранный Origin
+    function showOrigin(origin) {
         selectedView.style.display = 'flex';
         resetButton.style.display = 'block';
 
-        selectedCard.innerHTML = `<img src="images/races/${race.src}" alt="${race.name}">`;
-        raceTitle.textContent = race.name;
-        raceDescription.textContent = race.description;
+        selectedCard.innerHTML = `<img src="images/origins/${origin.src}" alt="${origin.name}">`;
+        originTitle.textContent = origin.name;
+        originDescription.textContent = origin.description;
 
         // Обновляем выбранную карточку в скролле
         document.querySelectorAll('.scroll-card').forEach(card => {
-            card.classList.toggle('selected', card.dataset.id === race.id);
-        });
-    }
-
-    // Рендеринг сетки рас
-    function renderRaceGrid() {
-        raceGrid.innerHTML = '';
-        racesData.forEach(race => {
-            const card = document.createElement('div');
-            card.classList.add('origin-card');
-            card.dataset.id = race.id;
-            card.innerHTML = `
-                <img src="images/races/${race.src}" alt="${race.name}">
-                <div class="overlay">${race.name}</div>
-            `;
-            card.addEventListener('click', () => {
-                showRace(race);
-                window.history.pushState({}, '', `race.html?id=${race.id}`);
-            });
-            raceGrid.appendChild(card);
+            card.classList.toggle('selected', card.dataset.id === origin.id);
         });
     }
 
     // Рендеринг мини-карточек в прокрутке
     function renderScrollCards() {
+        if (!scrollContainer) return;
+        
         scrollContainer.innerHTML = '';
-        racesData.forEach(race => {
+        originsData.forEach(origin => {
             const scrollCard = document.createElement('div');
             scrollCard.classList.add('scroll-card');
-            scrollCard.dataset.id = race.id;
+            scrollCard.dataset.id = origin.id;
             scrollCard.innerHTML = `
-                <img src="images/races/${race.src}" alt="${race.name}">
-                <div class="overlay">${race.name}</div>
+                <img src="images/origins/${origin.src}" alt="${origin.name}">
+                <div class="overlay">${origin.name}</div>
             `;
             scrollCard.addEventListener('click', () => {
-                const race = racesData.find(r => r.id === scrollCard.dataset.id);
-                if (race) {
-                    showRace(race);
-                    window.history.pushState({}, '', `race.html?id=${race.id}`);
+                const origin = originsData.find(o => o.id === scrollCard.dataset.id);
+                if (origin) {
+                    showOrigin(origin);
+                    window.history.pushState({}, '', `origin.html?id=${origin.id}`);
                 }
             });
             scrollContainer.appendChild(scrollCard);
@@ -92,15 +78,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Кнопка возврата
     resetButton.addEventListener('click', () => {
-        raceGrid.style.display = 'grid';
-        selectedView.style.display = 'none';
-        resetButton.style.display = 'none';
-        window.history.pushState({}, '', 'race.html');
+        window.location.href = 'index.html';
     });
 
-    // Показываем выбранную расу при загрузке
-    if (raceId) {
-        raceGrid.style.display = 'none';
+    // Показываем выбранный Origin при загрузке
+    if (originId && selectedView && resetButton) {
         selectedView.style.display = 'flex';
         resetButton.style.display = 'block';
     }

@@ -166,3 +166,24 @@
         height: 200px;
     }
 }
+
+.scroll-container {
+    overflow-x: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #00A3E0 #1A2639;
+    padding-bottom: 10px; /* Для места под скролл */
+}
+
+.scroll-container::-webkit-scrollbar {
+    height: 8px;
+}
+
+.scroll-container::-webkit-scrollbar-track {
+    background: #1A2639;
+    border-radius: 4px;
+}
+
+.scroll-container::-webkit-scrollbar-thumb {
+    background-color: #00A3E0;
+    border-radius: 4px;
+}
