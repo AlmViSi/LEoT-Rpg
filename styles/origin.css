@@ -1,112 +1,115 @@
-/* Основные стили */
-.main-container {
-    width: 100%;
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 0 20px;
-    box-sizing: border-box;
-}
-
 .selected-view {
     display: none;
     flex-direction: row;
-    gap: 3rem;
-    margin: 2rem 0;
-    width: 100%;
-    height: 80vh;
-    overflow: hidden;
+    gap: 2rem;
+    margin-top: 1rem;
 }
 
 .selected-card {
-    width: 450px;
-    height: 650px;
+    width: 300px;
+    height: 450px;
     flex-shrink: 0;
-    border-radius: 10px;
+    border-radius: 5px;
     overflow: hidden;
-    box-shadow: 0 0 20px rgba(0, 163, 224, 0.7);
-    align-self: flex-start; /* Выравнивание по верху */
+    box-shadow: 0 0 15px rgba(0, 163, 224, 0.5);
 }
 
 .selected-card img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    object-position: top center; /* Фокус на верх изображения */
-}
-
-.description-wrapper {
-    flex: 1;
-    min-width: 0;
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    overflow: hidden;
 }
 
 .description {
     flex: 1;
     display: flex;
     flex-direction: column;
-    overflow: hidden;
-    padding-right: 15px;
 }
 
 .description h2 {
     font-family: 'Cinzel', serif;
     color: #d9bd0b;
-    margin: 0 0 1.5rem 0;
-    font-size: 2.2rem;
-}
-
-.description p {
-    overflow-y: auto;
-    margin-bottom: 2rem;
-    flex-grow: 1;
-    word-wrap: break-word;
-    font-size: 1.1rem;
-    line-height: 1.6;
-    padding-right: 10px;
+    margin-top: 0;
 }
 
 .scroll-container {
     display: flex;
-    gap: 1.5rem;
+    gap: 1rem;
     overflow-x: auto;
-    padding: 1.5rem 0;
+    padding: 1rem 0;
     margin-top: auto;
-    width: 100%;
-    min-height: 180px;
 }
 
-/* Остальные стили (scroll-card, reset-button и т.д.) как в race.css */
+.scroll-card {
+    width: 100px;
+    height: 150px;
+    flex-shrink: 0;
+    position: relative;
+    cursor: pointer;
+    border-radius: 5px;
+    overflow: hidden;
+    opacity: 0.7;
+    transition: all 0.3s ease;
+}
+
+.scroll-card.selected {
+    opacity: 1;
+    box-shadow: 0 0 10px rgba(0, 163, 224, 0.8);
+}
+
+.scroll-card:hover {
+    opacity: 1;
+}
+
+.scroll-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.scroll-card .overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.7);
+    padding: 0.3rem;
+    text-align: center;
+    font-size: 0.8rem;
+    font-family: 'Cinzel', serif;
+}
+
+.reset-button {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    padding: 0.8rem 1.5rem;
+    background: #00A3E0;
+    color: #0A0A0A;
+    border: none;
+    border-radius: 5px;
+    font-family: 'Cinzel', serif;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    display: none;
+    z-index: 100;
+}
+
+.reset-button:hover {
+    background: #D9E4DD;
+}
 
 @media (max-width: 900px) {
     .selected-view {
         flex-direction: column;
-        height: auto;
-        gap: 2rem;
     }
     
     .selected-card {
         width: 100%;
-        height: 400px;
+        height: 350px;
     }
     
-    .description {
-        padding-right: 0;
-    }
-    
-    .description p {
-        margin-bottom: 1.5rem;
-    }
-}
-
-@media (max-width: 480px) {
-    .selected-card {
-        height: 300px;
-    }
-    
-    .description h2 {
-        font-size: 1.8rem;
+    .scroll-container {
+        justify-content: center;
     }
 }
