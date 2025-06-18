@@ -5,11 +5,13 @@
     gap: 2.6rem;
     margin-top: 1.3rem;
     align-items: flex-start;
+    max-width: 100%;
+    overflow: hidden;
 }
 
 .selected-card {
-    width: 390px;
-    height: 693px; /* 390 * (16/9) */
+    width: 360px;
+    height: 640px; /* 360 * (16/9) */
     flex-shrink: 0;
     border-radius: 5px;
     overflow: hidden;
@@ -27,15 +29,8 @@
     flex: 1;
     display: flex;
     flex-direction: column;
-    height: 693px; /* Такая же высота как у изображения */
-    position: relative;
-}
-
-.description-content {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
+    max-width: calc(100% - 360px - 2.6rem);
+    height: 640px;
 }
 
 .description h2 {
@@ -43,13 +38,12 @@
     color: #d9bd0b;
     margin-top: 0;
     font-size: 1.3em;
-    padding-right: 15px;
 }
 
 .description p {
     flex-grow: 1;
     overflow-y: auto;
-    padding-right: 15px;
+    padding-right: 1rem;
     margin-bottom: 1.3rem;
     font-size: 1.04em;
     scrollbar-width: thin;
@@ -94,8 +88,8 @@
 }
 
 .scroll-card {
-    width: 130px;
-    height: 231px; /* 130 * (16/9) */
+    width: 120px;
+    height: 213px; /* 120 * (16/9) */
     flex-shrink: 0;
     position: relative;
     cursor: pointer;
@@ -155,9 +149,11 @@
 
 .origin-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    grid-template-columns: repeat(5, minmax(180px, 1fr));
     gap: 1.95rem;
     margin: 1.3rem 0;
+    max-width: 100%;
+    overflow: hidden;
 }
 
 .origin-card {
@@ -193,25 +189,17 @@
 }
 
 /* Адаптивные стили */
-@media (min-width: 1200px) {
-    .origin-grid {
-        grid-template-columns: repeat(5, minmax(180px, 1fr));
-    }
-}
-
-@media (min-width: 900px) and (max-width: 1199px) {
+@media (max-width: 1200px) {
     .origin-grid {
         grid-template-columns: repeat(4, minmax(180px, 1fr));
     }
 }
 
-@media (min-width: 600px) and (max-width: 899px) {
+@media (max-width: 900px) {
     .origin-grid {
         grid-template-columns: repeat(3, minmax(180px, 1fr));
     }
-}
-
-@media (max-width: 900px) {
+    
     .selected-view {
         flex-direction: column;
     }
@@ -223,6 +211,7 @@
     }
     
     .description {
+        max-width: 100%;
         height: auto;
     }
 }
