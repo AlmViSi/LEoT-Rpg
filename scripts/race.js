@@ -22,30 +22,32 @@ document.addEventListener('DOMContentLoaded', () => {
     // Загрузка данных
     fetch('races.json')
         .then(response => {
-            if (!response.ok) throw new Error('Ошибка загрузки races.json');
+            if (!response.ok) throw new Error('Failed to load races.json');
             return response.json();
         })
         .then(data => {
             racesData = data;
-            if (raceId) {
-                const race = data.find(r => r.id === raceId);
-                if (race) {
-                    showRace(race);
-                }
-            }
             renderRaceGrid();
             renderScrollCards();
+            
+            // Если в URL есть ID, показываем соответствующую расу
+            if (raceId) {
+                const race = data.find(r => r.id === raceId);
+                if (race) showRace(race);
+            }
         })
         .catch(error => {
             console.error('Error:', error);
         });
 
-    // Показать выбранную расу
+    // Функция показа выбранной расы
     function showRace(race) {
+        // Скрываем сетку и показываем детали
         raceGrid.style.display = 'none';
         selectedView.style.display = 'flex';
         resetButton.style.display = 'block';
 
+        // Заполняем данные
         selectedCard.innerHTML = `<img src="images/races/${race.src}" alt="${race.name}">`;
         raceTitle.textContent = race.name;
         raceDescription.textContent = race.description;
@@ -54,6 +56,9 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelectorAll('.scroll-card').forEach(card => {
             card.classList.toggle('selected', card.dataset.id === race.id);
         });
+
+        // Обновляем URL
+        window.history.pushState({ raceId: race.id }, '', `race.html?id=${race.id}`);
     }
 
     // Рендеринг сетки рас
@@ -67,15 +72,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 <img src="images/races/${race.src}" alt="${race.name}">
                 <div class="overlay">${race.name}</div>
             `;
-            card.addEventListener('click', () => {
-                showRace(race);
-                window.history.pushState({}, '', `race.html?id=${race.id}`);
-            });
+            card.addEventListener('click', () => showRace(race));
             raceGrid.appendChild(card);
         });
     }
 
-    // Рендеринг мини-карточек в прокрутке
+    // Рендеринг карточек в полосе прокрутки
     function renderScrollCards() {
         scrollContainer.innerHTML = '';
         racesData.forEach(race => {
@@ -86,23 +88,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 <img src="images/races/${race.src}" alt="${race.name}">
                 <div class="overlay">${race.name}</div>
             `;
-            scrollCard.addEventListener('click', () => {
-                const race = racesData.find(r => r.id === scrollCard.dataset.id);
-                if (race) {
-                    showRace(race);
-                    window.history.pushState({}, '', `race.html?id=${race.id}`);
-                }
-            });
+            scrollCard.addEventListener('click', () => showRace(race));
             scrollContainer.appendChild(scrollCard);
         });
-
-        // Добавляем стиль для полосы прокрутки
-        scrollContainer.style.overflowX = 'auto';
-        scrollContainer.style.scrollbarWidth = 'thin';
-        scrollContainer.style.paddingBottom = '10px';
     }
 
-    // Кнопка возврата
+    // Обработчик кнопки возврата
     resetButton.addEventListener('click', () => {
         raceGrid.style.display = 'grid';
         selectedView.style.display = 'none';
@@ -110,7 +101,22 @@ document.addEventListener('DOMContentLoaded', () => {
         window.history.pushState({}, '', 'race.html');
     });
 
-    // Показываем выбранную расу при загрузке
+    // Обработчик навигации по истории
+    window.addEventListener('popstate', (event) => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const newRaceId = urlParams.get('id');
+        
+        if (!newRaceId) {
+            raceGrid.style.display = 'grid';
+            selectedView.style.display = 'none';
+            resetButton.style.display = 'none';
+        } else {
+            const race = racesData.find(r => r.id === newRaceId);
+            if (race) showRace(race);
+        }
+    });
+
+    // Инициализация при загрузке
     if (raceId) {
         raceGrid.style.display = 'none';
         selectedView.style.display = 'flex';
