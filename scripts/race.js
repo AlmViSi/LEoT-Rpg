@@ -36,7 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const card = document.createElement('div');
             card.classList.add('origin-card');
             card.innerHTML = `
-                <img src="Origins/${race.src}" alt="${race.name}">
+                <img src="images/races/${race.src}" alt="${race.name}">
                 <div class="overlay">${race.name}</div>
             `;
             card.addEventListener('click', () => selectRace(race));
@@ -49,7 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const card = document.createElement('div');
             card.classList.add('origin-card');
             card.innerHTML = `
-                <img src="Origins/${race.src}" alt="${race.name}">
+                <img src=""images/races/${race.src}" alt="${race.name}">
                 <div class="overlay">${race.name}</div>
             `;
             card.addEventListener('click', () => selectRace(race));
@@ -66,7 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
         selectedView.style.display = 'flex';
         resetButton.style.display = 'block';
 
-        selectedCard.innerHTML = `<img src="Origins/${race.src}" alt="${race.name}">`;
+        selectedCard.innerHTML = `<img src=""images/races/${race.src}" alt="${race.name}">`;
         raceTitle.textContent = race.name;
         raceDescription.textContent = race.description;
 
@@ -81,7 +81,7 @@ document.addEventListener('DOMContentLoaded', () => {
             scrollCard.classList.add('scroll-card');
             if (race.id === selectedId) scrollCard.classList.add('selected');
             scrollCard.innerHTML = `
-                <img src="Origins/${race.src}" alt="${race.name}">
+                <img src=""images/races/${race.src}" alt="${race.name}">
                 <div class="overlay">${race.name}</div>
             `;
             scrollCard.addEventListener('click', () => selectRace(race));
