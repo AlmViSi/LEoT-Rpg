@@ -6,8 +6,10 @@
     <title>Lost Edge of Time - Race Selection</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto&family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles/common.css">
-    <link rel="stylesheet" href="styles/race.css">
+    <link rel="stylesheet" href="styles/selection.css"> <!-- Общие стили -->
     <link rel="stylesheet" href="styles/mobile-menu.css">
+    <script type="module" src="scripts/race.js"></script>
+    <script src="scripts/particles.js" defer></script>
     <script src="scripts/mobile-menu.js" defer></script>
 </head>
 <body>
@@ -25,7 +27,7 @@
     </div>
     
     <div class="main-container">
-        <div id="race-grid" class="race-grid"></div>
+        <div id="race-grid" class="selection-grid"></div>
         <div id="selected-view" class="selected-view">
             <div class="left-column">
                 <div id="selected-card" class="selected-card"></div>
@@ -33,7 +35,7 @@
             <div class="right-column">
                 <div class="description-container">
                     <h2 id="race-title">Выберите расу</h2>
-                    <div id="race-description" class="race-description">
+                    <div id="race-description" class="selection-description">
                         Выберите расу, чтобы узнать её историю и особенности.
                     </div>
                 </div>
@@ -43,8 +45,5 @@
     </div>
     
     <button id="reset-button" class="reset-button">Вернуться</button>
-
-    <script src="scripts/particles.js"></script>
-    <script src="scripts/race.js"></script>
 </body>
 </html>
