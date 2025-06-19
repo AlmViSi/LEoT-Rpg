@@ -33,7 +33,7 @@ export class SelectionManager {
     await this.loadData();
     this.setupEventListeners();
     this.checkUrlForId();
-    console.log('Initialization complete. Cards:', this.data.length);
+    console.log('Initialization complete. Data:', this.data);
   }
 
   getDOMElements() {
@@ -59,7 +59,14 @@ export class SelectionManager {
     try {
       const response = await fetch(this.config.apiEndpoint);
       if (!response.ok) throw new Error(`Failed to load ${this.config.apiEndpoint}`);
+      
       this.data = await response.json();
+      
+      // Нормализуем ID к строковому типу
+      this.data = this.data.map(item => ({
+        ...item,
+        id: item.id.toString()
+      }));
       
       this.renderGrid();
       this.renderScrollCards();
@@ -76,16 +83,6 @@ export class SelectionManager {
         <div class="overlay">${item.name}</div>
       </div>
     `).join('');
-
-    this.elements.grid.addEventListener('click', (e) => {
-      const card = e.target.closest(`.${this.config.cardClass}`);
-      if (card) {
-        const itemId = card.getAttribute('data-id');
-        const item = this.data.find(i => i.id === itemId);
-        console.log('Grid card clicked:', itemId, item);
-        if (item) this.showSelected(item);
-      }
-    });
   }
 
   renderScrollCards() {
@@ -96,15 +93,6 @@ export class SelectionManager {
         <div class="overlay">${item.name}</div>
       </div>
     `).join('');
-
-    this.elements.scrollContainer.addEventListener('click', (e) => {
-      const card = e.target.closest('.scroll-card');
-      if (card) {
-        const itemId = card.getAttribute('data-id');
-        const item = this.data.find(i => i.id === itemId);
-        if (item) this.showSelected(item);
-      }
-    });
   }
 
   showSelected(item) {
@@ -112,7 +100,8 @@ export class SelectionManager {
       console.error('No item provided to showSelected');
       return;
     }
-    console.log('Showing selected item:', item.id, item.name);
+
+    console.log('Showing selected item:', item);
 
     this.elements.grid.style.display = 'none';
     this.elements.selectedView.style.display = 'flex';
@@ -125,7 +114,7 @@ export class SelectionManager {
     this.elements.title.textContent = item.name;
     this.elements.description.textContent = item.description;
 
-    // Update scroll cards selection without animation
+    // Обновляем выделение без анимации
     document.querySelectorAll('.scroll-card').forEach(card => {
       card.classList.toggle('selected', card.dataset.id === item.id);
     });
@@ -134,7 +123,32 @@ export class SelectionManager {
   }
 
   setupEventListeners() {
-    this.elements.resetButton?.addEventListener('click', () => this.resetSelection());
+    // Делегирование событий
+    this.elements.grid.addEventListener('click', (e) => {
+      const card = e.target.closest(`.${this.config.cardClass}`);
+      if (!card) return;
+      
+      const itemId = card.dataset.id;
+      const item = this.data.find(i => i.id === itemId);
+      
+      if (item) {
+        this.showSelected(item);
+      } else {
+        console.error('Item not found for ID:', itemId);
+      }
+    });
+
+    this.elements.scrollContainer.addEventListener('click', (e) => {
+      const card = e.target.closest('.scroll-card');
+      if (!card) return;
+      
+      const itemId = card.dataset.id;
+      const item = this.data.find(i => i.id === itemId);
+      
+      if (item) this.showSelected(item);
+    });
+
+    this.elements.resetButton.addEventListener('click', () => this.resetSelection());
     window.addEventListener('popstate', () => this.handleHistoryNavigation());
   }
 
