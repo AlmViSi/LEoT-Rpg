@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Проверка элементов DOM
     if (!originGrid || !selectedView || !selectedCard || !originTitle || 
         !originDescription || !scrollContainer || !resetButton) {
-        console.error('One or more required elements are missing in the DOM');
+        console.error('Один или несколько необходимых элементов отсутствуют в DOM');
         return;
     }
 
@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Загрузка данных
     fetch('origins.json')
         .then(response => {
-            if (!response.ok) throw new Error('Failed to load origins.json');
+            if (!response.ok) throw new Error('Не удалось загрузить origins.json');
             return response.json();
         })
         .then(data => {
@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         })
         .catch(error => {
-            console.error('Error:', error);
+            console.error('Ошибка:', error);
         });
 
     // Функция показа выбранного origin
@@ -48,7 +48,10 @@ document.addEventListener('DOMContentLoaded', () => {
         resetButton.style.display = 'block';
 
         // Заполняем данные
-        selectedCard.innerHTML = `<img src="images/origins/${origin.src}" alt="${origin.name}">`;
+        selectedCard.innerHTML = `
+            <img src="images/origins/${origin.src}" alt="${origin.name}"
+                 onerror="this.onerror=null;this.src='images/origins/default.jpg'">
+        `;
         originTitle.textContent = origin.name;
         originDescription.textContent = origin.description;
 
@@ -73,10 +76,11 @@ document.addEventListener('DOMContentLoaded', () => {
         originGrid.innerHTML = '';
         originsData.forEach(origin => {
             const card = document.createElement('div');
-            card.classList.add('origin-card');
+            card.className = 'origin-card';
             card.dataset.id = origin.id;
             card.innerHTML = `
-                <img src="images/origins/${origin.src}" alt="${origin.name}">
+                <img src="images/origins/${origin.src}" alt="${origin.name}"
+                     onerror="this.onerror=null;this.src='images/origins/default.jpg'">
                 <div class="overlay">${origin.name}</div>
             `;
             card.addEventListener('click', () => showOrigin(origin));
@@ -89,10 +93,11 @@ document.addEventListener('DOMContentLoaded', () => {
         scrollContainer.innerHTML = '';
         originsData.forEach(origin => {
             const scrollCard = document.createElement('div');
-            scrollCard.classList.add('scroll-card');
+            scrollCard.className = 'scroll-card';
             scrollCard.dataset.id = origin.id;
             scrollCard.innerHTML = `
-                <img src="images/origins/${origin.src}" alt="${origin.name}">
+                <img src="images/origins/${origin.src}" alt="${origin.name}"
+                     onerror="this.onerror=null;this.src='images/origins/default.jpg'">
                 <div class="overlay">${origin.name}</div>
             `;
             scrollCard.addEventListener('click', () => showOrigin(origin));

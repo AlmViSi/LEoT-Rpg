@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Проверка элементов DOM
     if (!raceGrid || !selectedView || !selectedCard || !raceTitle || 
         !raceDescription || !scrollContainer || !resetButton) {
-        console.error('One or more required elements are missing in the DOM');
+        console.error('Один или несколько необходимых элементов отсутствуют в DOM');
         return;
     }
 
@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Загрузка данных
     fetch('races.json')
         .then(response => {
-            if (!response.ok) throw new Error('Failed to load races.json');
+            if (!response.ok) throw new Error('Не удалось загрузить races.json');
             return response.json();
         })
         .then(data => {
@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         })
         .catch(error => {
-            console.error('Error:', error);
+            console.error('Ошибка:', error);
         });
 
     // Функция показа выбранной расы
@@ -48,13 +48,23 @@ document.addEventListener('DOMContentLoaded', () => {
         resetButton.style.display = 'block';
 
         // Заполняем данные
-        selectedCard.innerHTML = `<img src="images/races/${race.src}" alt="${race.name}">`;
+        selectedCard.innerHTML = `
+            <img src="images/races/${race.src}" alt="${race.name}"
+                 onerror="this.onerror=null;this.src='images/races/default.jpg'">
+        `;
         raceTitle.textContent = race.name;
         raceDescription.textContent = race.description;
 
         // Обновляем выбранную карточку в скролле
         document.querySelectorAll('.scroll-card').forEach(card => {
             card.classList.toggle('selected', card.dataset.id === race.id);
+            if (card.dataset.id === race.id) {
+                card.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'nearest',
+                    inline: 'center'
+                });
+            }
         });
 
         // Обновляем URL
@@ -66,10 +76,11 @@ document.addEventListener('DOMContentLoaded', () => {
         raceGrid.innerHTML = '';
         racesData.forEach(race => {
             const card = document.createElement('div');
-            card.classList.add('origin-card');
+            card.className = 'origin-card';
             card.dataset.id = race.id;
             card.innerHTML = `
-                <img src="images/races/${race.src}" alt="${race.name}">
+                <img src="images/races/${race.src}" alt="${race.name}"
+                     onerror="this.onerror=null;this.src='images/races/default.jpg'">
                 <div class="overlay">${race.name}</div>
             `;
             card.addEventListener('click', () => showRace(race));
@@ -82,10 +93,11 @@ document.addEventListener('DOMContentLoaded', () => {
         scrollContainer.innerHTML = '';
         racesData.forEach(race => {
             const scrollCard = document.createElement('div');
-            scrollCard.classList.add('scroll-card');
+            scrollCard.className = 'scroll-card';
             scrollCard.dataset.id = race.id;
             scrollCard.innerHTML = `
-                <img src="images/races/${race.src}" alt="${race.name}">
+                <img src="images/races/${race.src}" alt="${race.name}"
+                     onerror="this.onerror=null;this.src='images/races/default.jpg'">
                 <div class="overlay">${race.name}</div>
             `;
             scrollCard.addEventListener('click', () => showRace(race));

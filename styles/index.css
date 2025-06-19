@@ -1,25 +1,26 @@
 /* Origin Selection Page Specific Styles */
 .origin-grid {
     display: grid;
-    width: 80%;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-    gap: 0.1rem;
-    margin: 0.3rem 0;
+    width: 95%;
+    grid-template-columns: repeat(5, minmax(220px, 1fr));
+    gap: 1rem;
+    margin: 1rem auto;
+    padding: 1rem;
 }
 
 .origin-card {
     position: relative;
-    height: auto;
-    width: auto;
-    border-radius: 5px;
+    height: 300px;
+    border-radius: 10px;
     overflow: hidden;
     cursor: pointer;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 1px solid var(--border-accent);
 }
 
 .origin-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 10px 20px rgba(0, 163, 224, 0.3);
+    box-shadow: 0 10px 20px rgba(0, 163, 224, 0.5);
 }
 
 .origin-card img {
@@ -34,10 +35,11 @@
     left: 0;
     right: 0;
     background: rgba(0, 0, 0, 0.7);
-    padding: 0.75rem;
+    padding: 1rem;
     text-align: center;
     font-family: 'Cinzel', serif;
     font-size: 1.1em;
+    color: var(--text-primary);
 }
 
 /* Selected Origin View */
@@ -45,16 +47,21 @@
     display: none;
     flex-direction: row;
     gap: 2rem;
-    margin-top: 1.5rem;
+    margin: 2rem auto;
+    width: 95%;
+    padding: 1rem;
+    background: rgba(26, 38, 57, 0.8);
+    border-radius: 10px;
 }
 
 .selected-card {
     width: 300px;
     height: 450px;
     flex-shrink: 0;
-    border-radius: 5px;
+    border-radius: 10px;
     overflow: hidden;
-    box-shadow: 0 0 15px rgba(0, 163, 224, 0.5);
+    box-shadow: 0 0 20px rgba(0, 163, 224, 0.5);
+    border: 1px solid var(--border-accent);
 }
 
 .description {
@@ -68,14 +75,16 @@
 .description h2 {
     color: #d9bd0b;
     margin-top: 0;
-    font-size: 1.3em;
+    font-size: 1.5em;
+    font-family: 'Cinzel', serif;
 }
 
 .description p {
     overflow-y: auto;
-    padding-right: 0.5rem;
+    padding-right: 1rem;
     margin-bottom: 1rem;
     flex-grow: 1;
+    line-height: 1.6;
 }
 
 .scroll-container {
@@ -84,53 +93,26 @@
     overflow-x: auto;
     padding: 1rem 0;
     margin-top: auto;
-    scrollbar-width: thin;
-    scrollbar-color: var(--border-accent) var(--tab-bg);
-}
-
-.scroll-container::-webkit-scrollbar {
-    height: 8px;
-}
-
-.scroll-container::-webkit-scrollbar-track {
-    background: var(--tab-bg);
-    border-radius: 4px;
-}
-
-.scroll-container::-webkit-scrollbar-thumb {
-    background-color: var(--border-accent);
-    border-radius: 4px;
-}
-
-/* Variant Cards */
-.scroll-card {
-    width: 100px;
-    height: 150px;
-    flex-shrink: 0;
-    position: relative;
-    cursor: pointer;
-    border-radius: 5px;
-    overflow: hidden;
-    opacity: 0.7;
-    transition: all 0.3s ease;
-}
-
-.scroll-card.selected {
-    opacity: 1;
-    box-shadow: 0 0 10px rgba(0, 163, 224, 0.8);
-}
-
-.scroll-card:hover {
-    opacity: 1;
-}
-
-.scroll-card .overlay {
-    padding: 0.3rem;
-    font-size: 0.8rem;
 }
 
 /* Responsive Design */
+@media (max-width: 1400px) {
+    .origin-grid {
+        grid-template-columns: repeat(4, minmax(220px, 1fr));
+    }
+}
+
+@media (max-width: 1100px) {
+    .origin-grid {
+        grid-template-columns: repeat(3, minmax(220px, 1fr));
+    }
+}
+
 @media (max-width: 900px) {
+    .origin-grid {
+        grid-template-columns: repeat(2, minmax(220px, 1fr));
+    }
+    
     .selected-view {
         flex-direction: column;
     }
@@ -139,45 +121,22 @@
         width: 100%;
         height: 350px;
     }
-    
-    .origin-grid {
-        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 600px) {
     .origin-grid {
-        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-        gap: 1rem;
+        grid-template-columns: 1fr;
     }
     
     .origin-card {
         height: 250px;
     }
-}
-
-@media (max-width: 480px) {
-    .origin-grid {
-        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-        gap: 0.75rem;
-        margin: 1rem 0;
-    }
     
-    .origin-card {
-        height: 200px;
-    }
-    
-    .origin-card .overlay {
-        padding: 0.5rem;
-        font-size: 0.9rem;
-    }
-    
-    .scroll-card {
-        width: 80px;
-        height: 120px;
+    .selected-card {
+        height: 300px;
     }
     
     .description h2 {
-        font-size: 1.1em;
+        font-size: 1.3em;
     }
 }
