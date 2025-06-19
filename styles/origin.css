@@ -48,20 +48,23 @@
 /* Selected Origin View */
 .selected-view {
     display: none;
-    flex-direction: column;
-    margin: 1rem auto;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 2rem;
+    margin: 2rem auto;
     width: 95%;
-    padding: 0;
+    padding: 1rem;
+    background: rgba(26, 38, 57, 0.8);
+    border-radius: 10px;
 }
 
 .selected-card {
-    width: 100%;
+    width: 300px;
     height: 400px;
-    max-width: 240px;
-    margin: 0 auto;
     border-radius: 10px;
     overflow: hidden;
     border: 1px solid var(--border-accent);
+    flex-shrink: 0;
 }
 
 .selected-card img {
@@ -75,24 +78,23 @@
     flex: 1;
     display: flex;
     flex-direction: column;
-    width: 100%;
-    margin-top: 1rem;
+    height: 400px;
+    overflow: hidden;
 }
 
 .description h2 {
     color: #d9bd0b;
     margin: 0.5rem 0;
-    font-size: 1.3em;
+    font-size: 1.5em;
     font-family: 'Cinzel', serif;
-    text-align: center;
 }
 
 .description p {
     overflow-y: auto;
-    padding: 0 0.5rem;
-    margin: 0;
-    line-height: 1.5;
-    font-size: 0.95em;
+    padding-right: 1rem;
+    margin-bottom: 1rem;
+    line-height: 1.6;
+    flex-grow: 1;
 }
 
 .scroll-container {
@@ -100,40 +102,69 @@
     gap: 0.8rem;
     overflow-x: auto;
     padding: 1rem 0;
-    margin-top: 1rem;
+    margin-top: auto;
+    width: 100%;
 }
 
 .scroll-card {
-    width: 70px;
-    height: 110px;
+    width: 80px;
+    height: 120px;
     flex-shrink: 0;
     border-radius: 5px;
     overflow: hidden;
     opacity: 0.7;
     transition: all 0.3s ease;
+    border: 1px solid var(--border-accent);
+    position: relative;
+}
+
+.scroll-card:hover {
+    opacity: 0.9;
 }
 
 .scroll-card.selected {
     opacity: 1;
-    box-shadow: 0 0 8px rgba(0, 163, 224, 0.8);
+    box-shadow: 0 0 10px rgba(0, 163, 224, 0.8);
+}
+
+.scroll-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.scroll-card .overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.7);
+    padding: 0.3rem;
+    text-align: center;
+    font-size: 0.7rem;
+    font-family: 'Cinzel', serif;
 }
 
 /* Responsive Design */
 @media (max-width: 900px) {
-    .origin-grid {
-        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    .selected-view {
+        flex-direction: column;
     }
     
-    .origin-card {
-        height: 240px;
-        max-width: 140px;
+    .selected-card {
+        width: 100%;
+        max-width: 240px;
+        margin: 0 auto;
+    }
+    
+    .description {
+        height: auto;
     }
 }
 
 @media (max-width: 600px) {
     .origin-grid {
         grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-        gap: 1rem;
     }
     
     .origin-card {
@@ -142,12 +173,11 @@
     }
     
     .selected-card {
-        height: 320px;
-        max-width: 200px;
+        height: 300px;
     }
     
     .scroll-card {
-        width: 60px;
-        height: 95px;
+        width: 70px;
+        height: 105px;
     }
 }
