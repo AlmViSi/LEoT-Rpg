@@ -47,6 +47,7 @@ header h1 {
     min-height: 105vh;
     position: relative;
     z-index: 5;
+    margin: 0 auto;
 }
 
 /* Tabs */
