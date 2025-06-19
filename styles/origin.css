@@ -1,4 +1,4 @@
-/* Origin Selection Page Specific Styles */
+/* Main Grid Styles */
 .origin-grid {
     display: grid;
     width: 95%;
@@ -8,6 +8,7 @@
     padding: 0;
 }
 
+/* Origin Card Styles */
 .origin-card {
     position: relative;
     width: 100%;
@@ -45,7 +46,7 @@
     color: var(--text-primary);
 }
 
-/* Selected Origin View */
+/* Selected View Layout */
 .selected-view {
     display: none;
     grid-template-columns: 380px 1fr;
@@ -53,68 +54,81 @@
     margin: 2rem auto;
     width: 95%;
     max-width: 1200px;
-    padding: 1.5rem;
-    background: rgba(26, 38, 57, 0.8);
-    border-radius: 10px;
-    min-height: 600px;
-    box-sizing: border-box;
+    min-height: 650px;
+    position: relative;
+}
+
+.left-column {
+    height: 100%;
 }
 
 .selected-card {
     width: 100%;
-    aspect-ratio: 9/16;
+    height: 650px;
     border-radius: 10px;
     overflow: hidden;
     border: 3px solid var(--border-accent);
     box-shadow: 0 0 20px rgba(0, 163, 224, 0.3);
 }
 
-.right-panel {
+.selected-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
+}
+
+.right-column {
     display: flex;
     flex-direction: column;
-    height: 100%;
+    height: 650px;
 }
 
-.description {
+.description-container {
     flex: 1;
-    overflow-y: auto;
-    padding-right: 1rem;
+    background: rgba(26, 38, 57, 0.8);
+    border-radius: 10px;
+    padding: 1.5rem;
     margin-bottom: 1rem;
-    line-height: 1.6;
-    font-size: 1.1em;
+    overflow: hidden;
 }
 
-.description h2 {
+.description-container h2 {
     color: #d9bd0b;
-    margin: 0.5rem 0;
+    margin: 0 0 1rem 0;
     font-size: 1.8em;
     font-family: 'Cinzel', serif;
 }
 
+.origin-description {
+    height: calc(100% - 3rem);
+    overflow-y: auto;
+    line-height: 1.6;
+    font-size: 1.1em;
+    padding-right: 0.5rem;
+}
+
 .scroll-container {
+    height: 120px;
+    background: rgba(26, 38, 57, 0.9);
+    border-radius: 10px;
+    border: 1px solid var(--border-accent);
+    padding: 1rem;
     display: flex;
     gap: 0.8rem;
     overflow-x: auto;
-    padding: 1rem 0;
-    width: 100%;
-    white-space: nowrap;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: thin;
-    scrollbar-color: var(--border-accent) rgba(26, 38, 57, 0.5);
-    background: rgba(26, 38, 57, 0.9);
-    border-top: 1px solid var(--border-accent);
 }
 
-/* Scrollbar styling */
-.description::-webkit-scrollbar {
+/* Scrollbar Styles */
+.origin-description::-webkit-scrollbar {
     width: 8px;
 }
 
-.description::-webkit-scrollbar-track {
+.origin-description::-webkit-scrollbar-track {
     background: rgba(26, 38, 57, 0.5);
 }
 
-.description::-webkit-scrollbar-thumb {
+.origin-description::-webkit-scrollbar-thumb {
     background-color: var(--border-accent);
     border-radius: 4px;
 }
@@ -132,6 +146,7 @@
     border-radius: 4px;
 }
 
+/* Scroll Cards */
 .scroll-card {
     width: 100px;
     aspect-ratio: 9/16;
@@ -142,6 +157,7 @@
     transition: all 0.3s ease;
     border: 1px solid var(--border-accent);
     position: relative;
+    cursor: pointer;
 }
 
 .scroll-card:hover {
@@ -172,22 +188,23 @@
     font-family: 'Cinzel', serif;
 }
 
-/* Mobile version */
+/* Mobile Version */
 @media (max-width: 900px) {
     .selected-view {
         grid-template-columns: 1fr;
-        width: 98%;
-        padding: 1rem;
-        margin: 1rem auto;
         min-height: unset;
-        padding-bottom: 100px;
+        padding-bottom: 120px;
     }
 
-    .selected-card {
+    .left-column {
         display: none;
     }
 
-    .description {
+    .right-column {
+        height: auto;
+    }
+
+    .origin-description {
         max-height: 50vh;
     }
 
@@ -196,9 +213,10 @@
         bottom: 0;
         left: 0;
         right: 0;
-        padding: 10px;
-        background: rgba(26, 38, 57, 0.95);
-        border-top: 1px solid var(--border-accent);
+        height: 100px;
+        border-radius: 0;
+        border-left: none;
+        border-right: none;
         z-index: 100;
     }
 }
@@ -214,11 +232,5 @@
 
     .scroll-card {
         width: 80px;
-    }
-}
-
-@supports (-webkit-overflow-scrolling: touch) {
-    .scroll-container {
-        padding-bottom: env(safe-area-inset-bottom);
     }
 }
