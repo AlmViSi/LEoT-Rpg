@@ -52,32 +52,22 @@ export class SelectionManager {
             }
             return false;
         }
-        console.log('SelectionManager: Все необходимые элементы DOM найдены.');
         return true;
     }
 
     async loadData() {
         try {
-            console.log(`SelectionManager: Попытка загрузки данных из: ${this.config.apiEndpoint}`);
             const response = await fetch(this.config.apiEndpoint);
-            if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status} от ${this.config.apiEndpoint}`);
-            }
+            if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+            
             this.data = await response.json();
-            console.log('Загруженные данные:', this.data);
-            
             if (!Array.isArray(this.data) || this.data.length === 0) {
-                console.warn(`SelectionManager: Загруженные данные из ${this.config.apiEndpoint} пусты или не являются массивом.`);
-                if (this.elements.grid) {
-                    this.elements.grid.innerHTML = '<p class="info-message">Нет доступных элементов для отображения.</p>';
-                }
-                return;
+                throw new Error('Данные пусты или не являются массивом');
             }
             
-            console.log(`SelectionManager: Успешно загружено ${this.data.length} элементов.`);
             this.renderGrid();
         } catch (error) {
-            console.error('SelectionManager: Ошибка загрузки данных:', error);
+            console.error('Ошибка загрузки данных:', error);
             if (this.elements.grid) {
                 this.elements.grid.innerHTML = `<p class="error-message">Ошибка загрузки данных: ${error.message}</p>`;
             }
@@ -85,14 +75,6 @@ export class SelectionManager {
     }
 
     renderGrid() {
-        if (!this.elements.grid) {
-            console.error('SelectionManager: Элемент сетки для рендеринга не найден.');
-            return;
-        }
-        if (!this.data || this.data.length === 0) {
-            console.warn('SelectionManager: Нет данных для отрисовки сетки.');
-            return;
-        }
         this.elements.grid.innerHTML = this.data.map(item => `
             <div class="${this.config.cardClass}" data-id="${item.id}">
                 <img src="images/${this.config.imageFolder}/${item.src}" alt="${item.name}"
@@ -100,16 +82,9 @@ export class SelectionManager {
                 <div class="overlay">${item.name}</div>
             </div>
         `).join('');
-        console.log('SelectionManager: Сетка отрисована.');
     }
 
     showSelected(item) {
-        if (!item) {
-            console.error('SelectionManager: Попытка показать выбранный элемент без данных.');
-            return;
-        }
-        console.log(`SelectionManager: Отображение выбранного элемента: ${item.name} (ID: ${item.id})`);
-
         this.elements.grid.style.display = 'none';
         this.elements.selectedView.style.display = 'grid';
         this.elements.resetButton.style.display = 'block';
@@ -118,38 +93,24 @@ export class SelectionManager {
         this.elements.title.textContent = item.name;
         this.elements.description.innerHTML = item.description.replace(/\n/g, '<br>');
 
-        this.elements.scrollContainer.innerHTML = '';
-        this.data.forEach(scrollItem => {
-            if (scrollItem.id != item.id && scrollItem.src) {
-                const scrollCard = document.createElement('div');
-                scrollCard.classList.add('scroll-card');
-                scrollCard.dataset.id = scrollItem.id;
-                scrollCard.innerHTML = `<img src="images/${this.config.imageFolder}/${scrollItem.src}" alt="${scrollItem.name}">`;
-                this.elements.scrollContainer.appendChild(scrollCard);
-            }
-        });
+        // Очищаем и заполняем scroll-container
+        this.elements.scrollContainer.innerHTML = this.data
+            .filter(scrollItem => scrollItem.id !== item.id && scrollItem.src)
+            .map(scrollItem => `
+                <div class="scroll-card" data-id="${scrollItem.id}">
+                    <img src="images/${this.config.imageFolder}/${scrollItem.src}" alt="${scrollItem.name}">
+                </div>
+            `).join('');
 
-        // Автоматический скроллинг для выбранного элемента
+        // Плавный скролл к выбранному элементу
         setTimeout(() => {
             const selectedCard = this.elements.scrollContainer.querySelector(`[data-id="${item.id}"]`);
             if (selectedCard) {
-                const containerRect = this.elements.scrollContainer.getBoundingClientRect();
-                const cardRect = selectedCard.getBoundingClientRect();
-                
-                // Если карточка близко к левому краю (менее 100px)
-                if (cardRect.left < containerRect.left + 100) {
-                    this.elements.scrollContainer.scrollBy({
-                        left: cardRect.left - containerRect.left - 100,
-                        behavior: 'smooth'
-                    });
-                } 
-                // Если карточка близко к правому краю (менее 100px)
-                else if (cardRect.right > containerRect.right - 100) {
-                    this.elements.scrollContainer.scrollBy({
-                        left: cardRect.right - containerRect.right + 100,
-                        behavior: 'smooth'
-                    });
-                }
+                selectedCard.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'nearest',
+                    inline: 'center'
+                });
             }
         }, 100);
 
@@ -157,63 +118,39 @@ export class SelectionManager {
     }
 
     setupEventListeners() {
-        if (this.elements.grid) {
-            this.elements.grid.addEventListener('click', (e) => {
-                const card = e.target.closest(`.${this.config.cardClass}`);
-                if (!card) {
-                    console.log('SelectionManager: Клик вне карточки.');
-                    return;
-                }
-                
-                const item = this.data.find(i => i.id == card.dataset.id);
-                if (item) {
-                    this.showSelected(item);
-                } else {
-                    console.warn(`SelectionManager: Элемент с ID ${card.dataset.id} не найден в данных.`);
-                }
-            });
-            console.log(`SelectionManager: Обработчик кликов на ${this.config.gridSelector} установлен.`);
-        }
+        // Обработчик кликов по сетке
+        this.elements.grid?.addEventListener('click', (e) => {
+            const card = e.target.closest(`.${this.config.cardClass}`);
+            if (!card) return;
+            
+            const item = this.data.find(i => i.id == card.dataset.id);
+            if (item) this.showSelected(item);
+        });
 
-        if (this.elements.scrollContainer) {
-            this.elements.scrollContainer.addEventListener('click', (e) => {
-                const card = e.target.closest('.scroll-card');
-                if (!card) return;
-                
-                const item = this.data.find(i => i.id == card.dataset.id);
-                if (item) {
-                    this.showSelected(item);
-                    const containerRect = this.elements.scrollContainer.getBoundingClientRect();
-                    const cardRect = card.getBoundingClientRect();
-                    
-                    if (cardRect.left < containerRect.left + 100) {
-                        this.elements.scrollContainer.scrollBy({
-                            left: cardRect.left - containerRect.left - 100,
-                            behavior: 'smooth'
-                        });
-                    } else if (cardRect.right > containerRect.right - 100) {
-                        this.elements.scrollContainer.scrollBy({
-                            left: cardRect.right - containerRect.right + 100,
-                            behavior: 'smooth'
-                        });
-                    } else {
-                        card.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-                    }
-                }
-            });
-            console.log('SelectionManager: Обработчик кликов на scrollContainer установлен.');
-        }
+        // Обработчик кликов по миниатюрам
+        this.elements.scrollContainer?.addEventListener('click', (e) => {
+            const card = e.target.closest('.scroll-card');
+            if (!card) return;
+            
+            const item = this.data.find(i => i.id == card.dataset.id);
+            if (item) {
+                this.showSelected(item);
+                card.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'nearest',
+                    inline: 'center'
+                });
+            }
+        });
 
-        if (this.elements.resetButton) {
-            this.elements.resetButton.addEventListener('click', () => this.resetSelection());
-            console.log('SelectionManager: Обработчик кликов на reset-button установлен.');
-        }
+        // Кнопка сброса
+        this.elements.resetButton?.addEventListener('click', () => this.resetSelection());
+
+        // Обработчик навигации по истории
         window.addEventListener('popstate', () => this.handleHistoryNavigation());
-        console.log('SelectionManager: Обработчик popstate установлен.');
     }
 
     resetSelection() {
-        console.log('SelectionManager: Сброс выбора.');
         this.elements.grid.style.display = 'grid';
         this.elements.selectedView.style.display = 'none';
         this.elements.resetButton.style.display = 'none';
@@ -221,31 +158,20 @@ export class SelectionManager {
     }
 
     handleHistoryNavigation() {
-        console.log('SelectionManager: Обработка навигации по истории.');
         const urlParams = new URLSearchParams(window.location.search);
         const id = urlParams.get('id');
         const item = id ? this.data.find(item => item.id == id) : null;
         
-        if (item) {
-            this.showSelected(item);
-        } else {
-            this.resetSelection();
-        }
+        item ? this.showSelected(item) : this.resetSelection();
     }
 
     checkUrlForId() {
-        console.log('SelectionManager: Проверка URL на наличие ID.');
         const urlParams = new URLSearchParams(window.location.search);
         const id = urlParams.get('id');
         
         if (id) {
             const item = this.data.find(item => item.id == id);
-            if (item) {
-                this.showSelected(item);
-            } else {
-                console.warn(`SelectionManager: Элемент с ID "${id}" не найден. Доступные ID: ${this.data.map(i => i.id).join(', ')}`);
-                this.resetSelection();
-            }
+            item ? this.showSelected(item) : this.resetSelection();
         }
     }
 }
