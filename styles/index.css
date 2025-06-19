@@ -2,14 +2,14 @@
 .origin-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-    gap: 1.5rem;
-    margin: 1.5rem 0;
+    gap: 0.1rem;
+    margin: 0.3rem 0;
 }
 
 .origin-card {
     position: relative;
-    height: 320px;
-    width: 214px;
+    height: auto;
+    width: auto;
     border-radius: 5px;
     overflow: hidden;
     cursor: pointer;
