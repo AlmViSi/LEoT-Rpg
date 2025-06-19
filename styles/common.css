@@ -43,15 +43,10 @@ header h1 {
 }
 
 .main-container {
-    max-width: 95%;
-    min-height: 85vh;
-    margin: 1rem auto;
-    padding: 1rem;
+    max-width: 80%;
+    min-height: 105vh;
     position: relative;
     z-index: 5;
-    background: rgba(26, 38, 57, 0.7);
-    border-radius: 10px;
-    box-shadow: 0 0 20px rgba(0, 163, 224, 0.3);
 }
 
 /* Tabs */
