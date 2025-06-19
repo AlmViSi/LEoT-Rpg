@@ -80,7 +80,7 @@
 
 /* Изменения в selected-card для использования padding-bottom hack */
 #selected-card {
-    position: relative; /* Абсолютное позиционирование внутри selected-card-container */
+    position: absolute; /* Абсолютное позиционирование внутри selected-card-container */
     top: 0;
     left: 0;
     width: 100%;
@@ -95,17 +95,6 @@
     display: block; /* Убираем лишнее пространство под изображением */
 }
 
-#selected-card .overlay {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: rgba(0, 0, 0, 0.7);
-    padding: 0.8rem;
-    text-align: center;
-    font-family: 'Cinzel', serif;
-    color: var(--text-primary);
-}
 
 .description-container {
     grid-area: description;
@@ -185,16 +174,6 @@
         border-right: 2px solid var(--border-accent);
         border-bottom: none;
     }
-
-.description-container h2 {
-    color: #d9bd0b; /* Золотистый цвет */
-    margin-top: 0;
-    font-size: 1.5em;
-    font-family: 'Cinzel', serif;
-    border-bottom: 1px solid var(--border-accent);
-    padding-bottom: 0.5rem;
-    margin-bottom: 1rem;
-}
 
     .scroll-container {
         border-radius: 0 0 10px 10px;
