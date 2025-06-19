@@ -1,18 +1,18 @@
-// scripts/race.js
+// scripts/origin.js
 import { SelectionManager } from './selection.js';
 
 document.addEventListener('DOMContentLoaded', () => {
   new SelectionManager({
-    gridSelector: '#race-grid',
+    gridSelector: '#origin-grid',
     selectedViewSelector: '#selected-view',
     selectedCardSelector: '#selected-card',
-    titleSelector: '#race-title',
-    descriptionSelector: '#race-description',
+    titleSelector: '#origin-title',
+    descriptionSelector: '#origin-description',
     scrollContainerSelector: '#scroll-container',
     resetButtonSelector: '#reset-button',
-    apiEndpoint: 'races.json',
-    imageFolder: 'races',
-    pageUrl: 'race.html',
-    cardClass: 'race-card'
+    apiEndpoint: 'origins.json',
+    imageFolder: 'origins',
+    pageUrl: 'origin.html',
+    cardClass: 'origin-card'
   }).init();
 });

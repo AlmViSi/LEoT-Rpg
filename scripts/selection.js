@@ -1,209 +1,188 @@
-// scripts/selection.js
-
 export class SelectionManager {
-    constructor(options) {
-        this.gridElement = document.querySelector(options.gridSelector);
-        this.selectedViewElement = document.querySelector(options.selectedViewSelector);
-        this.selectedCardElement = document.querySelector(options.selectedCardSelector);
-        this.titleElement = document.querySelector(options.titleSelector);
-        this.descriptionElement = document.querySelector(options.descriptionSelector);
-        this.scrollContainerElement = document.querySelector(options.scrollContainerSelector);
-        this.resetButtonElement = document.querySelector(options.resetButtonSelector);
-        this.apiEndpoint = options.apiEndpoint;
-        this.imageFolder = options.imageFolder;
-        this.pageUrl = options.pageUrl;
-        this.cardClass = options.cardClass; // 'race-card' or 'origin-card'
+    constructor(config) {
+        this.config = {
+            gridSelector: '',
+            selectedViewSelector: '',
+            selectedCardSelector: '',
+            titleSelector: '',
+            descriptionSelector: '',
+            scrollContainerSelector: '',
+            resetButtonSelector: '',
+            apiEndpoint: '',
+            imageFolder: '',
+            pageUrl: '',
+            cardClass: '',
+            ...config
+        };
 
-        this.data = []; // Будет хранить все данные (расы/происхождения)
-        this.selectedItemId = null; // ID текущего выбранного элемента
+        this.elements = {};
+        this.data = [];
+        this.currentSelectedId = null;
     }
 
     async init() {
-        try {
-            const response = await fetch(this.apiEndpoint);
-            if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
-            }
-            this.data = await response.json();
-            
-            // Проверяем URL на наличие выбранного элемента при инициализации
-            const urlParams = new URLSearchParams(window.location.search);
-            const id = urlParams.get('id');
-            if (id) {
-                const item = this.data.find(d => d.id === id);
-                if (item) {
-                    this.renderSelectedView(item); // Рендерим выбранный вид, если ID есть
-                } else {
-                    console.warn(`Item with ID ${id} not found. Displaying grid.`);
-                    this.showGrid(); // Показываем сетку, если ID не найден
-                }
-            } else {
-                this.renderGrid(); // Рендерим сетку, если ID нет в URL
-                this.showGrid(); // Показываем сетку по умолчанию
-            }
+        this.getDOMElements();
+        if (!this.validateElements()) return;
+        
+        await this.loadData();
+        this.setupEventListeners();
+        this.checkUrlForId();
+    }
 
-            this.setupEventListeners();
+    getDOMElements() {
+        this.elements = {
+            grid: document.querySelector(this.config.gridSelector),
+            selectedView: document.querySelector(this.config.selectedViewSelector),
+            selectedCard: document.querySelector(this.config.selectedCardSelector),
+            title: document.querySelector(this.config.titleSelector),
+            description: document.querySelector(this.config.descriptionSelector),
+            scrollContainer: document.querySelector(this.config.scrollContainerSelector),
+            resetButton: document.querySelector(this.config.resetButtonSelector)
+        };
+    }
+
+    validateElements() {
+        const missingElements = Object.entries(this.elements).filter(([, el]) => !el);
+        if (missingElements.length > 0) {
+            console.error('Missing elements:', missingElements.map(([name]) => name));
+            if (this.elements.grid) {
+                this.elements.grid.innerHTML = `<p class="error-message">Ошибка: Необходимые элементы не найдены</p>`;
+            }
+            return false;
+        }
+        return true;
+    }
+
+    async loadData() {
+        try {
+            const response = await fetch(this.config.apiEndpoint);
+            if (!response.ok) throw new Error(`HTTP error ${response.status}`);
+            
+            this.data = await response.json();
+            if (!Array.isArray(this.data) || this.data.length === 0) {
+                throw new Error('Данные пусты или не являются массивом');
+            }
+            
+            this.renderGrid();
         } catch (error) {
-            console.error('Error fetching data or initializing:', error);
-            // Можно добавить отображение ошибки на UI
-            if (this.gridElement) {
-                this.gridElement.innerHTML = `<p class="error-message">Ошибка загрузки данных: ${error.message}. Пожалуйста, попробуйте еще раз.</p>`;
-                this.gridElement.style.display = 'block';
+            console.error('Ошибка загрузки данных:', error);
+            if (this.elements.grid) {
+                this.elements.grid.innerHTML = `<p class="error-message">Ошибка загрузки данных: ${error.message}</p>`;
             }
         }
     }
 
-    // Метод для отображения сетки выбора
     renderGrid() {
-        if (!this.gridElement) {
-            console.error('Grid element not found for rendering.');
-            return;
-        }
-        this.gridElement.innerHTML = this.data.map(item => `
-            <div class="${this.cardClass}" data-id="${item.id}">
-                <img src="images/${this.imageFolder}/${item.src}" alt="${item.name}"
-                     onerror="this.onerror=null;this.src='images/${this.imageFolder}/default.jpg'">
+        this.elements.grid.innerHTML = this.data.map(item => `
+            <div class="${this.config.cardClass}" data-id="${item.id}">
+                <img src="images/${this.config.imageFolder}/${item.src}" alt="${item.name}"
+                     onerror="this.onerror=null;this.src='images/default.jpg'">
                 <div class="overlay">${item.name}</div>
             </div>
         `).join('');
     }
 
-    // Обработчик клика по карточке (как в сетке, так и в скролле)
-    handleCardClick(id) {
-        const item = this.data.find(d => d.id === id);
-        if (item) {
-            this.selectedItemId = id;
-            // Обновляем URL без перезагрузки страницы
-            history.pushState({ id: item.id }, '', `${this.pageUrl}?id=${item.id}`);
-            this.renderSelectedView(item); // Рендерим новый выбранный вид
-        } else {
-            console.warn(`Attempted to select item with ID ${id}, but it was not found in data.`);
-        }
+    showSelected(item) {
+        if (!item) return;
+        this.currentSelectedId = item.id;
+
+        this.elements.grid.style.display = 'none';
+        this.elements.selectedView.style.display = 'grid';
+        this.elements.resetButton.style.display = 'block';
+
+        this.elements.selectedCard.innerHTML = `<img src="images/${this.config.imageFolder}/${item.src}" alt="${item.name}">`;
+        this.elements.title.textContent = item.name;
+        this.elements.description.innerHTML = item.description.replace(/\n/g, '<br>');
+
+        // Очищаем и заполняем scroll-container
+        this.elements.scrollContainer.innerHTML = this.data
+            .filter(scrollItem => scrollItem.id !== item.id && scrollItem.src)
+            .map(scrollItem => `
+                <div class="scroll-card" data-id="${scrollItem.id}">
+                    <img src="images/${this.config.imageFolder}/${scrollItem.src}" alt="${scrollItem.name}">
+                </div>
+            `).join('');
+
+        // Автоматический скролл к выбранному элементу
+        this.autoScrollToSelected();
+        window.history.pushState({ id: item.id }, '', `${this.config.pageUrl}?id=${item.id}`);
     }
 
-    // Метод для отображения выбранного элемента и связанных карточек
-    renderSelectedView(item) {
-        if (!this.selectedViewElement || !this.selectedCardElement || !this.titleElement || !this.descriptionElement || !this.scrollContainerElement || !this.resetButtonElement) {
-            console.error('One or more selected view elements are missing.');
-            return;
-        }
+    autoScrollToSelected() {
+        if (!this.currentSelectedId) return;
 
-        this.selectedViewElement.style.display = 'grid'; // Показываем выбранный вид
-        this.gridElement.style.display = 'none'; // Скрываем сетку
-        this.resetButtonElement.style.display = 'block'; // Показываем кнопку "Вернуться"
+        setTimeout(() => {
+            const cards = Array.from(this.elements.scrollContainer.querySelectorAll('.scroll-card'));
+            const selectedIndex = cards.findIndex(card => card.dataset.id === this.currentSelectedId);
+            
+            if (selectedIndex === -1) return;
 
-        // Очищаем предыдущее содержимое перед рендерингом нового
-        this.selectedCardElement.innerHTML = '';
-        this.scrollContainerElement.innerHTML = '';
-
-        // 1. Рендерим большую выбранную карточку
-        const mainImage = document.createElement('img');
-        mainImage.src = `images/${this.imageFolder}/${item.src}`;
-        mainImage.alt = item.name;
-        // Обработка ошибок загрузки изображения
-        mainImage.onerror = function() {
-            this.onerror = null; // Предотвратить зацикливание
-            this.src = `images/${this.imageFolder}/default.jpg`; // Путь к изображению-заглушке
-        };
-        this.selectedCardElement.appendChild(mainImage);
-
-        // Добавляем лейбл для большой карточки
-        const mainLabel = document.createElement('div');
-        mainLabel.classList.add('overlay-label');
-        mainLabel.textContent = item.name;
-        this.selectedCardElement.appendChild(mainLabel);
-
-        // 2. Рендерим заголовок и описание
-        this.titleElement.textContent = item.name;
-        this.descriptionElement.innerHTML = item.description;
-
-        // 3. Рендерим контейнер прокрутки с маленькими карточками
-        this.data.forEach(scrollItem => {
-            // Обертка для карточки и ее лейбла
-            const scrollItemWrapper = document.createElement('div');
-            scrollItemWrapper.classList.add('scroll-item-wrapper');
-            scrollItemWrapper.dataset.id = scrollItem.id; // ID на обертке
-            scrollItemWrapper.addEventListener('click', () => this.handleCardClick(scrollItem.id));
-
-            const scrollCard = document.createElement('div');
-            scrollCard.classList.add('scroll-card');
-            if (scrollItem.id === item.id) {
-                scrollCard.classList.add('selected'); // Подсвечиваем текущую выбранную карточку
-            }
-
-            const scrollImage = document.createElement('img');
-            scrollImage.src = `images/${this.imageFolder}/${scrollItem.src}`;
-            scrollImage.alt = scrollItem.name;
-            // Обработка ошибок загрузки изображения для скролл-карточек
-            scrollImage.onerror = function() {
-                this.onerror = null;
-                this.src = `images/${this.imageFolder}/default.jpg`;
-            };
-            scrollCard.appendChild(scrollImage);
-
-            // Лейбл под маленькой карточкой
-            const scrollLabel = document.createElement('div');
-            scrollLabel.classList.add('scroll-card-label');
-            scrollLabel.textContent = scrollItem.name;
-
-            scrollItemWrapper.appendChild(scrollCard);
-            scrollItemWrapper.appendChild(scrollLabel); // Добавляем лейбл в обертку
-
-            this.scrollContainerElement.appendChild(scrollItemWrapper);
-        });
-    }
-
-    // Метод для возврата к сетке выбора
-    showGrid() {
-        if (!this.gridElement || !this.selectedViewElement || !this.resetButtonElement) {
-            console.error('One or more core elements for grid view are missing.');
-            return;
-        }
-        this.gridElement.style.display = 'grid'; // Показываем сетку
-        this.selectedViewElement.style.display = 'none'; // Скрываем выбранный вид
-        this.resetButtonElement.style.display = 'none'; // Скрываем кнопку "Вернуться"
-
-        // Очищаем URL и сбрасываем выбранный ID
-        history.pushState(null, '', this.pageUrl);
-        this.selectedItemId = null;
-    }
-
-    // Установка всех слушателей событий
-    setupEventListeners() {
-        // Делегирование событий для карточек в основной сетке (gridElement)
-        if (this.gridElement) {
-            this.gridElement.addEventListener('click', (event) => {
-                const card = event.target.closest(`.${this.cardClass}`);
-                if (card) {
-                    this.handleCardClick(card.dataset.id);
-                }
+            const containerWidth = this.elements.scrollContainer.offsetWidth;
+            const cardWidth = cards[0].offsetWidth;
+            const gap = 16; // Примерный отступ между карточками
+            const scrollPosition = (cardWidth + gap) * selectedIndex - (containerWidth / 2) + (cardWidth / 2);
+            
+            this.elements.scrollContainer.scrollTo({
+                left: scrollPosition,
+                behavior: 'smooth'
             });
-        } else {
-            console.warn('Grid element not found, cannot set up click listener for grid cards.');
-        }
+        }, 100);
+    }
 
-        // Слушатель для кнопки "Вернуться"
-        if (this.resetButtonElement) {
-            this.resetButtonElement.addEventListener('click', () => this.showGrid());
-        } else {
-            console.warn('Reset button element not found, cannot set up click listener.');
-        }
+    setupEventListeners() {
+        // Клики по основной сетке
+        this.elements.grid?.addEventListener('click', (e) => {
+            const card = e.target.closest(`.${this.config.cardClass}`);
+            if (!card) return;
+            
+            const item = this.data.find(i => i.id == card.dataset.id);
+            if (item) this.showSelected(item);
+        });
 
-        // Обработка кнопки "Назад" в браузере (popstate)
-        window.addEventListener('popstate', (event) => {
-            if (event.state && event.state.id) {
-                // Если в истории есть ID, рендерим соответствующий выбранный вид
-                const item = this.data.find(d => d.id === event.state.id);
-                if (item) {
-                    this.renderSelectedView(item);
-                } else {
-                    // Если ID из истории не найден, показываем сетку
-                    this.showGrid();
-                }
-            } else {
-                // Если нет состояния или ID, или это корневая страница, показываем сетку
-                this.showGrid();
+        // Клики по миниатюрам в scroll-container
+        this.elements.scrollContainer?.addEventListener('click', (e) => {
+            const card = e.target.closest('.scroll-card');
+            if (!card) return;
+            
+            const item = this.data.find(i => i.id == card.dataset.id);
+            if (item) {
+                this.currentSelectedId = item.id;
+                this.showSelected(item);
             }
         });
+
+        // Кнопка сброса
+        this.elements.resetButton?.addEventListener('click', () => {
+            this.currentSelectedId = null;
+            this.resetSelection();
+        });
+
+        // Навигация по истории
+        window.addEventListener('popstate', () => this.handleHistoryNavigation());
+    }
+
+    resetSelection() {
+        this.elements.grid.style.display = 'grid';
+        this.elements.selectedView.style.display = 'none';
+        this.elements.resetButton.style.display = 'none';
+        window.history.pushState({}, '', this.config.pageUrl);
+    }
+
+    handleHistoryNavigation() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const id = urlParams.get('id');
+        const item = id ? this.data.find(item => item.id == id) : null;
+        
+        item ? this.showSelected(item) : this.resetSelection();
+    }
+
+    checkUrlForId() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const id = urlParams.get('id');
+        
+        if (id) {
+            const item = this.data.find(item => item.id == id);
+            item ? this.showSelected(item) : this.resetSelection();
+        }
     }
 }

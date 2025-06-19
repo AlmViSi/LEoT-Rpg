@@ -1,27 +1,35 @@
 // scripts/index.js
-import { SelectionManager } from './selection.js';
-
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+  const originGrid = document.getElementById('origin-grid');
+  const errorMessage = document.getElementById('error-message');
+  
   try {
-    const manager = new SelectionManager({
-      gridSelector: '#origin-grid',
-      selectedViewSelector: '#selected-view',
-      selectedCardSelector: '#selected-card',
-      titleSelector: '#origin-title', // ID заголовка для страницы Origins
-      descriptionSelector: '#origin-description', // ID описания для страницы Origins
-      scrollContainerSelector: '#scroll-container',
-      resetButtonSelector: '#reset-button',
-      apiEndpoint: 'origins.json', // Загружаем данные из origins.json
-      imageFolder: 'origins', // Папка с изображениями для Origins
-      pageUrl: 'index.html', // URL для страницы Origins (если это главная страница, то 'index.html')
-      cardClass: 'origin-card' // Класс карточек для Origins
+    const [response] = await Promise.all([
+      fetch('origins.json'),
+      new Promise(resolve => setTimeout(resolve, 300)) // Минимальная задержка
+    ]);
+    
+    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+    
+    const originsData = await response.json();
+    if (!originsData?.length) throw new Error('Origin data is empty or invalid');
+
+    originGrid.innerHTML = originsData.map(origin => `
+      <div class="origin-card" data-id="${origin.id}">
+        <img src="images/origins/${origin.src}" alt="${origin.name}"
+             onerror="this.onerror=null;this.src='images/origins/default.jpg'">
+        <div class="overlay">${origin.name}</div>
+      </div>
+    `).join('');
+
+    originGrid.querySelectorAll('.origin-card').forEach(card => {
+      card.addEventListener('click', () => {
+        window.location.href = `origin.html?id=${card.dataset.id}`;
+      });
     });
-    manager.init();
   } catch (error) {
-    console.error('Initialization error for Origin Selection:', error);
-    const mainContent = document.querySelector('.main-content');
-    if (mainContent) {
-        mainContent.innerHTML = `<p class="error-message">Не удалось загрузить данные происхождения. ${error.message}</p>`;
-    }
+    console.error('Error:', error);
+    errorMessage.textContent = `Error: ${error.message}`;
+    errorMessage.style.display = 'block';
   }
 });

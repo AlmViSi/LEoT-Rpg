@@ -6,7 +6,9 @@
     <title>Lost Edge of Time - Character Creator</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto&family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles/common.css">
-    <link rel="stylesheet" href="styles/index.css"> <link rel="stylesheet" href="styles/mobile-menu.css">
+    <link rel="stylesheet" href="styles/index.css">
+    <link rel="stylesheet" href="styles/mobile-menu.css">
+    <script src="scripts/mobile-menu.js" defer></script>
 </head>
 <body>
     <canvas id="particle-canvas"></canvas>
@@ -14,25 +16,22 @@
         <h1>Lost Edge of Time - Character Creator</h1>
     </header>
     
-    <button class="mobile-menu-btn">Меню</button>
-    <div class="mobile-menu-container">
-        <div class="mobile-menu-header">
-            <h2>Меню</h2>
-            <button class="mobile-menu-close">✕</button>
+    <div class="tab-container">
+        <a href="index.html" class="tab active">Origin</a>
+        <a href="race.html" class="tab">Race</a>
+        <a href="traits.html" class="tab">Traits</a>
+        <a href="powersets.html" class="tab">Power Sets</a>
+        <a href="character.html" class="tab">Character</a>
+    </div>
+    
+    <div class="main-container">
+        <div id="error-message" class="error-message">
+            Ошибка загрузки данных. Проверьте origins.json или наличие изображений в папке images/origins.
         </div>
-        <div class="mobile-menu-tabs">
-            <a href="index.html" class="mobile-menu-tab active">Origin</a> <a href="race.html" class="mobile-menu-tab">Race</a>
-            <a href="traits.html" class="mobile-menu-tab">Traits</a>
-            <a href="powersets.html" class="mobile-menu-tab">Power Sets</a>
-            <a href="character.html" class="mobile-menu-tab">Character</a>
-        </div>
+        <div id="origin-grid" class="origin-grid"></div>
     </div>
 
-    <main class="main-content">
-        <p>Добро пожаловать в Lost Edge of Time Character Creator! Используйте меню для навигации и создания своего персонажа.</p>
-        </main>
-    
-    <script src="scripts/particles.js" defer></script>
-    <script src="scripts/mobile-menu.js" defer></script>
-    </body>
+    <script src="scripts/particles.js"></script>
+    <script src="scripts/index.js"></script>
+</body>
 </html>

@@ -6,7 +6,8 @@
     <title>Lost Edge of Time - Race Selection</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto&family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles/common.css">
-    <link rel="stylesheet" href="styles/selection.css"> <link rel="stylesheet" href="styles/mobile-menu.css">
+    <link rel="stylesheet" href="styles/selection.css">
+    <link rel="stylesheet" href="styles/mobile-menu.css">
 </head>
 <body>
     <canvas id="particle-canvas"></canvas>
@@ -29,28 +30,58 @@
         </div>
     </div>
 
-    <main class="main-content">
-        <div id="race-grid" class="selection-grid">
-            <div id="error-message" class="error-message" style="display: none;"></div>
-        </div>
+    <div class="tab-container">
+        <a href="index.html" class="tab">Origin</a>
+        <a href="race.html" class="tab active">Race</a>
+        <a href="traits.html" class="tab">Traits</a>
+        <a href="powersets.html" class="tab">Power Sets</a>
+        <a href="character.html" class="tab">Character</a>
+    </div>
+
+    <div class="main-container">
+        <div id="race-grid" class="selection-grid"></div>
 
         <div id="selected-view" class="selected-view" style="display: none;">
             <div class="selected-card-container">
-                <div id="selected-card">
-                    </div>
+                <div id="selected-card" class="selected-card"></div>
             </div>
-            <div id="race-description-container" class="description-container">
-                <h2 id="race-title"></h2>
-                <p id="race-description"></p>
+            <div class="description-container">
+                <h2 id="race-title">Выберите расу</h2>
+                <div id="race-description" class="selection-description"></div>
             </div>
-            <div id="scroll-container" class="scroll-container">
-                </div>
+            <div id="scroll-container" class="scroll-container"></div>
         </div>
-    </main>
+    </div>
 
     <button id="reset-button" class="reset-button" style="display: none;">Вернуться</button>
 
-    <script type="module" src="scripts/race.js"></script> <script src="scripts/particles.js" defer></script>
+    <script type="module">
+        import { SelectionManager } from './scripts/selection.js'; // Use the same SelectionManager
+
+        document.addEventListener('DOMContentLoaded', () => {
+            try {
+                const manager = new SelectionManager({
+                    gridSelector: '#race-grid', // Changed from #origin-grid
+                    selectedViewSelector: '#selected-view',
+                    selectedCardSelector: '#selected-card',
+                    titleSelector: '#race-title', // Changed from #origin-title
+                    descriptionSelector: '#race-description', // Changed from #origin-description
+                    scrollContainerSelector: '#scroll-container',
+                    resetButtonSelector: '#reset-button',
+                    apiEndpoint: 'races.json', // Changed from origins.json
+                    imageFolder: 'races', // Changed from origins
+                    pageUrl: 'race.html', // Changed from origin.html
+                    cardClass: 'race-card' // Changed from origin-card
+                });
+                manager.init();
+            } catch (error) {
+                console.error('Initialization error:', error);
+                alert('Произошла ошибка при загрузке страницы. Пожалуйста, обновите страницу.');
+            }
+        });
+    </script>
+
+    <script src="scripts/particles.js" defer></script>
     <script src="scripts/mobile-menu.js" defer></script>
 </body>
 </html>

@@ -9,12 +9,11 @@
     justify-items: center;
 }
 
-/* Стили для карточек расы и происхождения в сетке */
-.race-card,
-.origin-card { /* Объединяем стили для race-card и origin-card */
+/* Стили для карточек расы */
+.race-card {
     position: relative;
     width: 100%;
-    aspect-ratio: 9/16; /* Соотношение сторон, чтобы изображения не искажались */
+    aspect-ratio: 9/16;
     max-width: 220px;
     border-radius: 10px;
     overflow: hidden;
@@ -23,22 +22,19 @@
     border: 1px solid var(--border-accent);
 }
 
-.race-card:hover,
-.origin-card:hover {
+.race-card:hover {
     transform: translateY(-5px);
     box-shadow: 0 10px 20px rgba(0, 163, 224, 0.5);
 }
 
-.race-card img,
-.origin-card img {
+.race-card img {
     width: 100%;
     height: 100%;
-    object-fit: cover; /* Изображение будет покрывать всю область, обрезая лишнее */
+    object-fit: cover;
 }
 
-/* Применение overlay к карточкам сетки (race-card и origin-card) */
-.race-card .overlay,
-.origin-card .overlay {
+/* Применение overlay к карточкам */
+.race-card .overlay {
     position: absolute;
     bottom: 0;
     left: 0;
@@ -48,180 +44,98 @@
     text-align: center;
     font-family: 'Cinzel', serif;
     color: var(--text-primary);
-    font-size: 1.1em;
 }
 
-/* Стили для выбранного элемента (Selected View) */
+
+/* Макет выбранного элемента */
 .selected-view {
-    display: grid;
+    display: none;
     grid-template-areas:
         "image description"
         "scroll scroll";
-    /* Изменено: изображение теперь 1fr, описание 2.5fr для большего пространства */
-    grid-template-columns: 1fr 2.5fr; 
-    grid-template-rows: auto auto; 
-    gap: 1.5rem;
+    grid-template-columns: minmax(250px, 350px) 1fr; /* Устанавливаем ширину для колонки с изображением */
+    grid-template-rows: auto auto; /* Автоматическая высота для строк */
     width: 95%;
-    max-width: 1200px;
+    max-width: 1400px;
     margin: 2rem auto;
-    padding: 1.5rem;
-    background-color: var(--card-bg);
     border: 2px solid var(--border-accent);
     border-radius: 10px;
-    box-shadow: 0 0 20px rgba(0, 163, 224, 0.5);
-    backdrop-filter: blur(5px);
-    -webkit-backdrop-filter: blur(5px);
-    transition: all 0.5s ease-in-out;
+    overflow: hidden;
 }
 
 .selected-card-container {
     grid-area: image;
+    background: #0a0a0a;
     display: flex;
-    justify-content: center; /* Центрирует карточку по горизонтали в своей ячейке */
-    align-items: flex-start; /* Выравнивает карточку по верхнему краю ячейки */
-    padding-right: 1rem; /* Добавляет небольшой отступ справа от карточки */
-    min-height: 400px; /* Минимальная высота для контейнера, чтобы избежать коллапса */
+    align-items: center;
+    justify-content: center;
+    width: 100%; /* Занимает всю доступную ширину в своей ячейке сетки */
+    height: 0; /* Важно для padding-bottom hack */
+    /* Вычисляем padding-bottom для соотношения 9/16 (высота / ширина * 100%) */
+    /* 16 / 9 * 100% = 177.777...% */
+    padding-bottom: 177.7777%; /* Гарантирует соотношение сторон 9:16 (высота/ширина) */
+    position: relative; /* Для позиционирования внутреннего контента */
+    overflow: hidden;
 }
 
+/* Изменения в selected-card для использования padding-bottom hack */
 #selected-card {
-    position: relative;
+    position: absolute; /* Абсолютное позиционирование внутри selected-card-container */
+    top: 0;
+    left: 0;
     width: 100%;
-    height: auto; /* Высота будет зависеть от содержимого и ширины */
-    max-width: 300px; /* Максимальная ширина для основной выбранной карточки */
-    aspect-ratio: 9/16; /* Сохраняем соотношение сторон */
-    border-radius: 10px;
-    overflow: hidden;
-    border: 2px solid var(--border-accent);
-    box-shadow: 0 0 15px rgba(0, 163, 224, 0.6);
+    height: 100%;
+    /* Больше не нужен object-fit здесь, так как его будет обрабатывать img */
 }
 
 #selected-card img {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: cover; /* Изображение будет полностью заполнять контейнер, обрезая лишнее */
+    display: block; /* Убираем лишнее пространство под изображением */
 }
 
-/* Стиль для лейбла на большой выбранной карточке */
-#selected-card .overlay-label {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: rgba(0, 0, 0, 0.8); /* Более темный фон для основной карточки */
-    padding: 1rem;
-    text-align: center;
-    font-family: 'Cinzel', serif;
-    font-size: 1.5em; /* Крупнее шрифт для основной карточки */
-    color: var(--text-primary);
-    box-shadow: 0 -5px 15px rgba(0, 163, 224, 0.3); /* Небольшая тень вверх */
-}
 
 .description-container {
     grid-area: description;
-    background-color: rgba(0, 0, 0, 0.4);
-    padding: 1.5rem;
-    border-radius: 10px;
+    background: rgba(26, 38, 57, 0.8);
+    padding: 2rem;
+    border-left: 2px solid var(--border-accent);
     overflow-y: auto;
-    max-height: 450px; /* Увеличена максимальная высота */
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    color: var(--text-secondary);
 }
 
-/* Стилизация заголовка в description-container */
-.description-container h2 {
-    color: #d9bd0b; /* Существующий цвет */
-    margin-top: 0;
-    font-size: 2em; /* Увеличенный размер шрифта */
-    font-family: 'Cinzel', serif;
-    text-align: center; /* Центрирование заголовка */
-    padding-bottom: 1rem; /* Отступ снизу */
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* Разделительная линия */
-    margin-bottom: 1.5rem; /* Отступ после линии */
-}
-
-.description-container p {
-    font-size: 1em;
+.selection-description {
     line-height: 1.6;
-    margin-bottom: 1em;
 }
 
 .scroll-container {
+    scroll-behavior: smooth;
+    white-space: nowrap;
     grid-area: scroll;
+    height: 200px;
+    background: rgba(26, 38, 57, 0.9);
+    padding: 1rem;
     display: flex;
     gap: 1rem;
-    overflow-x: auto; /* Позволяет горизонтальный скролл */
-    padding: 1rem 0;
-    margin-top: 1rem; /* Отступ сверху от блока описания */
-    border-top: 1px solid rgba(255, 255, 255, 0.1); /* Разделитель сверху */
-    padding-top: 1.5rem; /* Отступ между разделителем и карточками */
-    /* Стилизация скроллбара (для Webkit-браузеров) */
-    scrollbar-width: thin;
-    scrollbar-color: var(--border-accent) rgba(0, 0, 0, 0.2);
-}
-
-.scroll-container::-webkit-scrollbar {
-    height: 8px;
-}
-
-.scroll-container::-webkit-scrollbar-track {
-    background: rgba(0, 0, 0, 0.2);
-    border-radius: 10px;
-}
-
-.scroll-container::-webkit-scrollbar-thumb {
-    background-color: var(--border-accent);
-    border-radius: 10px;
-    border: 2px solid rgba(0, 0, 0, 0.1);
-}
-
-/* Обертка для карточки прокрутки и ее лейбла */
-.scroll-item-wrapper {
-    display: flex;
-    flex-direction: column; /* Элементы будут располагаться вертикально */
-    align-items: center; /* Центрирование по горизонтали */
-    text-align: center;
-    flex-shrink: 0; /* Важно, чтобы элементы не сжимались */
-    cursor: pointer; /* Курсор-указатель для всей обертки */
-    transition: transform 0.3s ease;
-}
-
-.scroll-item-wrapper:hover {
-    transform: translateY(-3px); /* Небольшой эффект при наведении */
+    overflow-x: auto;
+    overflow-y: hidden;
+    align-items: center;
 }
 
 .scroll-card {
-    width: 112px; /* Увеличенная ширина для лучшей видимости */
-    height: 180px; /* Соответствующая высота */
+    width: 112px;
+    height: 180px;
     flex-shrink: 0;
     border: 1px solid var(--border-accent);
     border-radius: 5px;
     overflow: hidden;
-    opacity: 0.7;
-    transition: all 0.3s ease;
-    margin-bottom: 0.5rem; /* Пространство между карточкой и лейблом */
-    box-shadow: 0 0 8px rgba(0, 163, 224, 0.2);
-}
-
-.scroll-card.selected {
-    opacity: 1;
-    box-shadow: 0 0 12px rgba(0, 163, 224, 0.8);
-    border-color: #d9bd0b; /* Подсветка выбранной карточки */
+    cursor: pointer;
 }
 
 .scroll-card img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-}
-
-/* Стиль для лейбла под карточкой прокрутки */
-.scroll-card-label {
-    color: var(--text-primary);
-    font-family: 'Roboto', sans-serif; /* Более простой шрифт для маленьких лейблов */
-    font-size: 0.85em; /* Меньший размер шрифта */
-    white-space: normal; /* Разрешаем перенос текста */
-    max-width: 112px; /* Ограничиваем ширину по ширине карточки */
-    line-height: 1.2; /* Улучшаем читаемость */
 }
 
 .reset-button {
@@ -235,15 +149,6 @@
     border-radius: 5px;
     cursor: pointer;
     z-index: 100;
-    font-family: 'Roboto', sans-serif;
-    font-size: 1em;
-    box-shadow: 0 5px 15px rgba(0, 163, 224, 0.4);
-    transition: background 0.3s ease, box-shadow 0.3s ease;
-}
-
-.reset-button:hover {
-    background: #008ccb; /* Чуть темнее при наведении */
-    box-shadow: 0 5px 20px rgba(0, 163, 224, 0.6);
 }
 
 /* Мобильная версия */
@@ -252,16 +157,14 @@
         grid-template-areas:
             "description"
             "scroll";
-        grid-template-columns: 1fr; /* Одна колонка для мобильных */
+        grid-template-columns: 1fr;
         grid-template-rows: auto auto;
         border: 2px solid var(--border-accent);
         border-radius: 10px;
-        padding: 1rem; /* Уменьшаем отступы для мобильных */
-        gap: 1rem; /* Уменьшаем зазор между областями */
     }
 
     .selected-card-container {
-        display: none; /* Скрываем большую карточку на мобильных */
+        display: none;
     }
 
     .description-container {
@@ -269,51 +172,21 @@
         border-left: 2px solid var(--border-accent);
         border-top: 2px solid var(--border-accent);
         border-right: 2px solid var(--border-accent);
-        border-bottom: none; /* Убираем нижнюю границу, так как ниже будет скролл */
-        max-height: 300px; /* Ограничиваем высоту описания на мобильных */
-        padding: 1rem;
+        border-bottom: none;
     }
 
     .scroll-container {
         border-radius: 0 0 10px 10px;
+        border-top: 2px solid var(--border-accent);
         border-left: 2px solid var(--border-accent);
-        border-bottom: 2px solid var(--border-accent);
         border-right: 2px solid var(--border-accent);
-        border-top: none; /* Убираем верхнюю границу, так как выше описание */
-        padding-top: 1rem;
-        margin-top: 0; /* Убираем верхний маржин, так как он уже есть от gap */
+        border-bottom: 2px solid var(--border-accent);
     }
+}
 
-    .scroll-card {
-        width: 90px; /* Меньшая ширина для мобильных прокручиваемых карточек */
-        height: 144px; /* Соответствующая высота (9/16 от 90) */
-    }
-
-    .scroll-card-label {
-        font-size: 0.75em; /* Меньший шрифт для лейблов прокручиваемых карточек на мобильных */
-        max-width: 90px;
-    }
-
-    .description-container h2 {
-        font-size: 1.5em; /* Меньший заголовок на мобильных */
-        padding-bottom: 0.8rem;
-        margin-bottom: 1rem;
-    }
-
-    .selection-grid {
-        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); /* Адаптация сетки */
-        gap: 1rem;
-        padding: 0.5rem;
-    }
-
-    .race-card,
-    .origin-card {
-        max-width: 180px; /* Уменьшаем максимальную ширину карточек */
-    }
-
-    .race-card .overlay,
-    .origin-card .overlay {
-        font-size: 0.9em; /* Меньший шрифт для оверлея на мобильных */
-        padding: 0.6rem;
+/* Дальнейшие уточнения для маленьких мобильных устройств */
+@media (max-width: 480px) {
+    .description-container {
+        padding: 1rem;
     }
 }
