@@ -3,7 +3,7 @@
     display: grid;
     width: 95%;
     grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-    gap: 0.2rem;
+    gap: 1rem;
     margin: 1rem auto;
     padding: 0;
 }
@@ -22,7 +22,8 @@
 }
 
 .selection-card:hover, .origin-card:hover, .race-card:hover {
-    transform: translateY(-3px);
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 163, 224, 0.4);
 }
 
 .selection-card img, .origin-card img, .race-card img {
@@ -38,33 +39,33 @@
     left: 0;
     right: 0;
     background: rgba(0, 0, 0, 0.7);
-    padding: 0.6rem;
+    padding: 0.8rem;
     text-align: center;
     font-family: 'Cinzel', serif;
-    font-size: 0.9em;
+    font-size: 0.95em;
     color: var(--text-primary);
 }
 
 .selected-view {
     display: none;
-    grid-template-columns: 400px 1fr;
+    grid-template-columns: 300px 1fr;
     gap: 2rem;
     margin: 2rem auto;
     width: 95%;
     max-width: 1200px;
-    min-height: 711px;
+    min-height: 500px;
 }
 
 .left-column {
-    width: 400px;
+    width: 100%;
 }
 
 .selected-card {
     width: 100%;
-    height: 711px;
+    height: 500px;
     border-radius: 10px;
     overflow: hidden;
-    border: 3px solid var(--border-accent);
+    border: 2px solid var(--border-accent);
     box-shadow: 0 0 20px rgba(0, 163, 224, 0.3);
     position: relative;
 }
@@ -74,15 +75,12 @@
     height: 100%;
     object-fit: cover;
     object-position: center top;
-    position: absolute;
-    top: 0;
-    left: 0;
 }
 
 .right-column {
     display: flex;
     flex-direction: column;
-    height: 711px;
+    height: 500px;
 }
 
 .description-container {
@@ -110,20 +108,20 @@
 }
 
 .scroll-container {
-    height: 200px;
+    height: 150px;
     background: rgba(26, 38, 57, 0.9);
     border-radius: 10px;
     border: 1px solid var(--border-accent);
     padding: 1rem;
     display: flex;
-    gap: 1rem; /* Increased gap */
-    align-items: center; /* Center vertically */
+    gap: 1rem;
     overflow-x: auto;
+    align-items: center;
 }
 
 .scroll-card {
-    width: 120px; /* Increased width */
-    height: 180px; /* Increased height to fill container */
+    width: 100px;
+    height: 140px;
     flex-shrink: 0;
     border-radius: 5px;
     overflow: hidden;
@@ -136,12 +134,14 @@
 
 .scroll-card:hover {
     opacity: 0.9;
+    transform: scale(1.05);
 }
 
 .scroll-card.selected {
     opacity: 1;
     box-shadow: 0 0 10px rgba(0, 163, 224, 0.8);
     border: 2px solid var(--border-accent);
+    transform: scale(1.08);
 }
 
 .scroll-card img {
@@ -150,4 +150,46 @@
     object-fit: cover;
 }
 
-/* Медиа-запросы и скроллбары остаются такими же */
+.reset-button {
+    display: none;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    padding: 12px 24px;
+    background: var(--border-accent);
+    color: var(--main-bg);
+    border: none;
+    border-radius: 5px;
+    font-family: 'Cinzel', serif;
+    cursor: pointer;
+    z-index: 100;
+    transition: all 0.3s ease;
+}
+
+.reset-button:hover {
+    background: var(--text-primary);
+    transform: translateY(-2px);
+}
+
+@media (max-width: 768px) {
+    .selected-view {
+        grid-template-columns: 1fr;
+    }
+    
+    .selected-card {
+        height: 400px;
+    }
+    
+    .right-column {
+        height: auto;
+    }
+    
+    .scroll-container {
+        height: 120px;
+    }
+    
+    .scroll-card {
+        width: 80px;
+        height: 110px;
+    }
+}

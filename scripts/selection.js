@@ -21,12 +21,19 @@ export class SelectionManager {
   }
 
   async init() {
+    console.log('Initializing SelectionManager with config:', this.config);
     this.getDOMElements();
-    if (!this.validateElements()) return;
+    
+    if (!this.validateElements()) {
+      console.error('Missing elements:', Object.entries(this.elements)
+        .filter(([_, el]) => !el).map(([name]) => name));
+      return;
+    }
     
     await this.loadData();
     this.setupEventListeners();
     this.checkUrlForId();
+    console.log('Initialization complete. Cards:', this.data.length);
   }
 
   getDOMElements() {
@@ -43,7 +50,7 @@ export class SelectionManager {
 
   validateElements() {
     return Object.values(this.elements).every(el => {
-      if (!el) console.error('Элемент не найден:', el);
+      if (!el) console.error('Element not found:', el);
       return el;
     });
   }
@@ -57,7 +64,7 @@ export class SelectionManager {
       this.renderGrid();
       this.renderScrollCards();
     } catch (error) {
-      console.error('Ошибка загрузки данных:', error);
+      console.error('Data loading error:', error);
     }
   }
 
@@ -71,9 +78,12 @@ export class SelectionManager {
     `).join('');
 
     this.elements.grid.querySelectorAll(`.${this.config.cardClass}`).forEach(card => {
-      card.addEventListener('click', () => this.showSelected(
-        this.data.find(item => item.id === card.dataset.id)
-      ));
+      card.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const item = this.data.find(i => i.id === card.dataset.id);
+        console.log('Card clicked:', item?.name);
+        if (item) this.showSelected(item);
+      });
     });
   }
 
@@ -87,14 +97,17 @@ export class SelectionManager {
     `).join('');
 
     this.elements.scrollContainer.querySelectorAll('.scroll-card').forEach(card => {
-      card.addEventListener('click', () => this.showSelected(
-        this.data.find(item => item.id === card.dataset.id)
-      ));
+      card.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const item = this.data.find(i => i.id === card.dataset.id);
+        if (item) this.showSelected(item);
+      });
     });
   }
 
   showSelected(item) {
     if (!item) return;
+    console.log('Showing selected item:', item.name);
 
     this.elements.grid.style.display = 'none';
     this.elements.selectedView.style.display = 'flex';
@@ -119,7 +132,24 @@ export class SelectionManager {
   }
 
   setupEventListeners() {
-    this.elements.resetButton.addEventListener('click', () => this.resetSelection());
+    // Делегирование событий
+    this.elements.grid?.addEventListener('click', (e) => {
+      const card = e.target.closest(`.${this.config.cardClass}`);
+      if (card) {
+        const item = this.data.find(i => i.id === card.dataset.id);
+        if (item) this.showSelected(item);
+      }
+    });
+
+    this.elements.scrollContainer?.addEventListener('click', (e) => {
+      const card = e.target.closest('.scroll-card');
+      if (card) {
+        const item = this.data.find(i => i.id === card.dataset.id);
+        if (item) this.showSelected(item);
+      }
+    });
+
+    this.elements.resetButton?.addEventListener('click', () => this.resetSelection());
     window.addEventListener('popstate', () => this.handleHistoryNavigation());
   }
 

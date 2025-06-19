@@ -6,11 +6,17 @@
     <title>Lost Edge of Time - Race Selection</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto&family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles/common.css">
-    <link rel="stylesheet" href="styles/selection.css"> <!-- Общие стили -->
+    <link rel="stylesheet" href="styles/selection.css">
     <link rel="stylesheet" href="styles/mobile-menu.css">
-    <script src="scripts/race.js" type="module"></script>
-    <script src="scripts/particles.js" defer></script>
-    <script src="scripts/mobile-menu.js" defer></script>
+    <style>
+        /* Гарантированная обработка кликов */
+        .race-card, .scroll-card {
+            pointer-events: auto;
+        }
+        .race-card *, .scroll-card * {
+            pointer-events: none;
+        }
+    </style>
 </head>
 <body>
     <canvas id="particle-canvas"></canvas>
@@ -45,5 +51,31 @@
     </div>
     
     <button id="reset-button" class="reset-button">Вернуться</button>
+
+    <script type="module">
+        import { SelectionManager } from './scripts/selection.js';
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            try {
+                new SelectionManager({
+                    gridSelector: '#race-grid',
+                    selectedViewSelector: '#selected-view',
+                    selectedCardSelector: '#selected-card',
+                    titleSelector: '#race-title',
+                    descriptionSelector: '#race-description',
+                    scrollContainerSelector: '#scroll-container',
+                    resetButtonSelector: '#reset-button',
+                    apiEndpoint: 'races.json',
+                    imageFolder: 'races',
+                    pageUrl: 'race.html',
+                    cardClass: 'race-card'
+                }).init();
+            } catch (error) {
+                console.error('Initialization error:', error);
+            }
+        });
+    </script>
+    <script src="scripts/particles.js" defer></script>
+    <script src="scripts/mobile-menu.js" defer></script>
 </body>
 </html>
