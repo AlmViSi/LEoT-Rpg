@@ -53,14 +53,16 @@
     gap: 2rem;
     margin: 2rem auto;
     width: 95%;
-    padding: 1rem;
+    max-width: 1200px; /* Ограничиваем максимальную ширину */
+    padding: 1.5rem;
     background: rgba(26, 38, 57, 0.8);
     border-radius: 10px;
     min-height: 600px;
+    box-sizing: border-box; /* Учитываем padding в общей ширине */
 }
 
 .selected-card {
-    width: 360px;
+    width: 380px; /* Увеличиваем ширину карточки */
     aspect-ratio: 9/16;
     border-radius: 10px;
     overflow: hidden;
@@ -81,6 +83,7 @@
     display: flex;
     flex-direction: column;
     height: 100%;
+    min-width: 0; /* Важно для правильного поведения flex-элементов */
 }
 
 .description h2 {
@@ -97,8 +100,9 @@
     line-height: 1.6;
     flex-grow: 1;
     font-size: 1.1em;
+    max-height: 400px; /* Ограничиваем высоту описания */
+    box-sizing: border-box;
 }
-
 /* Scrollbar styling */
 .description p::-webkit-scrollbar {
     width: 8px;
@@ -119,12 +123,14 @@
     overflow-x: auto;
     overflow-y: hidden;
     padding: 1rem 0;
-    margin-top: auto;
+    margin-top: 1rem; /* Добавляем отступ сверху */
     width: 100%;
     white-space: nowrap;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: thin;
     scrollbar-color: var(--border-accent) rgba(26, 38, 57, 0.5);
+    box-sizing: border-box;
+    position: static; /* Убираем фиксированное позиционирование */
 }
 
 .scroll-container::-webkit-scrollbar {
