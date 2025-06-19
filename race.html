@@ -8,99 +8,36 @@
     <link rel="stylesheet" href="styles/common.css">
     <link rel="stylesheet" href="styles/selection.css">
     <link rel="stylesheet" href="styles/mobile-menu.css">
-    <style>
-        /* Специфичные стили для race.html */
-        .race-card, .scroll-card {
-            pointer-events: auto;
-        }
-        .race-card *, .scroll-card * {
-            pointer-events: none;
-        }
-    </style>
 </head>
 <body>
+    <!-- Шапка (возвращаем на место) -->
     <canvas id="particle-canvas"></canvas>
-    
     <header>
         <h1>Lost Edge of Time - Race Selection</h1>
     </header>
 
-    <!-- Мобильное меню -->
-    <button class="mobile-menu-btn">Меню</button>
-    <div class="mobile-menu-container">
-        <div class="mobile-menu-header">
-            <h2>Меню</h2>
-            <button class="mobile-menu-close">✕</button>
-        </div>
-        <div class="mobile-menu-tabs">
-            <a href="index.html" class="mobile-menu-tab">Origin</a>
-            <a href="race.html" class="mobile-menu-tab active">Race</a>
-            <a href="traits.html" class="mobile-menu-tab">Traits</a>
-            <a href="powersets.html" class="mobile-menu-tab">Power Sets</a>
-            <a href="character.html" class="mobile-menu-tab">Character</a>
-        </div>
-    </div>
-
-    <!-- Основные вкладки -->
-    <div class="tab-container">
-        <a href="index.html" class="tab">Origin</a>
-        <a href="race.html" class="tab active">Race</a>
-        <a href="traits.html" class="tab">Traits</a>
-        <a href="powersets.html" class="tab">Power Sets</a>
-        <a href="character.html" class="tab">Character</a>
-    </div>
-
+    <!-- Контент -->
     <div class="main-container">
-        <!-- Сетка выбора рас -->
-        <div id="race-grid" class="selection-grid"></div>
+        <!-- Сетка выбора -->
+        <div id="race-grid" class="race-grid"></div>
 
         <!-- Выбранная раса -->
         <div id="selected-view" class="selected-view" style="display: none;">
-            <!-- Левая колонка: изображение -->
-            <div id="selected-card" class="selected-card"></div>
-
-            <!-- Правая колонка: описание -->
+            <!-- Блоки теперь в правильном порядке -->
+            <div class="selected-card-container">
+                <div id="selected-card" class="selected-card"></div>
+            </div>
             <div class="description-container">
                 <h2 id="race-title">Выберите расу</h2>
-                <div id="race-description" class="selection-description">
-                    Выберите расу, чтобы узнать её историю и особенности.
-                </div>
+                <div id="race-description" class="selection-description"></div>
             </div>
-
-            <!-- Скролл с миниатюрами -->
             <div id="scroll-container" class="scroll-container"></div>
         </div>
     </div>
 
-    <!-- Кнопка возврата -->
-    <button id="reset-button" class="reset-button" style="display: none;">Вернуться</button>
+    <button id="reset-button" class="reset-button">Вернуться</button>
 
-    <script type="module">
-        import { SelectionManager } from './scripts/selection.js';
-        
-        document.addEventListener('DOMContentLoaded', () => {
-            try {
-                const manager = new SelectionManager({
-                    gridSelector: '#race-grid',
-                    selectedViewSelector: '#selected-view',
-                    selectedCardSelector: '#selected-card',
-                    titleSelector: '#race-title',
-                    descriptionSelector: '#race-description',
-                    scrollContainerSelector: '#scroll-container',
-                    resetButtonSelector: '#reset-button',
-                    apiEndpoint: 'races.json',
-                    imageFolder: 'races',
-                    pageUrl: 'race.html',
-                    cardClass: 'race-card'
-                });
-                manager.init();
-            } catch (error) {
-                console.error('Initialization error:', error);
-                alert('Произошла ошибка при загрузке страницы. Пожалуйста, обновите страницу.');
-            }
-        });
-    </script>
-    
+    <script type="module" src="scripts/race.js"></script>
     <script src="scripts/particles.js" defer></script>
     <script src="scripts/mobile-menu.js" defer></script>
 </body>
