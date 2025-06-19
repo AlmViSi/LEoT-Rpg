@@ -66,6 +66,7 @@
     overflow: hidden;
     border: 3px solid var(--border-accent);
     box-shadow: 0 0 20px rgba(0, 163, 224, 0.3);
+    position: relative;
 }
 
 .selected-card img {
@@ -73,6 +74,9 @@
     height: 100%;
     object-fit: cover;
     object-position: center top;
+    position: absolute;
+    top: 0;
+    left: 0;
 }
 
 .right-column {
@@ -112,13 +116,14 @@
     border: 1px solid var(--border-accent);
     padding: 1rem;
     display: flex;
-    gap: 0.1rem;
+    gap: 1rem; /* Increased gap */
+    align-items: center; /* Center vertically */
     overflow-x: auto;
 }
 
 .scroll-card {
-    width: 67.5px;
-    height: 120px;
+    width: 120px; /* Increased width */
+    height: 180px; /* Increased height to fill container */
     flex-shrink: 0;
     border-radius: 5px;
     overflow: hidden;
