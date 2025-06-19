@@ -10,20 +10,38 @@
     <link rel="stylesheet" href="styles/mobile-menu.css">
 </head>
 <body>
-    <!-- Шапка (возвращаем на место) -->
     <canvas id="particle-canvas"></canvas>
     <header>
         <h1>Lost Edge of Time - Race Selection</h1>
     </header>
 
-    <!-- Контент -->
-    <div class="main-container">
-        <!-- Сетка выбора -->
-        <div id="race-grid" class="race-grid"></div>
+    <button class="mobile-menu-btn">Меню</button>
+    <div class="mobile-menu-container">
+        <div class="mobile-menu-header">
+            <h2>Меню</h2>
+            <button class="mobile-menu-close">✕</button>
+        </div>
+        <div class="mobile-menu-tabs">
+            <a href="index.html" class="mobile-menu-tab">Origin</a>
+            <a href="race.html" class="mobile-menu-tab active">Race</a>
+            <a href="traits.html" class="mobile-menu-tab">Traits</a>
+            <a href="powersets.html" class="mobile-menu-tab">Power Sets</a>
+            <a href="character.html" class="mobile-menu-tab">Character</a>
+        </div>
+    </div>
 
-        <!-- Выбранная раса -->
+    <div class="tab-container">
+        <a href="index.html" class="tab">Origin</a>
+        <a href="race.html" class="tab active">Race</a>
+        <a href="traits.html" class="tab">Traits</a>
+        <a href="powersets.html" class="tab">Power Sets</a>
+        <a href="character.html" class="tab">Character</a>
+    </div>
+
+    <div class="main-container">
+        <div id="race-grid" class="selection-grid"></div>
+
         <div id="selected-view" class="selected-view" style="display: none;">
-            <!-- Блоки теперь в правильном порядке -->
             <div class="selected-card-container">
                 <div id="selected-card" class="selected-card"></div>
             </div>
@@ -35,7 +53,7 @@
         </div>
     </div>
 
-    <button id="reset-button" class="reset-button">Вернуться</button>
+    <button id="reset-button" class="reset-button" style="display: none;">Вернуться</button>
 
     <script type="module" src="scripts/race.js"></script>
     <script src="scripts/particles.js" defer></script>

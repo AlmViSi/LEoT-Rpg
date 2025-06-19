@@ -1,28 +1,32 @@
 /* Основные стили для страниц выбора */
 .selection-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-    gap: 1rem;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); /* Изменено для соответствия index.css */
+    gap: 1.5rem; /* Изменено для соответствия index.css */
     padding: 1rem;
     width: 95%;
     margin: 0 auto;
 }
 
-.origin-card {
+/* Стили для карточек расы */
+.race-card {
     position: relative;
+    width: 100%;
     aspect-ratio: 9/16;
+    max-width: 220px; /* Добавлено для соответствия index.css */
     border-radius: 10px;
     overflow: hidden;
-    border: 1px solid var(--border-accent);
     cursor: pointer;
-    transition: transform 0.2s ease;
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Изменено для соответствия index.css */
+    border: 1px solid var(--border-accent);
 }
 
-.origin-card:hover {
-    transform: scale(1.03);
+.race-card:hover {
+    transform: translateY(-5px); /* Изменено для соответствия index.css */
+    box-shadow: 0 10px 20px rgba(0, 163, 224, 0.5); /* Изменено для соответствия index.css */
 }
 
-.origin-card img {
+.race-card img {
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -63,6 +67,10 @@
     align-items: center;
     justify-content: center;
     padding: 1rem;
+    width: 100%;
+    max-width: 300px; /* Ограничение максимальной ширины */
+    aspect-ratio: 9/16; /* Сохранение соотношения сторон */
+    overflow: hidden;
 }
 
 .selected-card {
@@ -70,6 +78,13 @@
     height: 100%;
     object-fit: contain;
 }
+
+.selected-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
 
 .description-container {
     grid-area: description;
@@ -131,25 +146,30 @@
 @media (max-width: 768px) {
     .selected-view {
         grid-template-areas:
-            "image"
             "description"
             "scroll";
         grid-template-columns: 1fr;
-        grid-template-rows: auto auto auto;
+        grid-template-rows: auto auto;
     }
 
     .selected-card-container {
-        height: 300px;
-        border-radius: 10px 10px 0 0;
-        border-right: 2px solid var(--border-accent);
+        display: none; /* Скрытие выбранной карточки на мобильных устройствах */
     }
 
     .description-container {
-        border-radius: 0;
+        border-radius: 10px 10px 0 0;
         border-left: 2px solid var(--border-accent);
+        border-top: 2px solid var(--border-accent);
     }
 
     .scroll-container {
         border-radius: 0 0 10px 10px;
+    }
+}
+
+/* Дальнейшие уточнения для маленьких мобильных устройств */
+@media (max-width: 480px) {
+    .description-container {
+        padding: 1rem;
     }
 }
