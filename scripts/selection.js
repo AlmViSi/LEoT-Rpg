@@ -114,16 +114,19 @@ export class SelectionManager {
     this.elements.title.textContent = item.name;
     this.elements.description.textContent = item.description;
 
-    // Обновляем выделение без анимации
+    // Обновляем выделение
     document.querySelectorAll('.scroll-card').forEach(card => {
       card.classList.toggle('selected', card.dataset.id === item.id);
+      if (card.dataset.id === item.id) {
+        card.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+      }
     });
 
     window.history.pushState({ selectedId: item.id }, '', `${this.config.pageUrl}?id=${item.id}`);
   }
 
   setupEventListeners() {
-    // Делегирование событий
+    // Делегирование событий для grid
     this.elements.grid.addEventListener('click', (e) => {
       const card = e.target.closest(`.${this.config.cardClass}`);
       if (!card) return;
@@ -138,6 +141,7 @@ export class SelectionManager {
       }
     });
 
+    // Делегирование событий для scroll-container
     this.elements.scrollContainer.addEventListener('click', (e) => {
       const card = e.target.closest('.scroll-card');
       if (!card) return;
@@ -148,7 +152,10 @@ export class SelectionManager {
       if (item) this.showSelected(item);
     });
 
+    // Кнопка сброса
     this.elements.resetButton.addEventListener('click', () => this.resetSelection());
+    
+    // Навигация по истории
     window.addEventListener('popstate', () => this.handleHistoryNavigation());
   }
 
