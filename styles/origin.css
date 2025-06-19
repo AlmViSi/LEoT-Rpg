@@ -1,4 +1,4 @@
-/* Main Grid Styles */
+/* Основные стили сетки выбора */
 .origin-grid {
     display: grid;
     width: 95%;
@@ -8,7 +8,7 @@
     padding: 0;
 }
 
-/* Origin Card Styles */
+/* Стили карточек в сетке */
 .origin-card {
     position: relative;
     width: 100%;
@@ -46,25 +46,24 @@
     color: var(--text-primary);
 }
 
-/* Selected View Layout */
+/* Стили выбранного элемента */
 .selected-view {
     display: none;
-    grid-template-columns: 380px 1fr;
+    grid-template-columns: 400px 1fr;
     gap: 2rem;
     margin: 2rem auto;
     width: 95%;
     max-width: 1200px;
-    min-height: 650px;
-    position: relative;
+    min-height: 711px; /* 400px * 16/9 = 711.11px */
 }
 
 .left-column {
-    height: 100%;
+    width: 400px;
 }
 
 .selected-card {
     width: 100%;
-    height: 650px;
+    height: 711px;
     border-radius: 10px;
     overflow: hidden;
     border: 3px solid var(--border-accent);
@@ -81,7 +80,7 @@
 .right-column {
     display: flex;
     flex-direction: column;
-    height: 650px;
+    height: 711px;
 }
 
 .description-container {
@@ -108,6 +107,7 @@
     padding-right: 0.5rem;
 }
 
+/* Стили полосы прокрутки */
 .scroll-container {
     height: 120px;
     background: rgba(26, 38, 57, 0.9);
@@ -119,37 +119,9 @@
     overflow-x: auto;
 }
 
-/* Scrollbar Styles */
-.origin-description::-webkit-scrollbar {
-    width: 8px;
-}
-
-.origin-description::-webkit-scrollbar-track {
-    background: rgba(26, 38, 57, 0.5);
-}
-
-.origin-description::-webkit-scrollbar-thumb {
-    background-color: var(--border-accent);
-    border-radius: 4px;
-}
-
-.scroll-container::-webkit-scrollbar {
-    height: 8px;
-}
-
-.scroll-container::-webkit-scrollbar-track {
-    background: rgba(26, 38, 57, 0.5);
-}
-
-.scroll-container::-webkit-scrollbar-thumb {
-    background-color: var(--border-accent);
-    border-radius: 4px;
-}
-
-/* Scroll Cards */
 .scroll-card {
-    width: 100px;
-    aspect-ratio: 9/16;
+    width: 67.5px; /* 120px * 9/16 = 67.5px */
+    height: 120px;
     flex-shrink: 0;
     border-radius: 5px;
     overflow: hidden;
@@ -188,7 +160,34 @@
     font-family: 'Cinzel', serif;
 }
 
-/* Mobile Version */
+/* Стили скроллбаров */
+.origin-description::-webkit-scrollbar {
+    width: 8px;
+}
+
+.origin-description::-webkit-scrollbar-track {
+    background: rgba(26, 38, 57, 0.5);
+}
+
+.origin-description::-webkit-scrollbar-thumb {
+    background-color: var(--border-accent);
+    border-radius: 4px;
+}
+
+.scroll-container::-webkit-scrollbar {
+    height: 8px;
+}
+
+.scroll-container::-webkit-scrollbar-track {
+    background: rgba(26, 38, 57, 0.5);
+}
+
+.scroll-container::-webkit-scrollbar-thumb {
+    background-color: var(--border-accent);
+    border-radius: 4px;
+}
+
+/* Мобильная версия */
 @media (max-width: 900px) {
     .selected-view {
         grid-template-columns: 1fr;
@@ -213,7 +212,7 @@
         bottom: 0;
         left: 0;
         right: 0;
-        height: 100px;
+        height: 120px;
         border-radius: 0;
         border-left: none;
         border-right: none;
@@ -231,6 +230,7 @@
     }
 
     .scroll-card {
-        width: 80px;
+        width: 60px;
+        height: 106.67px; /* Сохраняем пропорции 9:16 */
     }
 }
