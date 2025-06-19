@@ -1,4 +1,6 @@
 /* styles/selection.css */
+
+/* Базовые стили сетки выбора */
 .selection-grid {
     display: grid;
     width: 95%;
@@ -8,7 +10,8 @@
     padding: 0;
 }
 
-.selection-card, .origin-card, .race-card {
+/* Карточки в сетке */
+.origin-card, .race-card {
     position: relative;
     width: 100%;
     aspect-ratio: 9/16;
@@ -21,11 +24,11 @@
     transition: transform 0.2s ease;
 }
 
-.selection-card:hover, .origin-card:hover, .race-card:hover {
+.origin-card:hover, .race-card:hover {
     transform: scale(1.03);
 }
 
-.selection-card img, .origin-card img, .race-card img {
+.origin-card img, .race-card img {
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -45,28 +48,31 @@
     color: var(--text-primary);
 }
 
-/* Новый макет */
+/* Макет выбранного элемента */
 .selected-view {
     display: none;
     grid-template-areas:
-        "card description"
+        "image description"
         "scroll scroll";
-    grid-template-columns: 1fr 1.5fr;
-    gap: 2rem;
-    margin: 2rem auto;
+    grid-template-columns: 60% 40%;
+    grid-template-rows: 1fr auto;
+    gap: 1.5rem;
     width: 95%;
     max-width: 1600px;
+    margin: 2rem auto;
+    min-height: 600px;
 }
 
-.left-column {
-    grid-area: card;
-    width: 100%;
+/* Контейнер большого изображения */
+.selected-image-container {
+    grid-area: image;
+    position: relative;
 }
 
 .selected-card {
     width: 100%;
-    aspect-ratio: 9/16;
-    max-height: 600px;
+    height: 100%;
+    min-height: 500px;
     border-radius: 10px;
     overflow: hidden;
     border: 2px solid var(--border-accent);
@@ -83,18 +89,13 @@
     background: #0a0a0a;
 }
 
-.right-column {
-    grid-area: description;
-    display: flex;
-    flex-direction: column;
-}
-
+/* Блок описания */
 .description-container {
-    flex: 1;
+    grid-area: description;
     background: rgba(26, 38, 57, 0.8);
     border-radius: 10px;
     padding: 2rem;
-    overflow: hidden;
+    overflow-y: auto;
 }
 
 .description-container h2 {
@@ -112,23 +113,23 @@
     padding-right: 1rem;
 }
 
+/* Контейнер скролла */
 .scroll-container {
     grid-area: scroll;
-    height: 220px;
+    height: 200px;
     background: rgba(26, 38, 57, 0.9);
     border-radius: 10px;
     border: 1px solid var(--border-accent);
     padding: 1.5rem;
     display: flex;
-    gap: 1.2rem;
+    gap: 1rem;
     overflow-x: auto;
     overflow-y: hidden;
-    margin-top: 1rem;
 }
 
 .scroll-card {
-    width: 123.75px; /* 9/16 от 220px */
-    height: 220px;
+    width: 112.5px; /* 9/16 от высоты 200px */
+    height: 200px;
     flex-shrink: 0;
     border-radius: 5px;
     overflow: hidden;
@@ -154,6 +155,7 @@
     object-fit: cover;
 }
 
+/* Кнопка сброса */
 .reset-button {
     display: none;
     position: fixed;
@@ -175,39 +177,18 @@
     background: #00b4ff;
 }
 
+/* Адаптивные стили */
 @media (max-width: 1200px) {
     .selected-view {
-        grid-template-columns: 1fr 1.2fr;
-    }
-    
-    .selected-card {
-        max-height: 550px;
-    }
-    
-    .scroll-container {
-        height: 200px;
-    }
-    
-    .scroll-card {
-        width: 112.5px;
-        height: 200px;
-    }
-}
-
-@media (max-width: 992px) {
-    .selected-view {
+        grid-template-columns: 1fr;
         grid-template-areas:
-            "card"
+            "image"
             "description"
             "scroll";
-        grid-template-columns: 1fr;
-        gap: 1.5rem;
     }
     
     .selected-card {
-        max-height: 500px;
-        max-width: 350px;
-        margin: 0 auto;
+        min-height: 400px;
     }
     
     .scroll-container {
@@ -215,14 +196,18 @@
     }
     
     .scroll-card {
-        width: 101.25px;
+        width: 101.25px; /* 9/16 от 180px */
         height: 180px;
     }
 }
 
-@media (max-width: 576px) {
+@media (max-width: 768px) {
     .selected-card {
-        max-height: 400px;
+        min-height: 350px;
+    }
+    
+    .description-container {
+        padding: 1.5rem;
     }
     
     .scroll-container {
@@ -231,7 +216,7 @@
     }
     
     .scroll-card {
-        width: 90px;
+        width: 90px; /* 9/16 от 160px */
         height: 160px;
     }
     
