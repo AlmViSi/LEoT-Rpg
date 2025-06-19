@@ -55,7 +55,32 @@
 
     <button id="reset-button" class="reset-button" style="display: none;">Вернуться</button>
 
-    <script type="module" src="scripts/race.js"></script>
+    <script type="module">
+        import { SelectionManager } from './scripts/selection.js'; // Use the same SelectionManager
+
+        document.addEventListener('DOMContentLoaded', () => {
+            try {
+                const manager = new SelectionManager({
+                    gridSelector: '#race-grid', // Changed from #origin-grid
+                    selectedViewSelector: '#selected-view',
+                    selectedCardSelector: '#selected-card',
+                    titleSelector: '#race-title', // Changed from #origin-title
+                    descriptionSelector: '#race-description', // Changed from #origin-description
+                    scrollContainerSelector: '#scroll-container',
+                    resetButtonSelector: '#reset-button',
+                    apiEndpoint: 'races.json', // Changed from origins.json
+                    imageFolder: 'races', // Changed from origins
+                    pageUrl: 'race.html', // Changed from origin.html
+                    cardClass: 'race-card' // Changed from origin-card
+                });
+                manager.init();
+            } catch (error) {
+                console.error('Initialization error:', error);
+                alert('Произошла ошибка при загрузке страницы. Пожалуйста, обновите страницу.');
+            }
+        });
+    </script>
+
     <script src="scripts/particles.js" defer></script>
     <script src="scripts/mobile-menu.js" defer></script>
 </body>
