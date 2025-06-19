@@ -82,32 +82,36 @@ export class SelectionManager {
         `).join('');
     }
 
-    showSelected(item) {
-        if (!item) return;
-        this.currentSelectedId = item.id;
+showSelected(item) {
+    if (!item) return;
+    this.currentSelectedId = item.id;
 
-        this.elements.grid.style.display = 'none';
-        this.elements.selectedView.style.display = 'grid';
-        this.elements.resetButton.style.display = 'block';
+    this.elements.grid.style.display = 'none';
+    this.elements.selectedView.style.display = 'grid';
+    this.elements.resetButton.style.display = 'block';
 
-        this.elements.selectedCard.innerHTML = `<img src="images/${this.config.imageFolder}/${item.src}" alt="${item.name}">`;
-        this.elements.title.textContent = item.name;
-        this.elements.description.innerHTML = item.description.replace(/\n/g, '<br>');
+    // Обновленная строка с добавлением overlay
+    this.elements.selectedCard.innerHTML = `
+        <img src="images/${this.config.imageFolder}/${item.src}" alt="${item.name}">
+        <div class="overlay">${item.name}</div>
+    `;
+    
+    this.elements.title.textContent = item.name;
+    this.elements.description.innerHTML = item.description.replace(/\n/g, '<br>');
 
-        // Очищаем и заполняем scroll-container
-        this.elements.scrollContainer.innerHTML = this.data
-            .filter(scrollItem => scrollItem.id !== item.id && scrollItem.src)
-            .map(scrollItem => `
-                <div class="scroll-card" data-id="${scrollItem.id}">
-                    <img src="images/${this.config.imageFolder}/${scrollItem.src}" alt="${scrollItem.name}">
-                </div>
-            `).join('');
+    // Очищаем и заполняем scroll-container
+    this.elements.scrollContainer.innerHTML = this.data
+        .filter(scrollItem => scrollItem.id !== item.id && scrollItem.src)
+        .map(scrollItem => `
+            <div class="scroll-card" data-id="${scrollItem.id}">
+                <img src="images/${this.config.imageFolder}/${scrollItem.src}" alt="${scrollItem.name}">
+            </div>
+        `).join('');
 
-        // Автоматический скролл к выбранному элементу
-        this.autoScrollToSelected();
-        window.history.pushState({ id: item.id }, '', `${this.config.pageUrl}?id=${item.id}`);
-    }
-
+    // Автоматический скролл к выбранному элементу
+    this.autoScrollToSelected();
+    window.history.pushState({ id: item.id }, '', `${this.config.pageUrl}?id=${item.id}`);
+}
     autoScrollToSelected() {
         if (!this.currentSelectedId) return;
 
