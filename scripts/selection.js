@@ -11,7 +11,7 @@ export class SelectionManager {
             apiEndpoint: '',
             imageFolder: '',
             pageUrl: '',
-            cardClass: '', // Например, 'origin-card' или 'race-card'
+            cardClass: '',
             ...config
         };
 
@@ -23,11 +23,11 @@ export class SelectionManager {
         this.getDOMElements();
         if (!this.validateElements()) {
             console.error('SelectionManager: Инициализация прервана из-за отсутствующих элементов DOM.');
-            return; // Прекращаем выполнение, если элементы не найдены
+            return;
         }
         
-        await this.loadData(); // Это должно успешно загрузить данные
-        this.setupEventListeners(); // Это прикрепляет обработчики кликов
+        await this.loadData();
+        this.setupEventListeners();
         this.checkUrlForId();
     }
 
@@ -44,12 +44,10 @@ export class SelectionManager {
     }
 
     validateElements() {
-        // Проверяем, что все нужные элементы DOM найдены
         const missingElements = Object.entries(this.elements).filter(([, el]) => !el);
         if (missingElements.length > 0) {
             console.error('SelectionManager: Не найдены следующие элементы DOM:', missingElements.map(([name,]) => `${name} (${this.config[`${name}Selector`]})`));
-            // Здесь можно добавить отображение ошибки на странице, если это критично для пользователя
-            if (this.elements.grid) { // Если grid есть, можно в него вывести ошибку
+            if (this.elements.grid) {
                  this.elements.grid.innerHTML = `<p class="error-message">Ошибка: Необходимые элементы страницы не найдены. Проверьте HTML.</p>`;
             }
             return false;
@@ -66,16 +64,17 @@ export class SelectionManager {
                 throw new Error(`HTTP error! Status: ${response.status} от ${this.config.apiEndpoint}`);
             }
             this.data = await response.json();
+            console.log('Загруженные данные:', this.data);
             
             if (!Array.isArray(this.data) || this.data.length === 0) {
-                console.warn(`SelectionManager: Загруженные данные из ${this.config.apiEndpoint} пусты или не являются массивом. Карточки не будут отрисованы.`);
+                console.warn(`SelectionManager: Загруженные данные из ${this.config.apiEndpoint} пусты или не являются массивом.`);
                 if (this.elements.grid) {
                     this.elements.grid.innerHTML = '<p class="info-message">Нет доступных элементов для отображения.</p>';
                 }
-                return; // Останавливаем выполнение, если данные пусты
+                return;
             }
             
-            console.log(`SelectionManager: Успешно загружено ${this.data.length} элементов из ${this.config.apiEndpoint}.`);
+            console.log(`SelectionManager: Успешно загружено ${this.data.length} элементов.`);
             this.renderGrid();
         } catch (error) {
             console.error('SelectionManager: Ошибка загрузки данных:', error);
@@ -109,19 +108,19 @@ export class SelectionManager {
             console.error('SelectionManager: Попытка показать выбранный элемент без данных.');
             return;
         }
-        console.log(`SelectionManager: Отображение выбранного элемента: ${item.name}`);
+        console.log(`SelectionManager: Отображение выбранного элемента: ${item.name} (ID: ${item.id})`);
 
         this.elements.grid.style.display = 'none';
-        this.elements.selectedView.style.display = 'grid'; // Используем grid
+        this.elements.selectedView.style.display = 'grid';
         this.elements.resetButton.style.display = 'block';
 
         this.elements.selectedCard.innerHTML = `<img src="images/${this.config.imageFolder}/${item.src}" alt="${item.name}">`;
         this.elements.title.textContent = item.name;
-        this.elements.description.innerHTML = item.description.replace(/\n/g, '<br>'); // Поддержка переносов строк
+        this.elements.description.innerHTML = item.description.replace(/\n/g, '<br>');
 
-        this.elements.scrollContainer.innerHTML = ''; // Очищаем перед рендерингом
+        this.elements.scrollContainer.innerHTML = '';
         this.data.forEach(scrollItem => {
-            if (scrollItem.id !== item.id && scrollItem.src) { // Не отображаем текущий выбранный элемент в скролле
+            if (scrollItem.id != item.id && scrollItem.src) {
                 const scrollCard = document.createElement('div');
                 scrollCard.classList.add('scroll-card');
                 scrollCard.dataset.id = scrollItem.id;
@@ -142,7 +141,7 @@ export class SelectionManager {
                     return;
                 }
                 
-                const item = this.data.find(i => i.id === card.dataset.id);
+                const item = this.data.find(i => i.id == card.dataset.id);
                 if (item) {
                     this.showSelected(item);
                 } else {
@@ -157,10 +156,9 @@ export class SelectionManager {
                 const card = e.target.closest('.scroll-card');
                 if (!card) return;
                 
-                const item = this.data.find(i => i.id === card.dataset.id);
+                const item = this.data.find(i => i.id == card.dataset.id);
                 if (item) {
                     this.showSelected(item);
-                    // Прокрутка выбранной карточки в центр
                     card.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
                 }
             });
@@ -187,7 +185,7 @@ export class SelectionManager {
         console.log('SelectionManager: Обработка навигации по истории.');
         const urlParams = new URLSearchParams(window.location.search);
         const id = urlParams.get('id');
-        const item = id ? this.data.find(item => item.id === id) : null;
+        const item = id ? this.data.find(item => item.id == id) : null;
         
         if (item) {
             this.showSelected(item);
@@ -200,13 +198,14 @@ export class SelectionManager {
         console.log('SelectionManager: Проверка URL на наличие ID.');
         const urlParams = new URLSearchParams(window.location.search);
         const id = urlParams.get('id');
+        
         if (id) {
-            const item = this.data.find(item => item.id === id);
+            const item = this.data.find(item => item.id == id);
             if (item) {
                 this.showSelected(item);
             } else {
-                console.warn(`SelectionManager: Элемент с ID "${id}" не найден в данных. Сброс выбора.`);
-                this.resetSelection(); // Сброс, если ID не найден
+                console.warn(`SelectionManager: Элемент с ID "${id}" не найден. Доступные ID: ${this.data.map(i => i.id).join(', ')}`);
+                this.resetSelection();
             }
         }
     }
