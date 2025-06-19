@@ -8,14 +8,40 @@
     <link rel="stylesheet" href="styles/common.css">
     <link rel="stylesheet" href="styles/selection.css">
     <link rel="stylesheet" href="styles/mobile-menu.css">
+    <style>
+        /* Специфичные стили для race.html */
+        .race-card, .scroll-card {
+            pointer-events: auto;
+        }
+        .race-card *, .scroll-card * {
+            pointer-events: none;
+        }
+    </style>
 </head>
 <body>
     <canvas id="particle-canvas"></canvas>
+    
     <header>
         <h1>Lost Edge of Time - Race Selection</h1>
     </header>
-    
-    <!-- Навигация -->
+
+    <!-- Мобильное меню -->
+    <button class="mobile-menu-btn">Меню</button>
+    <div class="mobile-menu-container">
+        <div class="mobile-menu-header">
+            <h2>Меню</h2>
+            <button class="mobile-menu-close">✕</button>
+        </div>
+        <div class="mobile-menu-tabs">
+            <a href="index.html" class="mobile-menu-tab">Origin</a>
+            <a href="race.html" class="mobile-menu-tab active">Race</a>
+            <a href="traits.html" class="mobile-menu-tab">Traits</a>
+            <a href="powersets.html" class="mobile-menu-tab">Power Sets</a>
+            <a href="character.html" class="mobile-menu-tab">Character</a>
+        </div>
+    </div>
+
+    <!-- Основные вкладки -->
     <div class="tab-container">
         <a href="index.html" class="tab">Origin</a>
         <a href="race.html" class="tab active">Race</a>
@@ -23,26 +49,30 @@
         <a href="powersets.html" class="tab">Power Sets</a>
         <a href="character.html" class="tab">Character</a>
     </div>
-    
-    <!-- Основной контент -->
+
     <div class="main-container">
+        <!-- Сетка выбора рас -->
         <div id="race-grid" class="selection-grid"></div>
-        
+
+        <!-- Выбранная раса -->
         <div id="selected-view" class="selected-view" style="display: none;">
-            <!-- Большое изображение слева -->
+            <!-- Левая колонка: изображение -->
             <div id="selected-card" class="selected-card"></div>
-            
-            <!-- Описание справа -->
+
+            <!-- Правая колонка: описание -->
             <div class="description-container">
                 <h2 id="race-title">Выберите расу</h2>
-                <div id="race-description" class="selection-description"></div>
+                <div id="race-description" class="selection-description">
+                    Выберите расу, чтобы узнать её историю и особенности.
+                </div>
             </div>
-            
-            <!-- Скролл внизу -->
+
+            <!-- Скролл с миниатюрами -->
             <div id="scroll-container" class="scroll-container"></div>
         </div>
     </div>
-    
+
+    <!-- Кнопка возврата -->
     <button id="reset-button" class="reset-button" style="display: none;">Вернуться</button>
 
     <script type="module">
@@ -66,8 +96,12 @@
                 manager.init();
             } catch (error) {
                 console.error('Initialization error:', error);
+                alert('Произошла ошибка при загрузке страницы. Пожалуйста, обновите страницу.');
             }
         });
     </script>
+    
+    <script src="scripts/particles.js" defer></script>
+    <script src="scripts/mobile-menu.js" defer></script>
 </body>
 </html>
