@@ -45,19 +45,20 @@
     color: var(--text-primary);
 }
 
+/* Основные изменения начинаются здесь */
 .selected-view {
     display: none;
-    grid-template-columns: minmax(300px, 400px) minmax(0, 1fr);
+    grid-template-columns: 300px 1fr; /* Уменьшил ширину selected-card */
     gap: 2rem;
     margin: 2rem auto;
     width: 95%;
-    max-width: 1400px;
+    max-width: 1600px; /* Увеличил максимальную ширину */
     min-height: 600px;
 }
 
 .left-column {
-    width: 100%;
-    max-width: 400px;
+    width: 300px; /* Фиксированная ширина для selected-card */
+    margin-right: 0; /* Убрал лишний отступ */
 }
 
 .selected-card {
@@ -70,47 +71,23 @@
     box-shadow: 0 0 25px rgba(0, 163, 224, 0.3);
 }
 
-.selected-card img {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center top;
-}
-
 .right-column {
     display: flex;
     flex-direction: column;
     height: 600px;
-    max-width: calc(100% - 420px);
+    width: calc(100% - 320px); /* Занимает оставшееся пространство */
 }
 
 .description-container {
     flex: 1;
     background: rgba(26, 38, 57, 0.8);
     border-radius: 10px;
-    padding: 1.5rem;
-    margin-bottom: 1rem;
+    padding: 2rem; /* Увеличил padding */
+    margin-bottom: 1.5rem;
     overflow: hidden;
-    max-width: 100%;
+    width: 100%; /* Занимает всю доступную ширину */
 }
 
-.description-container h2 {
-    color: #d9bd0b;
-    margin: 0 0 1rem 0;
-    font-size: 1.8em;
-    font-family: 'Cinzel', serif;
-}
-
-.selection-description {
-    height: calc(100% - 3rem);
-    overflow-y: auto;
-    line-height: 1.6;
-    font-size: 1.1em;
-    padding-right: 1rem;
-}
-
-/* Обновленный scroll-container с соотношением 9:16 */
 .scroll-container {
     height: 200px;
     background: rgba(26, 38, 57, 0.9);
@@ -120,12 +97,12 @@
     display: flex;
     gap: 1rem;
     overflow-x: auto;
-    overflow-y: hidden; /* Убираем вертикальный скролл */
-    align-items: center;
+    overflow-y: hidden;
+    width: 100%; /* Занимает всю доступную ширину */
 }
 
 .scroll-card {
-    width: 112.5px; /* 9/16 от высоты 200px */
+    width: 112.5px;
     height: 200px;
     flex-shrink: 0;
     border-radius: 5px;
@@ -136,110 +113,64 @@
     transition: all 0.2s ease;
 }
 
-.scroll-card:hover {
-    transform: scale(1.05);
-}
-
-.scroll-card.selected {
-    border: 2px solid var(--border-accent);
-    box-shadow: 0 0 15px rgba(0, 163, 224, 0.8);
-    transform: scale(1.08);
-}
-
-.scroll-card img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.reset-button {
-    display: none;
-    position: fixed;
-    bottom: 30px;
-    right: 30px;
-    padding: 12px 24px;
-    background: var(--border-accent);
-    color: var(--main-bg);
-    border: none;
-    border-radius: 5px;
-    font-family: 'Cinzel', serif;
-    cursor: pointer;
-    z-index: 100;
-    font-size: 1.1em;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-}
-
-.reset-button:hover {
-    background: #00b4ff;
+/* Адаптивные стили */
+@media (max-width: 1600px) {
+    .selected-view {
+        max-width: 1400px;
+    }
 }
 
 @media (max-width: 1200px) {
     .selected-view {
-        grid-template-columns: 350px 1fr;
+        grid-template-columns: 250px 1fr;
+    }
+    
+    .left-column {
+        width: 250px;
     }
     
     .right-column {
-        max-width: calc(100% - 370px);
+        width: calc(100% - 270px);
     }
     
     .selected-card {
         height: 550px;
     }
-    
-    .scroll-container {
-        height: 180px;
-    }
-    
-    .scroll-card {
-        width: 101.25px; /* 9/16 от 180px */
-        height: 180px;
-    }
 }
 
 @media (max-width: 992px) {
     .selected-view {
-        grid-template-columns: 300px 1fr;
+        grid-template-columns: 220px 1fr;
         gap: 1.5rem;
     }
     
-    .right-column {
-        max-width: calc(100% - 320px);
+    .left-column {
+        width: 220px;
     }
     
-    .selected-card {
-        height: 500px;
+    .right-column {
+        width: calc(100% - 240px);
     }
 }
 
 @media (max-width: 768px) {
     .selected-view {
         grid-template-columns: 1fr;
-        min-height: auto;
     }
     
     .left-column {
-        max-width: 100%;
-    }
-    
-    .selected-card {
-        height: 450px;
+        width: 100%;
         max-width: 350px;
         margin: 0 auto;
     }
     
     .right-column {
+        width: 100%;
         height: auto;
-        max-width: 100%;
     }
     
-    .scroll-container {
-        height: 160px;
-        padding: 1rem;
-    }
-    
-    .scroll-card {
-        width: 90px; /* 9/16 от 160px */
-        height: 160px;
+    .selected-card {
+        height: 450px;
     }
 }
 
@@ -248,18 +179,7 @@
         height: 400px;
     }
     
-    .scroll-container {
-        height: 140px;
-    }
-    
-    .scroll-card {
-        width: 78.75px; /* 9/16 от 140px */
-        height: 140px;
-    }
-    
-    .reset-button {
-        bottom: 20px;
-        right: 20px;
-        padding: 10px 20px;
+    .description-container {
+        padding: 1.5rem;
     }
 }
