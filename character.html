@@ -1,245 +1,364 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lost Edge of Time - Character</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto&family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/character.css">
-    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database-compat.js"></script>
-  </head>
-<body>
-    <canvas id="particle-canvas"></canvas>
-    <header>
-        <h1>Lost Edge of Time - Character</h1>
-    </header>
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Roboto', sans-serif;
+    background-color: #0A0A0A;
+    color: #D9E4DD;
+    overflow-x: hidden;
+}
+
+#particle-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+}
+
+header {
+    background: rgba(26, 38, 57, 0.8);
+    padding: 1rem;
+    text-align: center;
+    border-bottom: 2px solid #00A3E0;
+}
+
+header h1 {
+    margin: 0;
+    font-family: 'Cinzel', serif;
+    color: #D9E4DD;
+}
+
+.main-container {
+    max-width: 1400px; /* Увеличил максимальную ширину */
+    margin: 0 auto;
+    padding: 1rem;
+}
+
+.tab-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 1rem;
+    position: relative;
+    z-index: 10;
+}
+
+.tab {
+    padding: 0.5rem 1rem;
+    background: #1A2639;
+    color: #D9E4DD;
+    border: 1px solid #00A3E0;
+    cursor: pointer;
+    font-family: 'Cinzel', serif;
+    transition: all 0.3s ease;
+}
+
+.tab:first-child {
+    border-radius: 5px 0 0 5px;
+}
+
+.tab:last-child {
+    border-radius: 0 5px 5px 0;
+}
+
+.tab.active {
+    background: #00A3E0;
+    color: #0A0A0A;
+    font-weight: bold;
+}
+
+.tab:hover:not(.active) {
+    background: rgba(0, 163, 224, 0.3);
+}
+
+.character-container {
+    display: grid;
+    grid-template-columns: 250px 1fr;
+    gap: 1rem;
+    padding: 1rem;
+}
+
+.character-portrait {
+    width: 100%;
+    min-height: 320px; /* Минимальная высота */
+    max-height: 600px; /* Максимальная высота (опционально) */
+    background: #1A2639;
+    border: 2px solid #00A3E0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    overflow: hidden;
+    resize: vertical; /* Разрешаем изменять размер по вертикали */
+    overflow: auto; /* Добавляем прокрутку, если контент не помещается */
+}
+
+.character-portrait img {
+    width: 100%; /* Растягиваем изображение на всю ширину */
+    height: 100%; /* Растягиваем изображение на всю высоту */
+    object-fit: contain; /* Сохраняем пропорции изображения */
+}
+.character-portrait span {
+    font-family: 'Cinzel', serif;
+    color: #D9E4DD;
+}
+
+.character-info {
+    margin-top: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.character-info input,
+.character-info textarea {
+    background: rgba(26, 38, 57, 0.8);
+    border: 1px solid #00A3E0;
+    color: #D9E4DD;
+    padding: 0.5rem;
+    border-radius: 5px;
+    font-family: 'Roboto', sans-serif;
+}
+
+.character-info textarea {
+    height: 80px;
+    resize: vertical;
+}
+
+.character-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.character-action-btn {
+    flex: 1;
+    padding: 0.5rem;
+    background: #00A3E0;
+    color: #0A0A0A;
+    border: none;
+    border-radius: 5px;
+    font-family: 'Cinzel', serif;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.character-action-btn:hover {
+    background: #D9E4DD;
+}
+
+.uid-container {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+    width: 100%;
+}
+
+.uid-input {
+    flex: 1;
+    min-width: 0;
+    background: rgba(26, 38, 57, 0.8);
+    border: 1px solid #00A3E0;
+    color: #D9E4DD;
+    padding: 0.5rem;
+    border-radius: 5px;
+}
+
+.load-uid-container {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.load-uid-input {
+    flex: 1;
+    background: rgba(26, 38, 57, 0.8);
+    border: 1px solid #00A3E0;
+    color: #D9E4DD;
+    padding: 0.5rem;
+    border-radius: 5px;
+}
+
+/* Новая структура для характеристик и параметров */
+.stats-section {
+    display: grid;
+    grid-template-columns: 250px 1fr;
+    gap: 1rem;
+    height: 100%;
+}
+
+.stats-column {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.main-stats {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+    /* Удаляем flex-grow и overflow-y */
+    /* flex-grow: 1;
+    overflow-y: auto; */
+    padding-right: 0.5rem;
+}
+
+.stat-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(26, 38, 57, 0.8);
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    border: 1px solid #00A3E0;
+}
+
+.stat-controls {
+    display: flex;
+    align-items: center;
+}
+
+.stat-value {
+    min-width: 30px;
+    text-align: center;
+    font-weight: bold;
+    margin: 0 0.5rem;
+}
+
+.stat-btn {
+    width: 25px;
+    height: 25px;
+    background: #00A3E0;
+    border: none;
+    color: #0A0A0A;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 3px;
+}
+
+.stat-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.points-left-container {
+    background: rgba(26, 38, 57, 0.8);
+    border: 1px solid #00A3E0;
+    border-radius: 5px;
+    padding: 0.5rem;
+    text-align: center;
+    font-family: 'Cinzel', serif;
+    margin-top: auto;
+}
+
+.derived-stats-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    /* Удаляем фиксированную высоту и overflow */
+    /* height: 100%;
+    overflow-y: auto; */
+    padding: 0.5rem;
+}
+
+.derived-stats-column {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.derived-stat {
+    background: rgba(26, 38, 57, 0.8);
+    padding: 0.5rem;
+    border: 1px solid #00A3E0;
+    border-radius: 5px;
+    display: flex;
+    flex-direction: column;
+}
+
+.derived-stat.special {
+    background: rgba(40, 60, 90, 0.8);
+}
+
+.derived-stat div:first-child {
+    font-size: 0.9rem;
+    opacity: 0.8;
+}
+
+.derived-stat div:last-child {
+    font-weight: bold;
+    font-size: 1.1rem;
+    text-align: right;
+}
+
+@media (max-width: 1200px) {
+    .derived-stats-container {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 900px) {
+    .stats-section {
+        grid-template-columns: 1fr;
+    }
     
-    <div class="tab-container">
-        <a href="index.html" class="tab">Origin</a>
-        <a href="race.html" class="tab">Race</a>
-        <a href="traits.html" class="tab">Traits</a>
-        <a href="powersets.html" class="tab">Power Sets</a>
-        <a href="character.html" class="tab active">Character</a>
-    </div>
+    .main-stats {
+        max-height: 300px;
+    }
+}
+
+@media (max-width: 768px) {
+    .character-container {
+        grid-template-columns: 1fr;
+    }
     
-    <div class="main-container">
-        <div class="character-container">
-            <div class="character-portrait-container">
-                <div class="character-portrait" id="character-portrait">
-                    <span>Click to upload portrait</span>
-                    <input type="file" id="portrait-upload" accept="image/*" style="display: none;">
-                </div>
-                
-                <div class="character-info">
-                    <input type="text" id="character-name" placeholder="Character Name">
-                    <textarea id="character-bio" placeholder="Character Biography"></textarea>
-                    
-                    <div class="uid-container">
-                        <input type="text" id="character-uid" class="uid-input" placeholder="Character UID" readonly>
-                        <button class="character-action-btn" id="generate-uid-btn">Generate UID</button>
-                    </div>
-                    
-                    <div class="load-uid-container">
-                        <input type="text" id="load-uid-input" class="load-uid-input" placeholder="Enter UID to load">
-                        <button class="character-action-btn" id="load-character-btn">Load</button>
-                    </div>
-                    
-                    <div class="character-actions">
-                        <button class="character-action-btn" id="save-character-btn">Save Character</button>
-                        <button class="character-action-btn" id="clear-character-btn">Clear</button>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="stats-column">
-                <div class="main-stats">
-                    <div class="stat-item">
-                        <span>Сила (STR):</span>
-                        <div class="stat-controls">
-                            <button class="stat-btn" data-stat="str" data-action="decrease">-</button>
-                            <span class="stat-value" id="str-value">0</span>
-                            <button class="stat-btn" data-stat="str" data-action="increase">+</button>
-                        </div>
-                    </div>
-                    
-                    <div class="stat-item">
-                        <span>Выносливость (CON):</span>
-                        <div class="stat-controls">
-                            <button class="stat-btn" data-stat="con" data-action="decrease">-</button>
-                            <span class="stat-value" id="con-value">0</span>
-                            <button class="stat-btn" data-stat="con" data-action="increase">+</button>
-                        </div>
-                    </div>
-                    
-                    <div class="stat-item">
-                        <span>Сноровка (DEX):</span>
-                        <div class="stat-controls">
-                            <button class="stat-btn" data-stat="dex" data-action="decrease">-</button>
-                            <span class="stat-value" id="dex-value">0</span>
-                            <button class="stat-btn" data-stat="dex" data-action="increase">+</button>
-                        </div>
-                    </div>
-                    
-                    <div class="stat-item">
-                        <span>Ловкость (AGI):</span>
-                        <div class="stat-controls">
-                            <button class="stat-btn" data-stat="agi" data-action="decrease">-</button>
-                            <span class="stat-value" id="agi-value">0</span>
-                            <button class="stat-btn" data-stat="agi" data-action="increase">+</button>
-                        </div>
-                    </div>
-                    
-                    <div class="stat-item">
-                        <span>Интеллект (INT):</span>
-                        <div class="stat-controls">
-                            <button class="stat-btn" data-stat="int" data-action="decrease">-</button>
-                            <span class="stat-value" id="int-value">0</span>
-                            <button class="stat-btn" data-stat="int" data-action="increase">+</button>
-                        </div>
-                    </div>
-                    
-                    <div class="stat-item">
-                        <span>Мудрость (WIS):</span>
-                        <div class="stat-controls">
-                            <button class="stat-btn" data-stat="wis" data-action="decrease">-</button>
-                            <span class="stat-value" id="wis-value">0</span>
-                            <button class="stat-btn" data-stat="wis" data-action="increase">+</button>
-                        </div>
-                    </div>
-                    
-                    <div class="stat-item">
-                        <span>Обаяние (CHA):</span>
-                        <div class="stat-controls">
-                            <button class="stat-btn" data-stat="cha" data-action="decrease">-</button>
-                            <span class="stat-value" id="cha-value">0</span>
-                            <button class="stat-btn" data-stat="cha" data-action="increase">+</button>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="points-left-container">
-                    Points left: <span id="points-left">36</span>
-                </div>
-                
-                <div class="derived-stats-container">
-                    <div class="derived-stats-column">
-                        <div class="derived-stat">
-                            <div>Запас Здоровья</div>
-                            <div id="health-value">0</div>
-                        </div>
-                        
-                        <div class="derived-stat">
-                            <div>Запас Фокуса</div>
-                            <div id="focus-value">0</div>
-                        </div>
-                        
-                        <div class="derived-stat special">
-                            <div>Колдовство</div>
-                            <div id="witchcraft-value">0</div>
-                        </div>
-                        
-                        <div class="derived-stat special">
-                            <div>Мастерство</div>
-                            <div id="mastery-value">0</div>
-                        </div>
-                        
-                        <div class="derived-stat special">
-                            <div>Могущество</div>
-                            <div id="might-value">0</div>
-                        </div>
-                        
-                        <div class="derived-stat">
-                            <div>Концентрация</div>
-                            <div id="concentration-value">0</div>
-                        </div>
-                        
-                        <div class="derived-stat">
-                            <div>Число Реакций</div>
-                            <div id="reactions-value">0</div>
-                        </div>
-                    </div>
-                    
-                    <div class="derived-stats-column">
-                        <div class="derived-stat">
-                            <div>Грация</div>
-                            <div id="grace-value">0</div>
-                        </div>
-                        
-                        <div class="derived-stat">
-                            <div>Предчувствие</div>
-                            <div id="premonition-value">0</div>
-                        </div>
-                        
-                        <div class="derived-stat special">
-                            <div>Снижение Угрозы</div>
-                            <div id="threat-value">0</div>
-                        </div>
-                        
-                        <div class="derived-stat special">
-                            <div>Влияние</div>
-                            <div id="influence-value">0</div>
-                        </div>
-                        
-                        <div class="derived-stat special">
-                            <div>Харизма</div>
-                            <div id="charisma-value">0</div>
-                        </div>
-                        
-                        <div class="derived-stat">
-                            <div>Число Умений</div>
-                            <div id="skills-value">0</div>
-                        </div>
-                        
-                        <div class="derived-stat">
-                            <div>Число Черт</div>
-                            <div id="traits-value">0</div>
-                        </div>
-                    </div>
-                    
-                    <div class="derived-stats-column">
-                        <div class="derived-stat">
-                            <div>Бдительность</div>
-                            <div id="vigilance-value">0</div>
-                        </div>
-                        
-                        <div class="derived-stat">
-                            <div>Борьба</div>
-                            <div id="combat-value">0</div>
-                        </div>
-                        
-                        <div class="derived-stat">
-                            <div>Логика</div>
-                            <div id="logic-value">0</div>
-                        </div>
-                        
-                        <div class="derived-stat">
-                            <div>Самообладание</div>
-                            <div id="composure-value">0</div>
-                        </div>
-                        
-                        <div class="derived-stat">
-                            <div>Сила Воли</div>
-                            <div id="willpower-value">0</div>
-                        </div>
-                        
-                        <div class="derived-stat">
-                            <div>Стойкость</div>
-                            <div id="resilience-value">0</div>
-                        </div>
-                        
-                        <div class="derived-stat">
-                            <div>Уклонение</div>
-                            <div id="evasion-value">0</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <script src="scripts/particles.js"></script>
-    <script src="scripts/firebase-config.js"></script>
-    <script src="scripts/firebase-init.js"></script>
-    <script src="scripts/character.js"></script>
-</body>
-</html>
+    .derived-stats-container {
+        grid-template-columns: 1fr;
+    }
+}
+@media (max-width: 480px) {
+    .character-container {
+        grid-template-columns: 1fr;
+        padding: 0.5rem;
+        gap: 0.5rem;
+    }
+    
+    .character-portrait {
+        min-height: 250px;
+        max-height: 300px;
+    }
+    
+    .stats-section {
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
+    }
+    
+    .main-stats {
+        max-height: none;
+    }
+    
+    .derived-stats-container {
+        grid-template-columns: 1fr;
+    }
+    
+    .stat-item {
+        padding: 0.5rem;
+        font-size: 0.9rem;
+    }
+    
+    .stat-btn {
+        width: 22px;
+        height: 22px;
+    }
+    
+    .character-action-btn {
+        padding: 0.5rem;
+        font-size: 0.9rem;
+    }
+    
+    .character-info input,
+    .character-info textarea {
+        padding: 0.4rem;
+        font-size: 0.9rem;
+    }
+}
