@@ -109,6 +109,8 @@
 }
 
 .scroll-container {
+    scroll-behavior: smooth;
+    white-space: nowrap;
     grid-area: scroll;
     height: 200px;
     background: rgba(26, 38, 57, 0.9);

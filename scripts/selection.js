@@ -17,14 +17,12 @@ export class SelectionManager {
 
         this.elements = {};
         this.data = [];
+        this.currentSelectedId = null;
     }
 
     async init() {
         this.getDOMElements();
-        if (!this.validateElements()) {
-            console.error('SelectionManager: Инициализация прервана из-за отсутствующих элементов DOM.');
-            return;
-        }
+        if (!this.validateElements()) return;
         
         await this.loadData();
         this.setupEventListeners();
@@ -46,9 +44,9 @@ export class SelectionManager {
     validateElements() {
         const missingElements = Object.entries(this.elements).filter(([, el]) => !el);
         if (missingElements.length > 0) {
-            console.error('SelectionManager: Не найдены следующие элементы DOM:', missingElements.map(([name,]) => `${name} (${this.config[`${name}Selector`]})`));
+            console.error('Missing elements:', missingElements.map(([name]) => name));
             if (this.elements.grid) {
-                 this.elements.grid.innerHTML = `<p class="error-message">Ошибка: Необходимые элементы страницы не найдены. Проверьте HTML.</p>`;
+                this.elements.grid.innerHTML = `<p class="error-message">Ошибка: Необходимые элементы не найдены</p>`;
             }
             return false;
         }
@@ -58,7 +56,7 @@ export class SelectionManager {
     async loadData() {
         try {
             const response = await fetch(this.config.apiEndpoint);
-            if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+            if (!response.ok) throw new Error(`HTTP error ${response.status}`);
             
             this.data = await response.json();
             if (!Array.isArray(this.data) || this.data.length === 0) {
@@ -85,6 +83,9 @@ export class SelectionManager {
     }
 
     showSelected(item) {
+        if (!item) return;
+        this.currentSelectedId = item.id;
+
         this.elements.grid.style.display = 'none';
         this.elements.selectedView.style.display = 'grid';
         this.elements.resetButton.style.display = 'block';
@@ -102,23 +103,34 @@ export class SelectionManager {
                 </div>
             `).join('');
 
-        // Плавный скролл к выбранному элементу
-        setTimeout(() => {
-            const selectedCard = this.elements.scrollContainer.querySelector(`[data-id="${item.id}"]`);
-            if (selectedCard) {
-                selectedCard.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'nearest',
-                    inline: 'center'
-                });
-            }
-        }, 100);
-
+        // Автоматический скролл к выбранному элементу
+        this.autoScrollToSelected();
         window.history.pushState({ id: item.id }, '', `${this.config.pageUrl}?id=${item.id}`);
     }
 
+    autoScrollToSelected() {
+        if (!this.currentSelectedId) return;
+
+        setTimeout(() => {
+            const cards = Array.from(this.elements.scrollContainer.querySelectorAll('.scroll-card'));
+            const selectedIndex = cards.findIndex(card => card.dataset.id === this.currentSelectedId);
+            
+            if (selectedIndex === -1) return;
+
+            const containerWidth = this.elements.scrollContainer.offsetWidth;
+            const cardWidth = cards[0].offsetWidth;
+            const gap = 16; // Примерный отступ между карточками
+            const scrollPosition = (cardWidth + gap) * selectedIndex - (containerWidth / 2) + (cardWidth / 2);
+            
+            this.elements.scrollContainer.scrollTo({
+                left: scrollPosition,
+                behavior: 'smooth'
+            });
+        }, 100);
+    }
+
     setupEventListeners() {
-        // Обработчик кликов по сетке
+        // Клики по основной сетке
         this.elements.grid?.addEventListener('click', (e) => {
             const card = e.target.closest(`.${this.config.cardClass}`);
             if (!card) return;
@@ -127,26 +139,25 @@ export class SelectionManager {
             if (item) this.showSelected(item);
         });
 
-        // Обработчик кликов по миниатюрам
+        // Клики по миниатюрам в scroll-container
         this.elements.scrollContainer?.addEventListener('click', (e) => {
             const card = e.target.closest('.scroll-card');
             if (!card) return;
             
             const item = this.data.find(i => i.id == card.dataset.id);
             if (item) {
+                this.currentSelectedId = item.id;
                 this.showSelected(item);
-                card.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'nearest',
-                    inline: 'center'
-                });
             }
         });
 
         // Кнопка сброса
-        this.elements.resetButton?.addEventListener('click', () => this.resetSelection());
+        this.elements.resetButton?.addEventListener('click', () => {
+            this.currentSelectedId = null;
+            this.resetSelection();
+        });
 
-        // Обработчик навигации по истории
+        // Навигация по истории
         window.addEventListener('popstate', () => this.handleHistoryNavigation());
     }
 
