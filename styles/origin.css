@@ -48,9 +48,8 @@
 /* Selected Origin View */
 .selected-view {
     display: none;
-    flex-direction: column; /* Меняем на column */
-    position: relative; /* Добавляем для позиционирования */
-    gap: 1rem;
+    grid-template-columns: 380px 1fr;
+    gap: 2rem;
     margin: 2rem auto;
     width: 95%;
     max-width: 1200px;
@@ -61,46 +60,28 @@
     box-sizing: border-box;
 }
 
-.selected-content {
-    display: flex;
-    flex-direction: row;
-    gap: 2rem;
-    flex-grow: 1;
-    min-height: 0; /* Важно для правильного скролла */
-}
-
 .selected-card {
-    width: 380px; /* Увеличиваем ширину карточки */
-    aspect-ratio: 9/16;
-    border-radius: 10px;
-    overflow: hidden;
-    border: 3px solid var(--border-accent);
-    flex-shrink: 0;
-    box-shadow: 0 0 20px rgba(0, 163, 224, 0.3);
-}
-
-.selected-card img {
     width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center top;
-}
-
-.selected-card {
-    width: 380px;
     aspect-ratio: 9/16;
     border-radius: 10px;
     overflow: hidden;
     border: 3px solid var(--border-accent);
-    flex-shrink: 0;
     box-shadow: 0 0 20px rgba(0, 163, 224, 0.3);
+}
+
+.right-panel {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
 }
 
 .description {
     flex: 1;
-    display: flex;
-    flex-direction: column;
-    min-height: 0; /* Важно для правильного скролла */
+    overflow-y: auto;
+    padding-right: 1rem;
+    margin-bottom: 1rem;
+    line-height: 1.6;
+    font-size: 1.1em;
 }
 
 .description h2 {
@@ -110,45 +91,32 @@
     font-family: 'Cinzel', serif;
 }
 
-.description p {
-    overflow-y: auto;
-    padding-right: 1rem;
-    margin-bottom: 1rem;
-    line-height: 1.6;
-    flex-grow: 1;
-    font-size: 1.1em;
-    min-height: 0; /* Важно для правильного скролла */
-}
-
-/* Scrollbar styling */
-.description p::-webkit-scrollbar {
-    width: 8px;
-}
-
-.description p::-webkit-scrollbar-track {
-    background: rgba(26, 38, 57, 0.5);
-}
-
-.description p::-webkit-scrollbar-thumb {
-    background-color: var(--border-accent);
-    border-radius: 4px;
-}
-
 .scroll-container {
     display: flex;
     gap: 0.8rem;
     overflow-x: auto;
-    overflow-y: hidden;
     padding: 1rem 0;
     width: 100%;
     white-space: nowrap;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: thin;
     scrollbar-color: var(--border-accent) rgba(26, 38, 57, 0.5);
-    margin-top: auto; /* Прижимаем к низу */
-    position: static;
     background: rgba(26, 38, 57, 0.9);
     border-top: 1px solid var(--border-accent);
+}
+
+/* Scrollbar styling */
+.description::-webkit-scrollbar {
+    width: 8px;
+}
+
+.description::-webkit-scrollbar-track {
+    background: rgba(26, 38, 57, 0.5);
+}
+
+.description::-webkit-scrollbar-thumb {
+    background-color: var(--border-accent);
+    border-radius: 4px;
 }
 
 .scroll-container::-webkit-scrollbar {
@@ -207,7 +175,7 @@
 /* Mobile version */
 @media (max-width: 900px) {
     .selected-view {
-        flex-direction: column;
+        grid-template-columns: 1fr;
         width: 98%;
         padding: 1rem;
         margin: 1rem auto;
@@ -219,7 +187,7 @@
         display: none;
     }
 
-    .description p {
+    .description {
         max-height: 50vh;
     }
 
