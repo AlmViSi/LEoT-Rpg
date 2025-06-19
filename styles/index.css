@@ -1,6 +1,7 @@
 /* Origin Selection Page Specific Styles */
 .origin-grid {
     display: grid;
+    width: 80%;
     grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
     gap: 0.1rem;
     margin: 0.3rem 0;
