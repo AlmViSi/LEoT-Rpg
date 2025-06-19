@@ -1,3 +1,4 @@
+/* Основные стили для страниц выбора */
 .selection-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
@@ -8,12 +9,12 @@
     justify-items: center;
 }
 
-/* Стили для карточек расы и происхождения */
+/* Стили для карточек расы и происхождения в сетке */
 .race-card,
 .origin-card { /* Объединяем стили для race-card и origin-card */
     position: relative;
     width: 100%;
-    aspect-ratio: 9/16;
+    aspect-ratio: 9/16; /* Соотношение сторон, чтобы изображения не искажались */
     max-width: 220px;
     border-radius: 10px;
     overflow: hidden;
@@ -32,7 +33,7 @@
 .origin-card img {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: cover; /* Изображение будет покрывать всю область, обрезая лишнее */
 }
 
 /* Применение overlay к карточкам сетки (race-card и origin-card) */
@@ -56,8 +57,9 @@
     grid-template-areas:
         "image description"
         "scroll scroll";
-    grid-template-columns: 1fr 1.5fr; /* Пропорции для картинки и описания */
-    grid-template-rows: auto auto; /* Автоматическая высота для строк */
+    /* Изменено: изображение теперь 1fr, описание 2.5fr для большего пространства */
+    grid-template-columns: 1fr 2.5fr; 
+    grid-template-rows: auto auto; 
     gap: 1.5rem;
     width: 95%;
     max-width: 1200px;
@@ -75,15 +77,16 @@
 .selected-card-container {
     grid-area: image;
     display: flex;
-    justify-content: center;
-    align-items: center;
+    justify-content: center; /* Центрирует карточку по горизонтали в своей ячейке */
+    align-items: flex-start; /* Выравнивает карточку по верхнему краю ячейки */
+    padding-right: 1rem; /* Добавляет небольшой отступ справа от карточки */
     min-height: 400px; /* Минимальная высота для контейнера, чтобы избежать коллапса */
 }
 
 #selected-card {
     position: relative;
     width: 100%;
-    height: 100%; /* Устанавливаем высоту в 100% от родителя */
+    height: auto; /* Высота будет зависеть от содержимого и ширины */
     max-width: 300px; /* Максимальная ширина для основной выбранной карточки */
     aspect-ratio: 9/16; /* Сохраняем соотношение сторон */
     border-radius: 10px;
@@ -98,7 +101,7 @@
     object-fit: cover;
 }
 
-/* Новый стиль для лейбла на большой выбранной карточке */
+/* Стиль для лейбла на большой выбранной карточке */
 #selected-card .overlay-label {
     position: absolute;
     bottom: 0;
@@ -119,7 +122,7 @@
     padding: 1.5rem;
     border-radius: 10px;
     overflow-y: auto;
-    max-height: 400px; /* Максимальная высота для скролла */
+    max-height: 450px; /* Увеличена максимальная высота */
     border: 1px solid rgba(255, 255, 255, 0.1);
     color: var(--text-secondary);
 }
@@ -146,14 +149,32 @@
     grid-area: scroll;
     display: flex;
     gap: 1rem;
-    overflow-x: auto;
+    overflow-x: auto; /* Позволяет горизонтальный скролл */
     padding: 1rem 0;
-    margin-top: 1rem; /* Добавляем отступ сверху */
+    margin-top: 1rem; /* Отступ сверху от блока описания */
     border-top: 1px solid rgba(255, 255, 255, 0.1); /* Разделитель сверху */
-    padding-top: 1.5rem;
+    padding-top: 1.5rem; /* Отступ между разделителем и карточками */
+    /* Стилизация скроллбара (для Webkit-браузеров) */
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-accent) rgba(0, 0, 0, 0.2);
 }
 
-/* Новый класс для обертки карточки прокрутки и ее лейбла */
+.scroll-container::-webkit-scrollbar {
+    height: 8px;
+}
+
+.scroll-container::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+}
+
+.scroll-container::-webkit-scrollbar-thumb {
+    background-color: var(--border-accent);
+    border-radius: 10px;
+    border: 2px solid rgba(0, 0, 0, 0.1);
+}
+
+/* Обертка для карточки прокрутки и ее лейбла */
 .scroll-item-wrapper {
     display: flex;
     flex-direction: column; /* Элементы будут располагаться вертикально */
@@ -167,7 +188,6 @@
 .scroll-item-wrapper:hover {
     transform: translateY(-3px); /* Небольшой эффект при наведении */
 }
-
 
 .scroll-card {
     width: 112px; /* Увеличенная ширина для лучшей видимости */
@@ -194,16 +214,15 @@
     object-fit: cover;
 }
 
-/* Новый стиль для лейбла под карточкой прокрутки */
+/* Стиль для лейбла под карточкой прокрутки */
 .scroll-card-label {
     color: var(--text-primary);
     font-family: 'Roboto', sans-serif; /* Более простой шрифт для маленьких лейблов */
     font-size: 0.85em; /* Меньший размер шрифта */
     white-space: normal; /* Разрешаем перенос текста */
     max-width: 112px; /* Ограничиваем ширину по ширине карточки */
-    line-height: 1.2;
+    line-height: 1.2; /* Улучшаем читаемость */
 }
-
 
 .reset-button {
     position: fixed;
@@ -233,11 +252,12 @@
         grid-template-areas:
             "description"
             "scroll";
-        grid-template-columns: 1fr;
+        grid-template-columns: 1fr; /* Одна колонка для мобильных */
         grid-template-rows: auto auto;
         border: 2px solid var(--border-accent);
         border-radius: 10px;
         padding: 1rem; /* Уменьшаем отступы для мобильных */
+        gap: 1rem; /* Уменьшаем зазор между областями */
     }
 
     .selected-card-container {
@@ -261,12 +281,12 @@
         border-right: 2px solid var(--border-accent);
         border-top: none; /* Убираем верхнюю границу, так как выше описание */
         padding-top: 1rem;
-        margin-top: 0;
+        margin-top: 0; /* Убираем верхний маржин, так как он уже есть от gap */
     }
 
     .scroll-card {
         width: 90px; /* Меньшая ширина для мобильных прокручиваемых карточек */
-        height: 144px; /* Соответствующая высота */
+        height: 144px; /* Соответствующая высота (9/16 от 90) */
     }
 
     .scroll-card-label {

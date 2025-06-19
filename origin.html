@@ -6,18 +6,15 @@
     <title>Lost Edge of Time - Origin Selection</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto&family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles/common.css">
-    <link rel="stylesheet" href="styles/selection.css">
-    <link rel="stylesheet" href="styles/mobile-menu.css">
+    <link rel="stylesheet" href="styles/selection.css"> <link rel="stylesheet" href="styles/mobile-menu.css">
 </head>
 <body>
     <canvas id="particle-canvas"></canvas>
     
-    <!-- Шапка сайта -->
     <header>
         <h1>Lost Edge of Time - Origin Selection</h1>
     </header>
 
-    <!-- Мобильное меню -->
     <button class="mobile-menu-btn">Меню</button>
     <div class="mobile-menu-container">
         <div class="mobile-menu-header">
@@ -33,69 +30,28 @@
         </div>
     </div>
 
-    <!-- Основные вкладки -->
-    <div class="tab-container">
-        <a href="index.html" class="tab active">Origin</a>
-        <a href="race.html" class="tab">Race</a>
-        <a href="traits.html" class="tab">Traits</a>
-        <a href="powersets.html" class="tab">Power Sets</a>
-        <a href="character.html" class="tab">Character</a>
-    </div>
-
-    <!-- Основной контент -->
-    <div class="main-container">
-        <!-- Сетка выбора происхождения -->
-        <div id="origin-grid" class="selection-grid"></div>
-
-        <!-- Выбранное происхождение -->
-        <div id="selected-view" class="selected-view" style="display: none;">
-            <!-- Левая колонка: изображение -->
-            <div class="selected-card-container">
-                <div id="selected-card" class="selected-card"></div>
-            </div>
-            
-            <!-- Правая колонка: описание -->
-            <div class="description-container">
-                <h2 id="origin-title">Выберите происхождение</h2>
-                <div id="origin-description" class="selection-description"></div>
-            </div>
-            
-            <!-- Скролл с миниатюрами -->
-            <div id="scroll-container" class="scroll-container"></div>
+    <main class="main-content">
+        <div id="origin-grid" class="selection-grid">
+            <div id="error-message" class="error-message" style="display: none;"></div>
         </div>
-    </div>
 
-    <!-- Кнопка возврата -->
+        <div id="selected-view" class="selected-view" style="display: none;">
+            <div class="selected-card-container">
+                <div id="selected-card">
+                    </div>
+            </div>
+            <div id="origin-description-container" class="description-container">
+                <h2 id="origin-title"></h2>
+                <p id="origin-description"></p>
+            </div>
+            <div id="scroll-container" class="scroll-container">
+                </div>
+        </div>
+    </main>
+
     <button id="reset-button" class="reset-button" style="display: none;">Вернуться</button>
 
-    <!-- Скрипты -->
-    <script type="module">
-        import { SelectionManager } from './scripts/selection.js';
-        
-        document.addEventListener('DOMContentLoaded', () => {
-            try {
-                const manager = new SelectionManager({
-                    gridSelector: '#origin-grid',
-                    selectedViewSelector: '#selected-view',
-                    selectedCardSelector: '#selected-card',
-                    titleSelector: '#origin-title',
-                    descriptionSelector: '#origin-description',
-                    scrollContainerSelector: '#scroll-container',
-                    resetButtonSelector: '#reset-button',
-                    apiEndpoint: 'origins.json',
-                    imageFolder: 'origins',
-                    pageUrl: 'origin.html',
-                    cardClass: 'origin-card'
-                });
-                manager.init();
-            } catch (error) {
-                console.error('Initialization error:', error);
-                alert('Произошла ошибка при загрузке страницы. Пожалуйста, обновите страницу.');
-            }
-        });
-    </script>
-    
-    <script src="scripts/particles.js" defer></script>
+    <script type="module" src="scripts/index.js"></script> <script src="scripts/particles.js" defer></script>
     <script src="scripts/mobile-menu.js" defer></script>
 </body>
 </html>
