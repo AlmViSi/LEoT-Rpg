@@ -1,20 +1,20 @@
 /* Основные стили для страниц выбора */
 .selection-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); /* Изменено для соответствия index.css */
-    gap: 1.5rem; /* Изменено для соответствия index.css */
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 1.5rem;
     padding: 1rem;
     width: 95%;
     margin: 0 auto;
-    justify-items: center; /* Добавлено для выравнивания карточек по центру, как в index.css */
+    justify-items: center;
 }
 
 /* Стили для карточек расы */
 .race-card {
-    position: relative; /* Важно для позиционирования overlay */
+    position: relative;
     width: 100%;
     aspect-ratio: 9/16;
-    max-width: 220px; /* Добавлено для соответствия index.css */
+    max-width: 220px;
     border-radius: 10px;
     overflow: hidden;
     cursor: pointer;
@@ -33,10 +33,8 @@
     object-fit: cover;
 }
 
-/* Применение overlay к карточкам (как к race-card, так и к origin-card) */
-/* Этот блок должен быть более специфичным, чтобы не конфликтовать */
-/* В index.css есть .origin-card .overlay, делаем аналогично для race-card */
-.race-card .overlay { /* Теперь overlay применяется правильно к race-card */
+/* Применение overlay к карточкам */
+.race-card .overlay {
     position: absolute;
     bottom: 0;
     left: 0;
@@ -55,42 +53,43 @@
     grid-template-areas:
         "image description"
         "scroll scroll";
-    /* Уточняем, чтобы не было конфликтов и неправильной подгонки */
-    grid-template-columns: minmax(200px, 300px) 1fr; /* Гибче, но с ограничением */
-    grid-template-rows: auto minmax(100px, 200px); /* Гибче, но с мин/макс высотой для скролла */
+    /* Adjusted grid template for better layout */
+    grid-template-columns: minmax(250px, 350px) 1fr; /* Make image column slightly more flexible, max 350px */
+    grid-template-rows: auto auto; /* Auto for description, auto for scroll (will use height) */
     width: 95%;
     max-width: 1400px;
     margin: 2rem auto;
-    gap: 0; /* Убираем gap, так как border между элементами */
+    /* Borders for the overall view, individual sections will get them */
+    border: 2px solid var(--border-accent); /* Unified border for the entire selected-view */
+    border-radius: 10px;
+    overflow: hidden; /* Ensure rounded corners clip content */
 }
 
 .selected-card-container {
     grid-area: image;
     background: #0a0a0a;
-    border-radius: 10px 0 0 0;
-    border: 2px solid var(--border-accent);
+    /* Removed individual border-radius and border here, as selected-view now has a unified border */
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 1rem;
+    /* Padding is removed here to ensure strict aspect ratio */
     width: 100%;
-    max-width: 300px;
-    /* Убедимся, что aspect-ratio работает корректно с max-width */
-    height: auto; /* Позволяем высоте подстраиваться под ширину и aspect-ratio */
-    aspect-ratio: 9/16;
-    overflow: hidden;
+    height: 100%; /* Take up full height of its grid cell */
+    aspect-ratio: 9/16; /* Enforce 9/16 aspect ratio on the container itself */
+    overflow: hidden; /* Hide any overflow */
 }
 
 .selected-card {
     width: 100%;
-    height: 100%; /* Убедимся, что изображение занимает всю доступную область */
-    object-fit: contain;
+    height: 100%;
+    /* No object-fit here, as the img inside will handle it */
 }
 
 .selected-card img {
     width: 100%;
     height: 100%;
-    object-fit: contain;
+    object-fit: contain; /* Make sure the image fits within the 9/16 container */
+    display: block; /* Remove any extra space under the image */
 }
 
 
@@ -98,10 +97,10 @@
     grid-area: description;
     background: rgba(26, 38, 57, 0.8);
     padding: 2rem;
-    border-radius: 0 10px 0 0;
-    border: 2px solid var(--border-accent);
-    border-left: none; /* Убираем левую границу, чтобы она не дублировалась с контейнером изображения */
-    overflow-y: auto; /* Автоматический скролл при необходимости */
+    /* Removed individual border-radius and border-left, as selected-view has unified border */
+    /* Only apply border-right and border-bottom for separator lines within the grid */
+    border-left: 2px solid var(--border-accent); /* Separator from image */
+    overflow-y: auto;
 }
 
 .selection-description {
@@ -110,23 +109,22 @@
 
 .scroll-container {
     grid-area: scroll;
-    /* Высота контейнера скролла. Учитываем, что padding: 1rem; */
-    height: 200px; /* Задаем фиксированную высоту */
+    height: 200px;
     background: rgba(26, 38, 57, 0.9);
-    border-radius: 0 0 10px 10px;
-    border: 2px solid var(--border-accent);
-    border-top: none;
+    /* Removed individual border-radius and border-top, as selected-view has unified border */
     padding: 1rem;
     display: flex;
     gap: 1rem;
     overflow-x: auto;
-    overflow-y: hidden; /* Явно скрываем вертикальный скролл */
-    align-items: center; /* Выравнивание элементов по центру по вертикали */
+    overflow-y: hidden; /* Ensure no vertical scrollbar appears */
+    align-items: center; /* Vertically center scroll cards */
 }
 
 .scroll-card {
     width: 112px;
-    height: 180px; /* Уменьшаем высоту, чтобы она была меньше высоты контейнера с учетом padding */
+    height: 180px; /* Keep height slightly less than scroll-container height (200px - 2*1rem padding = 200px - 32px = 168px) */
+    /* 180px might still cause issue if padding is inside. Let's make it 100% of available height for flexibility */
+    /* Or more precisely, calc(100% - 2 * 1rem) or similar */
     flex-shrink: 0;
     border: 1px solid var(--border-accent);
     border-radius: 5px;
@@ -161,6 +159,9 @@
             "scroll";
         grid-template-columns: 1fr;
         grid-template-rows: auto auto;
+        /* Re-apply borders for mobile layout where it's a single column */
+        border: 2px solid var(--border-accent);
+        border-radius: 10px;
     }
 
     .selected-card-container {
@@ -168,13 +169,19 @@
     }
 
     .description-container {
-        border-radius: 10px 10px 0 0;
-        border-left: 2px solid var(--border-accent);
-        border-top: 2px solid var(--border-accent);
+        border-radius: 10px 10px 0 0; /* Adjust for top corners on mobile */
+        border-left: 2px solid var(--border-accent); /* Re-add left border for mobile */
+        border-top: 2px solid var(--border-accent); /* Re-add top border for mobile */
+        border-right: 2px solid var(--border-accent); /* Ensure right border */
+        border-bottom: none; /* No bottom border as scroll is below */
     }
 
     .scroll-container {
         border-radius: 0 0 10px 10px;
+        border-top: 2px solid var(--border-accent); /* Add a top border to separate from description */
+        border-left: 2px solid var(--border-accent);
+        border-right: 2px solid var(--border-accent);
+        border-bottom: 2px solid var(--border-accent);
     }
 }
 

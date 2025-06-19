@@ -92,7 +92,8 @@ export class SelectionManager {
 
         this.elements.scrollContainer.innerHTML = ''; // Очищаем перед рендерингом
         this.data.forEach(scrollItem => {
-            if (scrollItem.id !== item.id) { // Не отображаем текущий выбранный элемент в скролле
+            // Check if scrollItem has a 'src' property to render its image
+            if (scrollItem.id !== item.id && scrollItem.src) { // Не отображаем текущий выбранный элемент в скролле
                 const scrollCard = document.createElement('div');
                 scrollCard.classList.add('scroll-card');
                 scrollCard.dataset.id = scrollItem.id;
@@ -118,7 +119,11 @@ export class SelectionManager {
             if (!card) return;
             
             const item = this.data.find(i => i.id === card.dataset.id);
-            if (item) this.showSelected(item);
+            if (item) {
+                this.showSelected(item);
+                // Scroll the clicked card into view
+                card.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+            }
         });
 
         this.elements.resetButton.addEventListener('click', () => this.resetSelection());
