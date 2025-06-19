@@ -129,6 +129,30 @@ export class SelectionManager {
             }
         });
 
+        // Автоматический скроллинг для выбранного элемента
+        setTimeout(() => {
+            const selectedCard = this.elements.scrollContainer.querySelector(`[data-id="${item.id}"]`);
+            if (selectedCard) {
+                const containerRect = this.elements.scrollContainer.getBoundingClientRect();
+                const cardRect = selectedCard.getBoundingClientRect();
+                
+                // Если карточка близко к левому краю (менее 100px)
+                if (cardRect.left < containerRect.left + 100) {
+                    this.elements.scrollContainer.scrollBy({
+                        left: cardRect.left - containerRect.left - 100,
+                        behavior: 'smooth'
+                    });
+                } 
+                // Если карточка близко к правому краю (менее 100px)
+                else if (cardRect.right > containerRect.right - 100) {
+                    this.elements.scrollContainer.scrollBy({
+                        left: cardRect.right - containerRect.right + 100,
+                        behavior: 'smooth'
+                    });
+                }
+            }
+        }, 100);
+
         window.history.pushState({ id: item.id }, '', `${this.config.pageUrl}?id=${item.id}`);
     }
 
@@ -159,7 +183,22 @@ export class SelectionManager {
                 const item = this.data.find(i => i.id == card.dataset.id);
                 if (item) {
                     this.showSelected(item);
-                    card.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+                    const containerRect = this.elements.scrollContainer.getBoundingClientRect();
+                    const cardRect = card.getBoundingClientRect();
+                    
+                    if (cardRect.left < containerRect.left + 100) {
+                        this.elements.scrollContainer.scrollBy({
+                            left: cardRect.left - containerRect.left - 100,
+                            behavior: 'smooth'
+                        });
+                    } else if (cardRect.right > containerRect.right - 100) {
+                        this.elements.scrollContainer.scrollBy({
+                            left: cardRect.right - containerRect.right + 100,
+                            behavior: 'smooth'
+                        });
+                    } else {
+                        card.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+                    }
                 }
             });
             console.log('SelectionManager: Обработчик кликов на scrollContainer установлен.');
