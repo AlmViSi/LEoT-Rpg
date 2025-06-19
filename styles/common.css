@@ -1,182 +1,14 @@
-/* Base styles */
-:root {
-    --main-bg: #0A0A0A;
-    --header-bg: rgba(26, 38, 57, 0.8);
-    --border-accent: #00A3E0;
-    --text-primary: #D9E4DD;
-    --text-accent: #00A3E0;
-    --tab-bg: #1A2639;
-    --modal-bg: rgba(26, 38, 57, 0.9);
-    --tooltip-text: #f7fafc;
-    --tooltip-muted: #a0aec0;
+/* Добавьте в начало файла */
+* {
+    box-sizing: border-box;
 }
 
-body {
-    margin: 0;
-    padding: 0;
-    font-family: 'Roboto', sans-serif;
-    background-color: var(--main-bg);
-    color: var(--text-primary);
-    overflow-x: hidden;
-}
-
-#particle-canvas {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: -1;
-}
-
-header {
-    background: var(--header-bg);
-    padding: 1rem;
-    text-align: center;
-    border-bottom: 2px solid var(--border-accent);
-}
-
-header h1 {
-    margin: 0;
-    font-family: 'Cinzel', serif;
-    color: var(--text-primary);
-}
-
-.main-container {
-    max-width: 80%;
-    min-height: 105vh;
-    position: relative;
-    z-index: 5;
-    margin: 0 auto;
-}
-
-/* Tabs */
-.tab-container {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 1rem;
-    position: relative;
-    z-index: 10;
-}
-
-.tab {
-    padding: 0.5rem 1rem;
-    background: var(--tab-bg);
-    color: var(--text-primary);
-    border: 1px solid var(--border-accent);
-    cursor: pointer;
-    font-family: 'Cinzel', serif;
-    transition: all 0.3s ease;
-}
-
-.tab:first-child {
-    border-radius: 5px 0 0 5px;
-}
-
-.tab:last-child {
-    border-radius: 0 5px 5px 0;
-}
-
-.tab.active {
-    background: var(--border-accent);
-    color: var(--main-bg);
-    font-weight: bold;
-}
-
-.tab:hover:not(.active) {
-    background: rgba(0, 163, 224, 0.3);
-}
-
-/* Common form elements */
-input, select, textarea {
-    background: rgba(26, 38, 57, 0.8);
-    border: 1px solid var(--border-accent);
-    color: var(--text-primary);
-    padding: 0.5rem;
-    border-radius: 5px;
-    font-family: 'Roboto', sans-serif;
-}
-
-textarea {
-    resize: vertical;
-}
-
-button {
-    padding: 0.5rem 1rem;
-    background: var(--border-accent);
-    color: var(--main-bg);
-    border: none;
-    border-radius: 5px;
-    font-family: 'Cinzel', serif;
-    cursor: pointer;
-    transition: background 0.3s ease;
-}
-
-button:hover {
-    background: var(--text-primary);
-}
-
-.error-message {
-    display: none;
-    color: #ff6b6b;
-    text-align: center;
-    padding: 1rem;
-    border: 1px solid #ff6b6b;
-    border-radius: 5px;
-    margin-bottom: 1rem;
-}
-
-/* Mobile menu (from mobile-menu.css) */
-.mobile-menu-btn {
-    display: none;
-    background: var(--tab-bg);
-    color: var(--text-primary);
-    border: 1px solid var(--border-accent);
-    padding: 10px 15px;
-    font-family: 'Cinzel', serif;
-    cursor: pointer;
-    margin: 0.5rem auto;
-    width: 100%;
-    text-align: center;
-    border-radius: 5px;
-}
-
-.mobile-menu-container {
-    display: none;
-    flex-direction: column;
-    background: rgba(26, 38, 57, 0.95);
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 1000;
-    padding: 20px;
-    overflow-y: auto;
-}
-
-/* Responsive styles */
-@media (max-width: 1200px) {
-    .main-container {
-        padding: 1rem 0.75rem;
-    }
-}
-
-@media (max-width: 900px) {
-    .tab-container {
-        flex-wrap: wrap;
-        gap: 0.5rem;
-    }
-    
-    .tab {
-        flex: 1 0 auto;
-        border-radius: 5px !important;
-    }
-}
-
+/* Обновите медиа-запрос для мобильных */
 @media (max-width: 768px) {
     .mobile-menu-btn {
         display: block;
+        width: 95%;
+        margin: 0.5rem auto;
     }
     
     .tab-container {
@@ -189,6 +21,12 @@ button:hover {
     
     header h1 {
         font-size: 1.5rem;
+    }
+    
+    .main-container {
+        width: 100%;
+        padding: 0.5rem;
+        max-width: 100%;
     }
 }
 
