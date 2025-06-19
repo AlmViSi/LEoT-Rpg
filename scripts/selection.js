@@ -11,7 +11,7 @@ export class SelectionManager {
             apiEndpoint: '',
             imageFolder: '',
             pageUrl: '',
-            cardClass: '',
+            cardClass: '', // Например, 'origin-card' или 'race-card'
             ...config
         };
 
@@ -21,7 +21,7 @@ export class SelectionManager {
 
     async init() {
         this.getDOMElements();
-        if (!this.validateElements()) return;
+        if (!this.validateElements()) return; // Проверка наличия элементов DOM
         
         await this.loadData();
         this.setupEventListeners();
@@ -41,22 +41,33 @@ export class SelectionManager {
     }
 
     validateElements() {
-        return Object.values(this.elements).every(el => {
-            if (!el) console.error('Element not found:', el);
-            return el;
-        });
+        // Проверяем, что все нужные элементы DOM найдены
+        const missingElements = Object.entries(this.elements).filter(([, el]) => !el);
+        if (missingElements.length > 0) {
+            console.error('SelectionManager: Не найдены следующие элементы DOM:', missingElements.map(([name]) => name));
+            // Здесь можно добавить отображение ошибки на странице
+            return false;
+        }
+        return true;
     }
 
     async loadData() {
         try {
             const response = await fetch(this.config.apiEndpoint);
-            if (!response.ok) throw new Error(`Failed to load ${this.config.apiEndpoint}`);
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
             this.data = await response.json();
-            
+            if (!Array.isArray(this.data) || this.data.length === 0) {
+                throw new Error('Данные пусты или имеют неверный формат');
+            }
             this.renderGrid();
-            this.renderScrollCards();
         } catch (error) {
-            console.error('Data loading error:', error);
+            console.error('SelectionManager: Ошибка загрузки данных:', error);
+            // Отобразить сообщение об ошибке пользователю, если возможно
+            if (this.elements.grid) {
+                this.elements.grid.innerHTML = `<p class="error-message">Ошибка загрузки данных: ${error.message}</p>`;
+            }
         }
     }
 
@@ -64,41 +75,33 @@ export class SelectionManager {
         this.elements.grid.innerHTML = this.data.map(item => `
             <div class="${this.config.cardClass}" data-id="${item.id}">
                 <img src="images/${this.config.imageFolder}/${item.src}" alt="${item.name}"
-                     onerror="this.onerror=null;this.src='images/${this.config.imageFolder}/default.jpg'">
-                <div class="overlay">${item.name}</div>
-            </div>
-        `).join('');
-    }
-
-    renderScrollCards() {
-        this.elements.scrollContainer.innerHTML = this.data.map(item => `
-            <div class="scroll-card" data-id="${item.id}">
-                <img src="images/${this.config.imageFolder}/${item.src}" alt="${item.name}"
-                     onerror="this.onerror=null;this.src='images/${this.config.imageFolder}/default.jpg'">
+                     onerror="this.onerror=null;this.src='images/default.jpg'">
                 <div class="overlay">${item.name}</div>
             </div>
         `).join('');
     }
 
     showSelected(item) {
-        if (!item) return;
-
         this.elements.grid.style.display = 'none';
-        this.elements.selectedView.style.display = 'grid';
+        this.elements.selectedView.style.display = 'grid'; // Используем grid
         this.elements.resetButton.style.display = 'block';
 
-        this.elements.selectedCard.innerHTML = `
-            <img src="images/${this.config.imageFolder}/${item.src}" alt="${item.name}"
-                 onerror="this.onerror=null;this.src='images/${this.config.imageFolder}/default.jpg'">
-        `;
+        this.elements.selectedCard.innerHTML = `<img src="images/${this.config.imageFolder}/${item.src}" alt="${item.name}">`;
         this.elements.title.textContent = item.name;
-        this.elements.description.textContent = item.description;
+        this.elements.description.innerHTML = item.description.replace(/\n/g, '<br>'); // Поддержка переносов строк
 
-        document.querySelectorAll('.scroll-card').forEach(card => {
-            card.classList.toggle('selected', card.dataset.id === item.id);
+        this.elements.scrollContainer.innerHTML = ''; // Очищаем перед рендерингом
+        this.data.forEach(scrollItem => {
+            if (scrollItem.id !== item.id) { // Не отображаем текущий выбранный элемент в скролле
+                const scrollCard = document.createElement('div');
+                scrollCard.classList.add('scroll-card');
+                scrollCard.dataset.id = scrollItem.id;
+                scrollCard.innerHTML = `<img src="images/${this.config.imageFolder}/${scrollItem.src}" alt="${scrollItem.name}">`;
+                this.elements.scrollContainer.appendChild(scrollCard);
+            }
         });
 
-        window.history.pushState({ selectedId: item.id }, '', `${this.config.pageUrl}?id=${item.id}`);
+        window.history.pushState({ id: item.id }, '', `${this.config.pageUrl}?id=${item.id}`);
     }
 
     setupEventListeners() {
@@ -146,7 +149,12 @@ export class SelectionManager {
         const id = urlParams.get('id');
         if (id) {
             const item = this.data.find(item => item.id === id);
-            if (item) this.showSelected(item);
+            if (item) {
+                this.showSelected(item);
+            } else {
+                console.warn(`Item with ID "${id}" not found.`);
+                this.resetSelection(); // Сброс, если ID не найден
+            }
         }
     }
 }

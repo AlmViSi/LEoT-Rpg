@@ -6,24 +6,25 @@
     padding: 1rem;
     width: 95%;
     margin: 0 auto;
+    justify-items: center; /* Добавлено для выравнивания карточек по центру, как в index.css */
 }
 
 /* Стили для карточек расы */
 .race-card {
-    position: relative;
+    position: relative; /* Важно для позиционирования overlay */
     width: 100%;
     aspect-ratio: 9/16;
     max-width: 220px; /* Добавлено для соответствия index.css */
     border-radius: 10px;
     overflow: hidden;
     cursor: pointer;
-    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Изменено для соответствия index.css */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
     border: 1px solid var(--border-accent);
 }
 
 .race-card:hover {
-    transform: translateY(-5px); /* Изменено для соответствия index.css */
-    box-shadow: 0 10px 20px rgba(0, 163, 224, 0.5); /* Изменено для соответствия index.css */
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 163, 224, 0.5);
 }
 
 .race-card img {
@@ -32,7 +33,10 @@
     object-fit: cover;
 }
 
-.overlay {
+/* Применение overlay к карточкам (как к race-card, так и к origin-card) */
+/* Этот блок должен быть более специфичным, чтобы не конфликтовать */
+/* В index.css есть .origin-card .overlay, делаем аналогично для race-card */
+.race-card .overlay { /* Теперь overlay применяется правильно к race-card */
     position: absolute;
     bottom: 0;
     left: 0;
@@ -44,18 +48,20 @@
     color: var(--text-primary);
 }
 
+
 /* Макет выбранного элемента */
 .selected-view {
     display: none;
     grid-template-areas:
         "image description"
         "scroll scroll";
-    grid-template-columns: 300px 1fr;
-    grid-template-rows: auto 200px;
+    /* Уточняем, чтобы не было конфликтов и неправильной подгонки */
+    grid-template-columns: minmax(200px, 300px) 1fr; /* Гибче, но с ограничением */
+    grid-template-rows: auto minmax(100px, 200px); /* Гибче, но с мин/макс высотой для скролла */
     width: 95%;
     max-width: 1400px;
     margin: 2rem auto;
-    gap: 0;
+    gap: 0; /* Убираем gap, так как border между элементами */
 }
 
 .selected-card-container {
@@ -68,14 +74,16 @@
     justify-content: center;
     padding: 1rem;
     width: 100%;
-    max-width: 300px; /* Ограничение максимальной ширины */
-    aspect-ratio: 9/16; /* Сохранение соотношения сторон */
+    max-width: 300px;
+    /* Убедимся, что aspect-ratio работает корректно с max-width */
+    height: auto; /* Позволяем высоте подстраиваться под ширину и aspect-ratio */
+    aspect-ratio: 9/16;
     overflow: hidden;
 }
 
 .selected-card {
     width: 100%;
-    height: 100%;
+    height: 100%; /* Убедимся, что изображение занимает всю доступную область */
     object-fit: contain;
 }
 
@@ -92,8 +100,8 @@
     padding: 2rem;
     border-radius: 0 10px 0 0;
     border: 2px solid var(--border-accent);
-    border-left: none;
-    overflow-y: auto;
+    border-left: none; /* Убираем левую границу, чтобы она не дублировалась с контейнером изображения */
+    overflow-y: auto; /* Автоматический скролл при необходимости */
 }
 
 .selection-description {
@@ -102,7 +110,8 @@
 
 .scroll-container {
     grid-area: scroll;
-    height: 200px;
+    /* Высота контейнера скролла. Учитываем, что padding: 1rem; */
+    height: 200px; /* Задаем фиксированную высоту */
     background: rgba(26, 38, 57, 0.9);
     border-radius: 0 0 10px 10px;
     border: 2px solid var(--border-accent);
@@ -111,11 +120,13 @@
     display: flex;
     gap: 1rem;
     overflow-x: auto;
+    overflow-y: hidden; /* Явно скрываем вертикальный скролл */
+    align-items: center; /* Выравнивание элементов по центру по вертикали */
 }
 
 .scroll-card {
     width: 112px;
-    height: 200px;
+    height: 180px; /* Уменьшаем высоту, чтобы она была меньше высоты контейнера с учетом padding */
     flex-shrink: 0;
     border: 1px solid var(--border-accent);
     border-radius: 5px;
