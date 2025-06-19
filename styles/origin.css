@@ -2,34 +2,34 @@
 .origin-grid {
     display: grid;
     width: 95%;
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-    gap: 1.5rem;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 1.2rem;
     margin: 1rem auto;
-    padding: 1rem;
-    justify-items: center;
+    padding: 0;
 }
 
 .origin-card {
     position: relative;
     width: 100%;
-    aspect-ratio: 9/16;
-    max-width: 220px;
+    height: 280px;
+    max-width: 160px;
     border-radius: 10px;
     overflow: hidden;
     cursor: pointer;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    transition: transform 0.3s ease;
     border: 1px solid var(--border-accent);
+    margin: 0 auto;
 }
 
 .origin-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 20px rgba(0, 163, 224, 0.5);
+    transform: translateY(-3px);
 }
 
 .origin-card img {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    object-position: center top;
 }
 
 .origin-card .overlay {
@@ -38,72 +38,75 @@
     left: 0;
     right: 0;
     background: rgba(0, 0, 0, 0.7);
-    padding: 0.8rem;
+    padding: 0.6rem;
     text-align: center;
     font-family: 'Cinzel', serif;
-    font-size: 1em;
+    font-size: 0.9em;
     color: var(--text-primary);
 }
 
 /* Selected Origin View */
 .selected-view {
     display: none;
-    flex-direction: row;
-    gap: 2rem;
-    margin: 2rem auto;
+    flex-direction: column;
+    margin: 1rem auto;
     width: 95%;
-    padding: 1rem;
-    background: rgba(26, 38, 57, 0.8);
-    border-radius: 10px;
+    padding: 0;
 }
 
 .selected-card {
     width: 100%;
-    max-width: 300px;
-    aspect-ratio: 9/16;
+    height: 400px;
+    max-width: 240px;
+    margin: 0 auto;
     border-radius: 10px;
     overflow: hidden;
-    box-shadow: 0 0 20px rgba(0, 163, 224, 0.5);
     border: 1px solid var(--border-accent);
+}
+
+.selected-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
 }
 
 .description {
     flex: 1;
     display: flex;
     flex-direction: column;
-    max-height: 80vh;
-    overflow: hidden;
+    width: 100%;
+    margin-top: 1rem;
 }
 
 .description h2 {
     color: #d9bd0b;
-    margin-top: 0;
-    font-size: 1.5em;
+    margin: 0.5rem 0;
+    font-size: 1.3em;
     font-family: 'Cinzel', serif;
+    text-align: center;
 }
 
 .description p {
     overflow-y: auto;
-    padding-right: 1rem;
-    margin-bottom: 1rem;
-    flex-grow: 1;
-    line-height: 1.6;
+    padding: 0 0.5rem;
+    margin: 0;
+    line-height: 1.5;
+    font-size: 0.95em;
 }
 
 .scroll-container {
     display: flex;
-    gap: 1rem;
+    gap: 0.8rem;
     overflow-x: auto;
     padding: 1rem 0;
-    margin-top: auto;
+    margin-top: 1rem;
 }
 
 .scroll-card {
-    width: 80px;
-    aspect-ratio: 9/16;
+    width: 70px;
+    height: 110px;
     flex-shrink: 0;
-    position: relative;
-    cursor: pointer;
     border-radius: 5px;
     overflow: hidden;
     opacity: 0.7;
@@ -112,33 +115,18 @@
 
 .scroll-card.selected {
     opacity: 1;
-    box-shadow: 0 0 10px rgba(0, 163, 224, 0.8);
-}
-
-.scroll-card:hover {
-    opacity: 1;
+    box-shadow: 0 0 8px rgba(0, 163, 224, 0.8);
 }
 
 /* Responsive Design */
-@media (max-width: 1200px) {
-    .origin-grid {
-        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-    }
-}
-
 @media (max-width: 900px) {
     .origin-grid {
         grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-        gap: 1.2rem;
     }
     
-    .selected-view {
-        flex-direction: column;
-    }
-    
-    .selected-card {
-        max-width: 250px;
-        margin: 0 auto;
+    .origin-card {
+        height: 240px;
+        max-width: 140px;
     }
 }
 
@@ -148,20 +136,18 @@
         gap: 1rem;
     }
     
-    .origin-card .overlay {
-        padding: 0.6rem;
-        font-size: 0.9em;
+    .origin-card {
+        height: 200px;
+        max-width: 120px;
     }
     
     .selected-card {
+        height: 320px;
         max-width: 200px;
     }
     
-    .description h2 {
-        font-size: 1.3em;
-    }
-    
     .scroll-card {
-        width: 70px;
+        width: 60px;
+        height: 95px;
     }
 }

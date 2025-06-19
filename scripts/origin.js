@@ -72,21 +72,21 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Рендеринг сетки origins
-    function renderOriginGrid() {
-        originGrid.innerHTML = '';
-        originsData.forEach(origin => {
-            const card = document.createElement('div');
-            card.className = 'origin-card';
-            card.dataset.id = origin.id;
-            card.innerHTML = `
-                <img src="images/origins/${origin.src}" alt="${origin.name}"
-                     onerror="this.onerror=null;this.src='images/origins/default.jpg'">
-                <div class="overlay">${origin.name}</div>
-            `;
-            card.addEventListener('click', () => showOrigin(origin));
-            originGrid.appendChild(card);
-        });
-    }
+function renderOriginGrid() {
+    originGrid.innerHTML = '';
+    originsData.forEach(origin => {
+        const card = document.createElement('div');
+        card.className = 'origin-card'; // Более четкое указание класса
+        card.dataset.id = origin.id;
+        card.innerHTML = `
+            <img src="images/origins/${origin.src}" alt="${origin.name}"
+                 onerror="this.onerror=null;this.src='images/origins/default.jpg'">
+            <div class="overlay">${origin.name}</div>
+        `;
+        card.addEventListener('click', () => showOrigin(origin));
+        originGrid.appendChild(card);
+    });
+}
 
     // Рендеринг карточек в полосе прокрутки
     function renderScrollCards() {

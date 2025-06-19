@@ -72,21 +72,21 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Рендеринг сетки рас
-    function renderRaceGrid() {
-        raceGrid.innerHTML = '';
-        racesData.forEach(race => {
-            const card = document.createElement('div');
-            card.className = 'origin-card';
-            card.dataset.id = race.id;
-            card.innerHTML = `
-                <img src="images/races/${race.src}" alt="${race.name}"
-                     onerror="this.onerror=null;this.src='images/races/default.jpg'">
-                <div class="overlay">${race.name}</div>
-            `;
-            card.addEventListener('click', () => showRace(race));
-            raceGrid.appendChild(card);
-        });
-    }
+function renderRaceGrid() {
+    raceGrid.innerHTML = '';
+    racesData.forEach(race => {
+        const card = document.createElement('div');
+        card.className = 'race-card'; // Исправлено с origin-card на race-card
+        card.dataset.id = race.id;
+        card.innerHTML = `
+            <img src="images/races/${race.src}" alt="${race.name}"
+                 onerror="this.onerror=null;this.src='images/races/default.jpg'">
+            <div class="overlay">${race.name}</div>
+        `;
+        card.addEventListener('click', () => showRace(race));
+        raceGrid.appendChild(card);
+    });
+}
 
     // Рендеринг карточек в полосе прокрутки
     function renderScrollCards() {
