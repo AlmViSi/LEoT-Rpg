@@ -110,21 +110,23 @@
     padding-right: 1rem;
 }
 
+/* Обновленный scroll-container с соотношением 9:16 */
 .scroll-container {
     height: 200px;
     background: rgba(26, 38, 57, 0.9);
     border-radius: 10px;
     border: 1px solid var(--border-accent);
-    padding: 1.5rem;
+    padding: 1rem;
     display: flex;
-    gap: 1.5rem;
+    gap: 1rem;
     overflow-x: auto;
+    overflow-y: hidden; /* Убираем вертикальный скролл */
     align-items: center;
 }
 
 .scroll-card {
-    width: 150px;
-    height: 180px;
+    width: 112.5px; /* 9/16 от высоты 200px */
+    height: 200px;
     flex-shrink: 0;
     border-radius: 5px;
     overflow: hidden;
@@ -189,8 +191,8 @@
     }
     
     .scroll-card {
-        width: 130px;
-        height: 160px;
+        width: 101.25px; /* 9/16 от 180px */
+        height: 180px;
     }
 }
 
@@ -236,8 +238,8 @@
     }
     
     .scroll-card {
-        width: 110px;
-        height: 140px;
+        width: 90px; /* 9/16 от 160px */
+        height: 160px;
     }
 }
 
@@ -251,8 +253,8 @@
     }
     
     .scroll-card {
-        width: 90px;
-        height: 120px;
+        width: 78.75px; /* 9/16 от 140px */
+        height: 140px;
     }
     
     .reset-button {
