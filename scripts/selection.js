@@ -77,13 +77,14 @@ export class SelectionManager {
       </div>
     `).join('');
 
-    this.elements.grid.querySelectorAll(`.${this.config.cardClass}`).forEach(card => {
-      card.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const item = this.data.find(i => i.id === card.dataset.id);
-        console.log('Card clicked:', item?.name);
+    this.elements.grid.addEventListener('click', (e) => {
+      const card = e.target.closest(`.${this.config.cardClass}`);
+      if (card) {
+        const itemId = card.getAttribute('data-id');
+        const item = this.data.find(i => i.id === itemId);
+        console.log('Grid card clicked:', itemId, item);
         if (item) this.showSelected(item);
-      });
+      }
     });
   }
 
@@ -96,18 +97,22 @@ export class SelectionManager {
       </div>
     `).join('');
 
-    this.elements.scrollContainer.querySelectorAll('.scroll-card').forEach(card => {
-      card.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const item = this.data.find(i => i.id === card.dataset.id);
+    this.elements.scrollContainer.addEventListener('click', (e) => {
+      const card = e.target.closest('.scroll-card');
+      if (card) {
+        const itemId = card.getAttribute('data-id');
+        const item = this.data.find(i => i.id === itemId);
         if (item) this.showSelected(item);
-      });
+      }
     });
   }
 
   showSelected(item) {
-    if (!item) return;
-    console.log('Showing selected item:', item.name);
+    if (!item) {
+      console.error('No item provided to showSelected');
+      return;
+    }
+    console.log('Showing selected item:', item.id, item.name);
 
     this.elements.grid.style.display = 'none';
     this.elements.selectedView.style.display = 'flex';
@@ -120,35 +125,15 @@ export class SelectionManager {
     this.elements.title.textContent = item.name;
     this.elements.description.textContent = item.description;
 
+    // Update scroll cards selection without animation
     document.querySelectorAll('.scroll-card').forEach(card => {
-      const isSelected = card.dataset.id === item.id;
-      card.classList.toggle('selected', isSelected);
-      if (isSelected) {
-        card.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-      }
+      card.classList.toggle('selected', card.dataset.id === item.id);
     });
 
     window.history.pushState({ selectedId: item.id }, '', `${this.config.pageUrl}?id=${item.id}`);
   }
 
   setupEventListeners() {
-    // Делегирование событий
-    this.elements.grid?.addEventListener('click', (e) => {
-      const card = e.target.closest(`.${this.config.cardClass}`);
-      if (card) {
-        const item = this.data.find(i => i.id === card.dataset.id);
-        if (item) this.showSelected(item);
-      }
-    });
-
-    this.elements.scrollContainer?.addEventListener('click', (e) => {
-      const card = e.target.closest('.scroll-card');
-      if (card) {
-        const item = this.data.find(i => i.id === card.dataset.id);
-        if (item) this.showSelected(item);
-      }
-    });
-
     this.elements.resetButton?.addEventListener('click', () => this.resetSelection());
     window.addEventListener('popstate', () => this.handleHistoryNavigation());
   }
