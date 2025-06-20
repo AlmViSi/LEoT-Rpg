@@ -84,7 +84,7 @@ export class SelectionManager {
             </div>
         `).join('');
     }
-
+    
     showSelected(item) {
         if (!item) return;
         this.currentSelectedId = item.id;
@@ -93,16 +93,18 @@ export class SelectionManager {
         this.elements.selectedView.style.display = 'grid';
         this.elements.resetButton.style.display = 'block';
 
-        // Добавляем aria-label для выбранной карточки
+        // Обновленный HTML для selected-card с подписью
         this.elements.selectedCard.innerHTML = `
             <img src="images/${this.config.imageFolder}/${item.src}" 
                  alt="${item.name}"
-                 aria-label="Выбранный элемент: ${item.name}">
+                 aria-hidden="true">
+            <div class="selected-card-label">${item.name}</div>
         `;
+    
         this.elements.title.textContent = item.name;
         this.elements.description.innerHTML = item.description.replace(/\n/g, '<br>');
 
-        // Очищаем и заполняем scroll-container с aria-labels
+        // Обновленный HTML для scroll-container с подписями
         this.elements.scrollContainer.innerHTML = this.data
             .filter(scrollItem => scrollItem.id !== item.id && scrollItem.src)
             .map(scrollItem => `
@@ -111,10 +113,10 @@ export class SelectionManager {
                     <img src="images/${this.config.imageFolder}/${scrollItem.src}" 
                          alt="${scrollItem.name}"
                          aria-hidden="true">
+                    <div class="scroll-card-label">${scrollItem.name}</div>
                 </div>
             `).join('');
 
-        // Автоматический скролл к выбранному элементу
         this.autoScrollToSelected();
         window.history.pushState({ id: item.id }, '', `${this.config.pageUrl}?id=${item.id}`);
     }
