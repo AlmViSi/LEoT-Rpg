@@ -93,7 +93,7 @@ export class SelectionManager {
         this.elements.selectedView.style.display = 'grid';
         this.elements.resetButton.style.display = 'block';
 
-        // Обновленный HTML для selected-card с подписью
+        // Для selected-card
         this.elements.selectedCard.innerHTML = `
             <img src="images/${this.config.imageFolder}/${item.src}" 
                  alt="${item.name}"
@@ -104,12 +104,11 @@ export class SelectionManager {
         this.elements.title.textContent = item.name;
         this.elements.description.innerHTML = item.description.replace(/\n/g, '<br>');
 
-        // Обновленный HTML для scroll-container с подписями
+        // Для scroll-container
         this.elements.scrollContainer.innerHTML = this.data
             .filter(scrollItem => scrollItem.id !== item.id && scrollItem.src)
             .map(scrollItem => `
-                <div class="scroll-card" data-id="${scrollItem.id}" role="button" tabindex="0"
-                     aria-label="Альтернативный вариант: ${scrollItem.name}">
+                <div class="scroll-card" data-id="${scrollItem.id}">
                     <img src="images/${this.config.imageFolder}/${scrollItem.src}" 
                          alt="${scrollItem.name}"
                          aria-hidden="true">
