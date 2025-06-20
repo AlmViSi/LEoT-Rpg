@@ -21,6 +21,20 @@
     border: 1px solid var(--border-accent);
 }
 
+.origin-card .overlay,
+.origin-card-label {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.7);
+    padding: 0.8rem;
+    text-align: center;
+    font-family: 'Cinzel', serif;
+    font-size: 1em;
+    color: var(--text-primary);
+}
+
 .origin-card:hover {
     transform: translateY(-5px);
     box-shadow: 0 10px 20px rgba(0, 163, 224, 0.5);
