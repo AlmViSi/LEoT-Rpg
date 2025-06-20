@@ -74,8 +74,11 @@ export class SelectionManager {
 
     renderGrid() {
         this.elements.grid.innerHTML = this.data.map(item => `
-            <div class="${this.config.cardClass}" data-id="${item.id}">
-                <img src="images/${this.config.imageFolder}/${item.src}" alt="${item.name}"
+            <div class="${this.config.cardClass}" data-id="${item.id}" role="button" tabindex="0"
+                 aria-label="Выбрать ${item.name}">
+                <img src="images/${this.config.imageFolder}/${item.src}" 
+                     alt="${item.name}"
+                     aria-hidden="true"
                      onerror="this.onerror=null;this.src='images/default.jpg'">
                 <div class="overlay">${item.name}</div>
             </div>
@@ -90,16 +93,24 @@ export class SelectionManager {
         this.elements.selectedView.style.display = 'grid';
         this.elements.resetButton.style.display = 'block';
 
-        this.elements.selectedCard.innerHTML = `<img src="images/${this.config.imageFolder}/${item.src}" alt="${item.name}">`;
+        // Добавляем aria-label для выбранной карточки
+        this.elements.selectedCard.innerHTML = `
+            <img src="images/${this.config.imageFolder}/${item.src}" 
+                 alt="${item.name}"
+                 aria-label="Выбранный элемент: ${item.name}">
+        `;
         this.elements.title.textContent = item.name;
         this.elements.description.innerHTML = item.description.replace(/\n/g, '<br>');
 
-        // Очищаем и заполняем scroll-container
+        // Очищаем и заполняем scroll-container с aria-labels
         this.elements.scrollContainer.innerHTML = this.data
             .filter(scrollItem => scrollItem.id !== item.id && scrollItem.src)
             .map(scrollItem => `
-                <div class="scroll-card" data-id="${scrollItem.id}">
-                    <img src="images/${this.config.imageFolder}/${scrollItem.src}" alt="${scrollItem.name}">
+                <div class="scroll-card" data-id="${scrollItem.id}" role="button" tabindex="0"
+                     aria-label="Альтернативный вариант: ${scrollItem.name}">
+                    <img src="images/${this.config.imageFolder}/${scrollItem.src}" 
+                         alt="${scrollItem.name}"
+                         aria-hidden="true">
                 </div>
             `).join('');
 
@@ -107,7 +118,7 @@ export class SelectionManager {
         this.autoScrollToSelected();
         window.history.pushState({ id: item.id }, '', `${this.config.pageUrl}?id=${item.id}`);
     }
-
+    
     autoScrollToSelected() {
         if (!this.currentSelectedId) return;
 
