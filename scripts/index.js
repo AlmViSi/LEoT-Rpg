@@ -14,13 +14,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     const originsData = await response.json();
     if (!originsData?.length) throw new Error('Origin data is empty or invalid');
 
-    originGrid.innerHTML = originsData.map(origin => `
-      <div class="origin-card" data-id="${origin.id}">
-        <img src="images/origins/${origin.src}" alt="${origin.name}"
-             onerror="this.onerror=null;this.src='images/origins/default.jpg'">
-        <div class="overlay">${origin.name}</div>
+  originGrid.innerHTML = originsData.map(origin => `
+      <div class="origin-card" data-id="${origin.id}" role="button" tabindex="0"
+           aria-label="Выбрать происхождение: ${origin.name}">
+          <img src="images/origins/${origin.src}" 
+               alt="${origin.name}"
+               aria-hidden="true"
+               onerror="this.onerror=null;this.src='images/origins/default.jpg'">
+          <div class="overlay">${origin.name}</div>
       </div>
-    `).join('');
+  `).join('');
 
     originGrid.querySelectorAll('.origin-card').forEach(card => {
       card.addEventListener('click', () => {
