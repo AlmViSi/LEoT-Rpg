@@ -95,6 +95,34 @@
     display: block; /* Убираем лишнее пространство под изображением */
 }
 
+.selected-card-label {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.7);
+    color: var(--text-primary);
+    padding: 0.5rem;
+    text-align: center;
+    font-family: 'Cinzel', serif;
+    font-size: 1.1em;
+}
+
+.scroll-card-label {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.7);
+    color: var(--text-primary);
+    padding: 0.3rem;
+    text-align: center;
+    font-family: 'Cinzel', serif;
+    font-size: 0.8em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
 
 .description-container {
     grid-area: description;
