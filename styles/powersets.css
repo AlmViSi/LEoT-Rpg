@@ -412,7 +412,7 @@ button:hover {
 
 #spell-tooltip h5 {
     margin: 16px 0 8px 0;
-    color: var(#ccad23);
+    color: #ccad23;
     font-size: 15px;
     font-weight: 500;
 }
