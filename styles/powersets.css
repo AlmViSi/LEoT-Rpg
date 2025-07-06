@@ -378,7 +378,7 @@ button:hover {
     display: none;
     opacity: 0;
     z-index: 1000;      
-    width: 1200px;
+    width: 600px;
     max-width: 90vw;
     max-height: 80vh;
     border-radius: 0;     
@@ -393,7 +393,7 @@ button:hover {
     transition: opacity 0.2s ease;
     pointer-events: none;    
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-columns: 3fr 1fr 1fr;
     gap: 15px;
     padding: 15px;
 }
