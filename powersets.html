@@ -2121,12 +2121,6 @@ function positionTooltip(event, tooltip) {
 
             if (modal.style.display === 'flex' && e.key === 'Escape') {
                 closeModal();
-            } else if (e.key === 'ArrowRight') {
-                const nextIndex = (activeIndex + 1) % tabs.length;
-                showTab(tabs[nextIndex].dataset.tab);
-            } else if (e.key === 'ArrowLeft') {
-                const prevIndex = (activeIndex - 1 + tabs.length) % tabs.length;
-                showTab(tabs[prevIndex].dataset.tab);
             } else if (e.ctrlKey && e.key === 's') {
                 e.preventDefault();
                 if (document.getElementById('spell-creator').classList.contains('active')) saveSpell();
