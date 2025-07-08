@@ -1990,25 +1990,37 @@ function showSpellTooltip(event, spell) {
     `;
     
     // Позиционирование тултипа
-    const offset = 15;
-    let x = event.clientX + offset;
-    let y = event.clientY + offset;
-    
-    // Проверка границ экрана
-    const tooltipWidth = tooltip.offsetWidth;
-    const tooltipHeight = tooltip.offsetHeight;
-    
-    if (x + tooltipWidth > window.innerWidth) {
-        x = window.innerWidth - tooltipWidth - offset;
-    }
-    
-    if (y + tooltipHeight > window.innerHeight) {
-        y = window.innerHeight - tooltipHeight - offset;
-    }
-    
-    tooltip.style.left = `${Math.max(0, x)}px`;
-    tooltip.style.top = `${Math.max(0, y)}px`;
-    tooltip.style.opacity = '1';
+const offset = 15; // Desired spacing from the mouse and screen edges
+
+let x = event.clientX + offset;
+let y = event.clientY + offset;
+
+const tooltipWidth = tooltip.offsetWidth;
+const tooltipHeight = tooltip.offsetHeight;
+
+// Calculate the maximum allowed x and y coordinates
+// These ensure the tooltip does not go beyond the screen, maintaining the offset
+const maxX = window.innerWidth - tooltipWidth - offset;
+const maxY = window.innerHeight - tooltipHeight - offset;
+
+// Adjust x if it goes beyond the right edge
+if (x > maxX) {
+    x = maxX;
+}
+
+// Adjust y if it goes beyond the bottom edge
+if (y > maxY) {
+    y = maxY;
+}
+
+// Ensure x and y are never less than the offset from the left/top edge
+// This handles cases where the mouse is very close to the top or left edge
+x = Math.max(offset, x);
+y = Math.max(offset, y);
+
+tooltip.style.left = `${x}px`;
+tooltip.style.top = `${y}px`;
+tooltip.style.opacity = '1';
 }
 	    
 function formatPairedValuesForDisplay(pairedArray) {
